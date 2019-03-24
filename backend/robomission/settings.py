@@ -2,6 +2,7 @@
 """
 
 import os
+from sys import platform
 import dj_database_url
 
 from .cronjobs import get_cronjobs, get_crontab_command_prefix
@@ -23,7 +24,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 TASKS_DIR = os.path.join(REPO_DIR, 'tasks')
 FRONTEND_DIR = os.path.join(REPO_DIR, 'frontend')
-JS_NODE_PATH = os.path.join(FRONTEND_DIR, 'node_modules', '.bin', 'babel-node')
+
+if platform.startswith('win32'):
+    JS_NODE_PATH = os.path.join(FRONTEND_DIR, 'node_modules', '.bin', 'babel-node.cmd')
+else:
+    JS_NODE_PATH = os.path.join(FRONTEND_DIR, 'node_modules', '.bin', 'babel-node')
+
+
 JS_TOOLS_DIR = os.path.join(FRONTEND_DIR, 'tools')
 
 SHOW_SQL_QUERIES = os.getenv('SHOW_SQL_QUERIES', 'False') == 'True'
