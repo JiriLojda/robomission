@@ -13,7 +13,7 @@ def start_task(domain, student, task_name):
     task_session = get_current_task_session(student, task)
 
     if task_session is not None:
-        # task has been already started, so this is a duplicate actions and
+        # task has been already started, so this is a duplicate action and
         # we don't wan't to save it again
         duplicate_action = Action(
             name=Action.START_TASK,
