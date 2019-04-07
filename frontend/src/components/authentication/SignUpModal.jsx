@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import { translate } from '../localization';
+import { translate } from '../../localization';
 
 
 export default class SignUpModal extends React.Component {

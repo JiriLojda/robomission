@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { toTitle } from '../utils/text';
-import { possiblyTranslate } from '../localization';
+import { toTitle } from '../../utils/text';
+import { possiblyTranslate } from '../../localization';
 
 export default function TaskName({ taskId }) {
   return (

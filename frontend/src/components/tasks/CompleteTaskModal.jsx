@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
-import NextTaskButtonContainer from '../containers/NextTaskButtonContainer';
-import LevelBar from '../components/LevelBar';
-import Text from '../localization/Text';
-import { translate } from '../localization';
+import NextTaskButtonContainer from '../../containers/NextTaskButtonContainer';
+import LevelBar from '../LevelBar';
+import Text from '../../localization/Text';
+import { translate } from '../../localization';
 
 
 export default class CompleteTaskModal extends React.Component {

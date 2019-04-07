@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactBlocklyComponent from 'react-blockly-component';
-import { blocklyXmlToRoboAst } from '../core/blockly';
-import { generateBlocklyXml } from '../core/blocklyXmlGenerator';
-import { completeToolbox } from '../core/toolbox';
-import { countStatements } from '../core/roboCodeSyntaxChecker';
+import ReactBlocklyComponent from 'react-blockly-component/dist-modules';
+import { blocklyXmlToRoboAst } from '../../core/blockly';
+import { generateBlocklyXml } from '../../core/blocklyXmlGenerator';
+import { completeToolbox } from '../../core/toolbox';
+import { countStatements } from '../../core/roboCodeSyntaxChecker';
 
 
 const workspaceConfiguration = {
@@ -31,7 +31,7 @@ export default class BlocklyEditor extends React.Component {
     if (prevProps.editorSessionId !== this.props.editorSessionId) {
       this.setRoboAst(this.props.roboAst);
     }
-    this.checkLengthLimit(this.props.roboAst);
+    // this.checkLengthLimit(this.props.roboAst);
     this.setHighlight();
   }
 
@@ -97,7 +97,7 @@ export default class BlocklyEditor extends React.Component {
     const xmlDidChange = newXml => {
       const roboAst = blocklyXmlToRoboAst(newXml);
       this.props.onChange(roboAst);
-      this.checkLengthLimit(roboAst);
+      // this.checkLengthLimit(roboAst);
     };
     return (
       <div
@@ -113,7 +113,7 @@ export default class BlocklyEditor extends React.Component {
       >
         <ReactBlocklyComponent.BlocklyEditor
           ref={(ref) => { this.blocklyEditor = ref; }}
-          workspaceConfiguration={workspaceConfiguration}
+          workspaceConfiguration={{...workspaceConfiguration, maxBlocks: this.props.lengthLimit}}
           toolboxBlocks={this.props.toolboxBlocks}
           initialXml={initialXml}
           xmlDidChange={xmlDidChange}

@@ -9,8 +9,8 @@ import { closeTaskCompletionDialog,
          resetGame,
          showLevelProgress,
          startTask } from '../actions';
-import CompleteTaskModal from '../components/CompleteTaskModal';
-import TaskFailedModal from '../components/TaskFailedModal';
+import CompleteTaskModal from '../components/tasks/CompleteTaskModal';
+import TaskFailedModal from '../components/tasks/TaskFailedModal';
 
 function getProps(state, props) {
   return {

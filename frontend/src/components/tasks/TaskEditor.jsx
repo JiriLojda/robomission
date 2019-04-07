@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SplitPane from 'react-split-pane';
-import TaskEnvironmentContainer from '../containers/TaskEnvironmentContainer';
-import SettingEditorContainer from '../containers/SettingEditorContainer';
+import SplitPane from 'react-split-pane/index';
+import TaskEnvironmentContainer from '../../containers/TaskEnvironmentContainer';
+import SettingEditorContainer from '../../containers/SettingEditorContainer';
 
 
 export default class TaskEditor extends React.Component {

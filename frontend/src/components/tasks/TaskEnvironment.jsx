@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import SplitPane from 'react-split-pane';
+import SplitPane from 'react-split-pane/index';
 import { Scrollbars } from 'react-custom-scrollbars';
-import CodeEditorContainer from '../containers/CodeEditorContainer';
-import BlocklyEditorContainer from '../containers/BlocklyEditorContainer';
-import SpaceGameContainer from '../containers/SpaceGameContainer';
-import { theme } from '../theme';
+import CodeEditorContainer from '../../containers/CodeEditorContainer';
+import BlocklyEditorContainer from '../../containers/BlocklyEditorContainer';
+import SpaceGameContainer from '../../containers/SpaceGameContainer';
+import { theme } from '../../theme';
 
 
 export default class TaskEnvironment extends React.Component {

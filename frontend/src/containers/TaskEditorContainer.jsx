@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import TaskEditor from '../components/TaskEditor';
+import TaskEditor from '../components/tasks/TaskEditor';
 import { setTask } from '../actions';
 import { stripIndentation } from '../utils/text'
 

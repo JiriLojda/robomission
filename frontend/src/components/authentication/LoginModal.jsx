@@ -5,7 +5,7 @@ import {GridList, GridTile} from 'material-ui/GridList';
 import TextField from 'material-ui/TextField';
 import EmailIcon from 'material-ui/svg-icons/communication/email';
 import { FacebookLoginButton, GoogleLoginButton } from 'react-social-login-buttons';
-import { translate } from '../localization';
+import { translate } from '../../localization';
 
 
 export default class LoginModal extends React.Component {

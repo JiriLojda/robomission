@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import TaskName from './TaskName';
+import TaskName from './tasks/TaskName';
 import Icon from './Icon';
 import Instructable from '../containers/Instructable';
 

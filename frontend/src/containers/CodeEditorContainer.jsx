@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import CodeEditor from '../components/CodeEditor';
+import CodeEditor from '../components/editor/CodeEditor';
 import { editProgramCode } from '../actions';
 
 
