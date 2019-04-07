@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import BlocklyEditor from '../components/BlocklyEditor';
+import BlocklyEditor from '../components/editor/BlocklyEditor';
 import {
   getRoboAst,
   getEditorSessionId,

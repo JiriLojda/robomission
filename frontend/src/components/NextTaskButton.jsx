@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import RaisedButton from 'material-ui/RaisedButton';
 import TaskIcon from 'material-ui/svg-icons/av/play-arrow';
 import Instructable from '../containers/Instructable';
-import TaskName from './TaskName';
+import TaskName from './tasks/TaskName';
 
 
 export default function NextTaskButton({ task }) {

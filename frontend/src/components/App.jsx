@@ -6,8 +6,8 @@ import HeaderContainer from '../containers/HeaderContainer';
 import MenuContainer from '../containers/MenuContainer';
 import InstructionsContainer from '../containers/InstructionsContainer';
 import FeedbackModalContainer  from '../containers/FeedbackModalContainer';
-import LoginModal from '../components/LoginModal';
-import SignUpModal from '../components/SignUpModal';
+import LoginModal from './authentication/LoginModal';
+import SignUpModal from './authentication/SignUpModal';
 import { translate } from '../localization';
 
 

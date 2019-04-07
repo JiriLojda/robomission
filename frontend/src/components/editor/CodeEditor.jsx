@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
 import 'brace/theme/solarized_dark';
-import '../core/roboCodeHighlighter';
+import '../../core/roboCodeHighlighter';
 
 
 export default class CodeEditor extends React.Component {

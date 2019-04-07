@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import TaskEnvironment from '../components/TaskEnvironment';
+import TaskEnvironment from '../components/tasks/TaskEnvironment';
 import { createTaskEnvironment, changeGamePanelWidth } from '../actions';
 import { getEditorType, getGamePanelWidth } from '../selectors/taskEnvironment';
 

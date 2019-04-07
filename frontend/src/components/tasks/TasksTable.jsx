@@ -6,11 +6,11 @@ import Avatar from 'material-ui/Avatar';
 import { Card, CardHeader, CardText } from 'material-ui/Card';
 import { GridList, GridTile } from 'material-ui/GridList';
 import TaskName from './TaskName';
-import Rating from './Rating';
-import { theme } from '../theme';
-import { translate } from '../localization';
-import { flatten } from '../utils/arrays';
-import Instructable from '../containers/Instructable';
+import Rating from '../Rating';
+import { theme } from '../../theme';
+import { translate } from '../../localization';
+import { flatten } from '../../utils/arrays';
+import Instructable from '../../containers/Instructable';
 
 
 export default function TaskTable({ urlBase, missions, recommendation, levelStatus }) {
