@@ -83,7 +83,7 @@ export default function reduceInstructions(state = initial, action) {
       if (newCount > 0) {
         instructables =  {...instructables, [instructionId]: newCount};
       }
-      const instruction = { ...state.byId[instructionId], position }
+      const instruction = { ...state.byId[instructionId], position };
       const byId = { ...state.byId, [instructionId]: instruction };
       return { ...state, byId, instructables };
     }
@@ -91,10 +91,10 @@ export default function reduceInstructions(state = initial, action) {
       const { registered, unregistered } = action.payload;
       const instructables = {...state.instructables};
       const byId = {...state.byId};
-      for (let id of unregistered) {
+      for (const id of unregistered) {
         delete instructables[id];
       }
-      for (let { instructionId, position } of registered) {
+      for (const { instructionId, position } of registered) {
         instructables[instructionId] = 1;
         byId[instructionId] = {...byId[instructionId], position};
       }

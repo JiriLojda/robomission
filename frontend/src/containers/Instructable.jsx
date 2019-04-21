@@ -18,7 +18,7 @@ const addClass = (component, className) => {
   return React.cloneElement(component, {
     className: className + originalClasses,
   });
-}
+};
 
 
 class Instructable extends React.Component {

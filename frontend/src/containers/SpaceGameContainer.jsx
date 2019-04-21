@@ -85,7 +85,7 @@ SpaceGameWrapper.propTypes = {
 
 SpaceGameWrapper.defaultProps = {
   showHeader: true,
-}
+};
 
 function mapStateToProps(state, props) {
   const { taskEnvironmentId, controls } = props;

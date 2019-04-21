@@ -36,7 +36,7 @@ function mapStateToProps(state, props) {
 
 const actionCreators = {
   changeCode: editProgramCode,
-}
+};
 
 
 const CodeEditorContainer = connect(mapStateToProps, actionCreators)(CodeEditorWrapper);
