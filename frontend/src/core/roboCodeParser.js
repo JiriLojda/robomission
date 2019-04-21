@@ -1,12 +1,11 @@
-import pegRoboCodeParser from './pegRoboCodeParser';
+import {parse, SyntaxError} from './pegRoboCodeParser';
 
 export function parseRoboCode(code) {
   const normalizedCode = preprocess(code);
   try {
-    const roboAst = pegRoboCodeParser.parse(normalizedCode);
-    return roboAst;
+    return parse(normalizedCode);
   } catch (error) {
-    if (error instanceof pegRoboCodeParser.SyntaxError) {
+    if (error instanceof SyntaxError) {
       const { message, location, expected, found } = error;
       const { line, column } = getOriginalLocation(location.start, normalizedCode);
       let problem = message;

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import App from '../components/App';
@@ -72,7 +72,7 @@ class AppContainer extends React.Component {
     this.login = this.props.login.bind(this);
     this.signUp = this.props.signUp.bind(this);
     this.props.changeLocation(props.location);  // report initial location
-    this.props.history.listen((location, action) => {
+    this.props.history.listen((location) => {
       this.props.changeLocation(location);
     });
   }

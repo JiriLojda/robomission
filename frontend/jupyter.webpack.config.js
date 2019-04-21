@@ -15,6 +15,7 @@ module.exports = [
     entry: './src/jupyter.js',
     output: {
       filename: 'index.js',
+      devtool: 'inline-source-map',
       path: path.join(__dirname, '..',  'robomission', 'static'),
       // PublicPath gets prepended to all asset requests.
       // It is dictated by jupyter, which serves extensions files from
@@ -55,6 +56,11 @@ module.exports = [
                 presets: ['env', 'react'],
                 plugins: ['transform-object-rest-spread'],
               },
+            },
+            {
+              test: /\.(ts|tsx)$/,
+              exclude: /node_modules/,
+              loader: 'ts-loader',
             },
             // The file loader loader doesn't use a "test" so it will catch all
             // modules that fall through the other loaders.

@@ -14,11 +14,6 @@
 /* global ace:false */
 /* eslint-disable no-param-reassign */
 
-ace.define('ace/mode/spaceworld_highlight_rules',
-  ['require', 'exports', 'ace/lib/oop', 'ace/mode/text_highlight_rules'],
-  (acequire, exports) => {
-    const oop = acequire('../lib/oop');
-    const TextHighlightRules = acequire('./text_highlight_rules').TextHighlightRules;
     const colorTokens = {
       black: 'text',
       gray: 'comment',  // comment also implies italics font-variant
@@ -29,63 +24,52 @@ ace.define('ace/mode/spaceworld_highlight_rules',
       magenta: 'constant.numeric',
       yellow: 'constant.language.boolean',
     };
-    function SpaceWorldHighlightRules() {
-      this.$rules = {
-        start: [
-          {
-            token: colorTokens.black,
-            regex: 'k',
-          }, {
-            token: colorTokens.red,
-            regex: 'r',
-          }, {
-            token: colorTokens.green,
-            regex: 'g',
-          }, {
-            token: colorTokens.blue,
-            regex: 'b',
-          }, {
-            token: colorTokens.cyan,
-            regex: 'c',
-          }, {
-            token: colorTokens.magenta,
-            regex: 'm',
-          }, {
-            token: colorTokens.yellow,
-            regex: 'y',
-          }, {
-            token: colorTokens.black,
-            regex: '(S|D|A|M|W|X|Y|Z)',
-          }, {
-          }, {
-            token: colorTokens.black,
-            regex: '\\|',
-          }, {
-            token: colorTokens.black,
-            regex: '.',
-          },
-        ],
-      };
+    export class SpaceWorldHighlightRules extends window.ace.acequire('ace/mode/text_highlight_rules').TextHighlightRules {
+        constructor() {
+            super();
+            this.$rules = {
+                start: [
+                    {
+                        token: colorTokens.black,
+                        regex: 'k',
+                    }, {
+                        token: colorTokens.red,
+                        regex: 'r',
+                    }, {
+                        token: colorTokens.green,
+                        regex: 'g',
+                    }, {
+                        token: colorTokens.blue,
+                        regex: 'b',
+                    }, {
+                        token: colorTokens.cyan,
+                        regex: 'c',
+                    }, {
+                        token: colorTokens.magenta,
+                        regex: 'm',
+                    }, {
+                        token: colorTokens.yellow,
+                        regex: 'y',
+                    }, {
+                        token: colorTokens.black,
+                        regex: '(S|D|A|M|W|X|Y|Z)',
+                    }, {}, {
+                        token: colorTokens.black,
+                        regex: '\\|',
+                    }, {
+                        token: colorTokens.black,
+                        regex: '.',
+                    },
+                ],
+            };
+        }
     }
-    oop.inherits(SpaceWorldHighlightRules, TextHighlightRules);
-    exports.SpaceWorldHighlightRules = SpaceWorldHighlightRules;
-  }
-);
 
-ace.define('ace/mode/spaceworld',
-  ['require', 'exports', 'ace/lib/oop', 'ace/mode/text', 'ace/mode/spaceworld_highlight_rules'],
-  (acequire, exports) => {
-    const oop = acequire('../lib/oop');
-    const TextMode = acequire('./text').Mode;
-    const HighlightRules = acequire('./spaceworld_highlight_rules').SpaceWorldHighlightRules;
-    function Mode() {
-      this.HighlightRules = HighlightRules;
-      this.$behaviour = this.$defaultBehaviour;
+    export default class Mode extends window.ace.acequire('ace/mode/text').Mode{
+        constructor() {
+            super();
+            this.HighlightRules = SpaceWorldHighlightRules;
+            this.$behaviour = this.$defaultBehaviour;
+            this.$id = 'ace/mode/spaceworld';
+        }
     }
-    oop.inherits(Mode, TextMode);
-    (function setId() {
-      this.$id = 'ace/mode/spaceworld';
-    }).call(Mode.prototype);
-    exports.Mode = Mode;
-  }
-);

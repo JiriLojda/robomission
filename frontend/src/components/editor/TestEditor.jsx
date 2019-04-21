@@ -7,7 +7,7 @@ import {completeToolbox} from "../../core/toolbox";
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
-import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter";
+import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter.ts";
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
 

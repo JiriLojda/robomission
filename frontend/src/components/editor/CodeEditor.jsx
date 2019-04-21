@@ -1,12 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
+import RoboCodeHighlighter from '../../core/roboCodeHighlighter'
 
 import 'brace/theme/solarized_dark';
-import '../../core/roboCodeHighlighter';
 
 
 export default class CodeEditor extends React.Component {
+  componentDidMount() {
+    const roboCodeHighlighter = new RoboCodeHighlighter();
+    this.aceEditor.editor.getSession().setMode(roboCodeHighlighter);
+  }
+
   componentDidUpdate() {
     if (this.props.code === '') {
       this.aceEditor.editor.focus();
@@ -19,7 +24,7 @@ export default class CodeEditor extends React.Component {
         ref={(ref) => { this.aceEditor = ref; }}
         value={this.props.code}
         onChange={this.props.onChange}
-        mode="robocode"
+        mode="text"
         theme="solarized_dark"
         fontSize={18}
         focus={true}

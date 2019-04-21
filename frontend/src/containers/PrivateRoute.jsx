@@ -35,7 +35,7 @@ class PrivateRoute extends React.Component {
           state: { from: props.location, requireStaffUser: true }
         }}/>
       );
-    }
+    };
     return (
       <Route {...rest} render={renderComponentOrRedirect} />
     );
