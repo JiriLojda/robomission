@@ -1,20 +1,20 @@
-import pegTaskSourceParser from './pegTaskSourceParser';
-import { parseRoboCode } from './roboCodeParser';
-import { parseSpaceWorld } from './spaceWorldDescription';
-import { generateMiniRoboCode } from './miniRoboCodeGenerator';
+import { parse } from './pegTaskSourceParser';
+import {parseRoboCode} from './roboCodeParser';
+import {parseSpaceWorld} from './spaceWorldDescription';
+import {generateMiniRoboCode} from './miniRoboCodeGenerator';
 
 /**
  * Parse task source text (markdown) and returned js object representing the
  * task
  */
 export function parseTaskSourceText(sourceText) {
-  const chunkedTaskSource = pegTaskSourceParser.parse(sourceText);
+  const chunkedTaskSource = parse(sourceText);
   const { errors } = parseSpaceWorld(chunkedTaskSource.setting.fields);
   if (errors.length > 0) {
     throw errors[0];
   }
 
-  const task = {
+  return {
     id: chunkedTaskSource.taskId,
     setting: {
       ...chunkedTaskSource.setting,
@@ -22,5 +22,4 @@ export function parseTaskSourceText(sourceText) {
     },
     solution: generateMiniRoboCode(parseRoboCode(chunkedTaskSource.solution)),
   };
-  return task;
 }
