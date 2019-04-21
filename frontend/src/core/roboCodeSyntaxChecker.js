@@ -24,8 +24,7 @@ export function countActions(roboAst) {
   const nodes = getAllNodes(roboAst);
   const actionTypes = ['fly', 'left', 'right', 'shoot'];
   const actionNodes = nodes.filter(node => actionTypes.includes(node.head));
-  const count = actionNodes.length;
-  return count;
+  return actionNodes.length;
 }
 
 
@@ -33,8 +32,7 @@ export function countStatements(roboAst) {
   const nodes = getAllNodes(roboAst);
   const statementTypes = ['fly', 'left', 'right', 'shoot', 'if', 'repeat', 'while'];
   const statementNodes = nodes.filter(node => statementTypes.includes(node.head));
-  const count = statementNodes.length;
-  return count;
+  return statementNodes.length;
 }
 
 

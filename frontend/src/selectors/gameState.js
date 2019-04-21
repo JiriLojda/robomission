@@ -98,8 +98,7 @@ export function getGameStage(state, taskEnvironmentId) {
 
 export function getGameState(state, taskEnvironmentId) {
   const taskEnvironment = getTaskEnvironment(state, taskEnvironmentId);
-  const gameState = computeGameStateOfTaskEnvironment(taskEnvironment);
-  return gameState;
+  return computeGameStateOfTaskEnvironment(taskEnvironment);
 }
 
 
@@ -146,23 +145,22 @@ function getInitialGameState(taskEnvironment) {
 
 
 function decideGameStage(fields, spaceship, interpreting, someActionsTaken) {
-  let stage = 'preparing';
   if (spaceship !== null) {
     // the order of cases is important, e.g. game can only be solved once the
     // program ends
     if (isSpaceshipDead(fields, spaceship)) {
-      stage = 'dead';
+      return 'dead';
     } else if (interpreting) {
-      stage = 'running';
+      return 'running';
     } else if (gameSolved(fields, spaceship)) {
-      stage = 'solved';
+      return 'solved';
     } else if (someActionsTaken) {
-      stage = 'stopped';
+      return 'stopped';
     } else {
-      stage = 'initial';
+      return 'initial';
     }
   }
-  return stage;
+  return 'preparing';
 }
 
 

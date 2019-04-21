@@ -12,8 +12,7 @@ export function getToolboxForTask(state, task) {
   if (toolboxId === null) {
     return [];
   }
-  const toolbox = state.toolboxes[toolboxId].blocks;
-  return toolbox;
+  return state.toolboxes[toolboxId].blocks;
 }
 
 

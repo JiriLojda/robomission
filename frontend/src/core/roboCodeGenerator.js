@@ -5,8 +5,7 @@ export function generateRoboCode(roboAst) {
   if (head !== 'start') {
     throw new Error(`Unexpected root of roboAst: ${head}`);
   }
-  const roboCode = (body.length > 0) ? generateBody(body, 0) : '';
-  return roboCode;
+  return (body.length > 0) ? generateBody(body, 0) : '';
 }
 
 
@@ -14,8 +13,7 @@ function generateBody(nodes, indent = 4) {
   const statementCodes = (nodes.length === 0) ? ['pass'] : nodes.map(generateStatement);
   const lines = [].concat(...statementCodes.map(c => c.split('\n')));
   const indentedLines = lines.map(line => ' '.repeat(indent) + line);
-  const code = indentedLines.join('\n');
-  return code;
+  return indentedLines.join('\n');
 }
 
 
@@ -40,20 +38,18 @@ function generateSimpleStatement({ head }) {
 
 function generateRepeatLoop({ count, body }) {
   const bodyCode = generateBody(body);
-  const code = stripIndentation`\
+  return stripIndentation`\
     repeat ${count}:
     ${bodyCode}`;
-  return code;
 }
 
 
 function generateWhileLoop({ test, body }) {
   const testCode = generateTest(test);
   const bodyCode = generateBody(body);
-  const code = stripIndentation`\
+  return stripIndentation`\
     while ${testCode}:
     ${bodyCode}`;
-  return code;
 }
 
 
@@ -61,10 +57,9 @@ function generateIfStatement({ test, body, orelse }) {
   const testCode = generateTest(test);
   const bodyCode = generateBody(body);
   const orelseCode = orelse ? generateOrelseBlock(orelse) : '';
-  const code = stripIndentation`\
+  return stripIndentation`\
     if ${testCode}:
     ${bodyCode}${orelseCode}`;
-  return code;
 }
 
 
@@ -84,19 +79,17 @@ function generateElif({ test, body, orelse }) {
   const testCode = generateTest(test);
   const bodyCode = generateBody(body);
   const orelseCode = orelse ? generateOrelseBlock(orelse) : '';
-  const code = stripIndentation`
+  return stripIndentation`
     elif ${testCode}:
     ${bodyCode}${orelseCode}`;
-  return code;
 }
 
 
 function generateElse({ body }) {
   const bodyCode = generateBody(body);
-  const code = stripIndentation`
+  return stripIndentation`
     else:
     ${bodyCode}`;
-  return code;
 }
 
 
