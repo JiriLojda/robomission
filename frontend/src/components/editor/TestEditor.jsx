@@ -8,7 +8,7 @@ import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
 import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter.ts";
-import {convertIWorldModelToEditorModel, demoWorld} from "../../core/strategyCore/models/worldModel";
+import {demoWorld, convertWorldToEditorModel} from '../../core/strategyCore/models/world.ts'
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
 
@@ -22,7 +22,7 @@ export class TestEditor extends React.PureComponent {
             blocklySettings: { trashcan: true, disable: false },
             roboAst: blocklyXmlToRoboAst(getEmptyXml()),
             runtimeContext: emptyRuntimeContext,
-            world: getDeepCopy(demoWorld),
+            world: demoWorld,
         };
     }
 
@@ -35,14 +35,13 @@ export class TestEditor extends React.PureComponent {
     _makeStep = () => {
         this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: true}}));
 
-        const worldCopy = getDeepCopy(this.state.world);
-        const runtimeContext = doNextStep(this.state.roboAst, worldCopy, 'S1', this.state.runtimeContext);
+        const [runtimeContext, world] = doNextStep(this.state.roboAst, this.state.world, 'S1', this.state.runtimeContext);
 
-        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, world: worldCopy, runtimeContext}));
+        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, world, runtimeContext}));
     };
 
     _resetRuntimeContext = () => {
-        this.setState(() => ({runtimeContext: emptyRuntimeContext, world: getDeepCopy(demoWorld)}));
+        this.setState(() => ({runtimeContext: emptyRuntimeContext, world: demoWorld}));
     };
 
     render() {
@@ -60,7 +59,7 @@ export class TestEditor extends React.PureComponent {
         >
             <span>
                 <SpaceWorld
-                    fields={convertIWorldModelToEditorModel(this.state.world)}
+                    fields={convertWorldToEditorModel(this.state.world)}
                     width={200}
                 />
                 <RaisedButton
