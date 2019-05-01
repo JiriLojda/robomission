@@ -3,9 +3,10 @@ import {Comparator} from "./enums/comparator";
 import {ConditionType} from "./enums/conditionType";
 import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {IPosition, IWorldModel} from "./models/worldModel";
-import {getShipPosition, moveShip} from "./utils/worldModelUtils";
+import {getShip, getShipPosition, moveShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
+import {updateShipInWorld, World} from "./models/world";
+import {Position} from "./models/position";
 
 const defaultMinorActionsCount = 100;
 
@@ -123,15 +124,15 @@ const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
     return result;
 };
 
-const getComparedObject = (condition: Condition, world: IWorldModel, shipPosition?: IPosition) => {
+const getComparedObject = (condition: Condition, world: World, shipPosition?: Position) => {
     if (!shipPosition) {
         throw new Error("getComparedObject: Cannot evaluate condition when no ship is present.")
     }
 
     switch (condition.head) {
         case ConditionType.Color:
-            const tile = world.surface[shipPosition.y][shipPosition.x];
-            return tile[0];
+            const tile = world.surface.get(shipPosition.y)!.get(shipPosition.x);
+            return tile || TileColor.Black;
         case ConditionType.Position:
             return shipPosition.x + 1;
         default:
@@ -139,7 +140,7 @@ const getComparedObject = (condition: Condition, world: IWorldModel, shipPositio
     }
 };
 
-const evaluateCondition = (condition: Condition, world: IWorldModel, shipId: string) => {
+const evaluateCondition = (condition: Condition, world: World, shipId: string) => {
     const shipPosition = getShipPosition(world, shipId);
 
     switch (condition.comparator) {
@@ -239,7 +240,7 @@ const setSystemVariable = (context: IRuntimeContext, variableName: SystemVariabl
 
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
-const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: IWorldModel, shipId: string) => {
+const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: string) => {
     switch (statement.head) {
         case StatementType.If:
         case StatementType.While:
@@ -267,31 +268,34 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-const evaluateActionStatement = (statement: IStatement, world: IWorldModel, shipId: string): boolean => {
+const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World => {
+    const ship = getShip(world, shipId);
+
+    if (!ship) {
+        throw new Error(`Cannot find a ship with id '${shipId}'.`)
+    }
+
     switch (statement.head) {
         case StatementType.Fly:
-            moveShip(world, shipId, MovingDirection.Foward);
-            return true;
+            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Foward));
         case StatementType.Left:
-            moveShip(world, shipId, MovingDirection.Left);
-            return true;
+            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
-            moveShip(world, shipId, MovingDirection.Right);
-            return true;
+            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         default:
-            return false;
+            return world;
     }
 };
 
-export const doNextStep = (roboAst: IRoboAst, world: IWorldModel, shipId: string, context: IRuntimeContext) => {
+export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, context: IRuntimeContext): [IRuntimeContext, World] => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
-        return context;
+        return [context, world];
     }
 
     if (context.minorActionsLeft <= 0) {
         console.log('No actions left, let other players play too.');
-        return context;
+        return [context, world];
     }
     context = deepCopy(context);
 
@@ -299,7 +303,8 @@ export const doNextStep = (roboAst: IRoboAst, world: IWorldModel, shipId: string
     const statement = getStatement(roboAst, context);
     console.log(statement);
 
-    context.wasActionExecuted = evaluateActionStatement(statement, world, shipId);
+    const newWorld = evaluateActionStatement(statement, world, shipId);
+    context.wasActionExecuted = newWorld !== world;
     if (context.wasActionExecuted) {
          context.minorActionsLeft = defaultMinorActionsCount;
     }
@@ -309,6 +314,8 @@ export const doNextStep = (roboAst: IRoboAst, world: IWorldModel, shipId: string
     context.position = getNextPosition(roboAst, context);
     console.log('new context:');
     console.log(context);
+    console.log("new world");
+    console.log(newWorld);
 
-    return context;
+    return [context, newWorld];
 };

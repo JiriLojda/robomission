@@ -1,10 +1,12 @@
 import {MovingDirection} from "../enums/movingDirection";
-import {IPosition, IShip, IWorldModel} from "../models/worldModel";
+import {World} from "../models/world";
+import {Ship} from "../models/ship";
+import {Position} from "../models/position";
 
-export const getShip = (world: IWorldModel, shipId: string): IShip | undefined =>
+export const getShip = (world: World, shipId: string): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
 
-export const getShipPosition = (world: IWorldModel, shipId: string): IPosition | undefined => {
+export const getShipPosition = (world: World, shipId: string): Position | undefined => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -14,28 +16,25 @@ export const getShipPosition = (world: IWorldModel, shipId: string): IPosition |
     return {...ship.position};
 };
 
-export const moveShip = (world: IWorldModel, shipId: string, direction: MovingDirection): boolean => {
-    const ship = getShip(world, shipId);
-
-    if (!ship) {
-        return false;
-    }
+export const moveShip = (world: World, ship: Ship, direction: MovingDirection): Ship => {
     if (!canMove(world, ship.position, direction)) {
-        return false;
+        throw new Error('Cannot move the ship.');
     }
+
+    const newPosition = ship.position.toJS();
 
     if (direction === MovingDirection.Right) {
-        ship.position.x++;
+        newPosition.x++;
     }
     if (direction === MovingDirection.Left) {
-        ship.position.x--;
+        newPosition.x--;
     }
-    ship.position.y--;
+    newPosition.y--;
 
-    return true;
+    return ship.set("position", new Position(newPosition));
 };
 
-const canMove = (world: IWorldModel, position: IPosition, direction: MovingDirection): boolean => {
+export const canMove = (world: World, position: Position, direction: MovingDirection): boolean => {
     if (direction === MovingDirection.Left && position.x === 0) {
         return false;
     }
