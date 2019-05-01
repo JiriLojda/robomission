@@ -3,6 +3,19 @@ import {Comparator} from "./enums/comparator";
 import {ConditionType} from "./enums/conditionType";
 import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
+import {IPosition, IWorldModel} from "./models/worldModel";
+import {getShipPosition, moveShip} from "./utils/worldModelUtils";
+import {MovingDirection} from "./enums/movingDirection";
+
+const defaultMinorActionsCount = 100;
+
+export const emptyRuntimeContext: IRuntimeContext = {
+    position: [{index: 0, elseBranchEntered: false, repeatCount: undefined}],
+    variables: [],
+    systemVariables: [],
+    wasActionExecuted: false,
+    minorActionsLeft: defaultMinorActionsCount,
+};
 
 interface IPositionItem {
     index: number;
@@ -17,12 +30,9 @@ interface IRuntimeContext {
     position: IPositionItem[]
     variables: Variable[];
     systemVariables: SystemVariable[];
+    wasActionExecuted: boolean;
+    minorActionsLeft: number;
 }
-
-type Tile = [TileColor, string[]];
-type State = Tile[][];
-type ShipIdentifier = string;
-type ShipPosition = [number, number];
 
 interface ICondition {
     head: ConditionType;
@@ -60,12 +70,6 @@ interface IRoboAst extends IStatement{
     head: StatementType.Start;
     body: IBlock[];
 }
-
-export const emptyRuntimeContext: IRuntimeContext = {
-    position: [{index: 0, elseBranchEntered: false, repeatCount: undefined}],
-    variables: [],
-    systemVariables: [],
-};
 
 const scopeStatements = [
     StatementType.While,
@@ -119,49 +123,38 @@ const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
     return result;
 };
 
-const getShipPosition = (state: State, shipIdentifier: ShipIdentifier): ShipPosition | undefined => {
-    for (const line of state) {
-        for (const tile of line) {
-            if (tile[1].indexOf(shipIdentifier) >= 0) {
-                return [state.indexOf(line), line.indexOf(tile)];
-            }
-        }
-    }
-    return undefined;
-};
-
-const getComparedObject = (condition: Condition, state: State, shipPosition?: ShipPosition) => {
+const getComparedObject = (condition: Condition, world: IWorldModel, shipPosition?: IPosition) => {
     if (!shipPosition) {
         throw new Error("getComparedObject: Cannot evaluate condition when no ship is present.")
     }
 
     switch (condition.head) {
         case ConditionType.Color:
-            const tile = state[shipPosition[0]][shipPosition[1]];
+            const tile = world.surface[shipPosition.y][shipPosition.x];
             return tile[0];
         case ConditionType.Position:
-            return shipPosition[1] + 1;
+            return shipPosition.x + 1;
         default:
             throw new Error(`Unknown condition type: ${condition!.head}.`);
     }
 };
 
-const evaluateCondition = (condition: Condition, state: State, shipIdentifier: ShipIdentifier) => {
-    const shipPosition = getShipPosition(state, shipIdentifier);
+const evaluateCondition = (condition: Condition, world: IWorldModel, shipId: string) => {
+    const shipPosition = getShipPosition(world, shipId);
 
     switch (condition.comparator) {
         case Comparator.Equal:
-            return condition.value === getComparedObject(condition, state, shipPosition);
+            return condition.value === getComparedObject(condition, world, shipPosition);
         case Comparator.NonEqual:
-            return condition.value !== getComparedObject(condition, state, shipPosition);
+            return condition.value !== getComparedObject(condition, world, shipPosition);
         case Comparator.Bigger:
-            return condition.value < getComparedObject(condition, state, shipPosition);
+            return condition.value < getComparedObject(condition, world, shipPosition);
         case Comparator.BiggerOrEqual:
-            return condition.value <= getComparedObject(condition, state, shipPosition);
+            return condition.value <= getComparedObject(condition, world, shipPosition);
         case Comparator.Smaller:
-            return condition.value > getComparedObject(condition, state, shipPosition);
+            return condition.value > getComparedObject(condition, world, shipPosition);
         case Comparator.SmallerOrEqual:
-            return condition.value >= getComparedObject(condition, state, shipPosition);
+            return condition.value >= getComparedObject(condition, world, shipPosition);
         default:
             throw new Error(`Unknown comparator: '${condition!.comparator}'`);
     }
@@ -178,7 +171,7 @@ const isScopeStatement = (statement: IStatement) => scopeStatements.indexOf(stat
 
 const shouldReevaluateScopeStatement = (statement: IStatement) => ['while', 'repeat'].indexOf(statement.head) > -1;
 
-const getNextPosition = (roboAst: IRoboAst, state: State, shipIdentifier: ShipIdentifier, context: IRuntimeContext) => {
+const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext) => {
     const statements = getStatementsForPosition(roboAst, context);
     let currentStatementIndex = statements.length - 1;
     const result = context.position.slice(0);
@@ -246,14 +239,14 @@ const setSystemVariable = (context: IRuntimeContext, variableName: SystemVariabl
 
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
-const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, state: State, shipIdentifier: ShipIdentifier) => {
+const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: IWorldModel, shipId: string) => {
     switch (statement.head) {
         case StatementType.If:
         case StatementType.While:
             if (!statement.test) {
                 throw new Error(`${statement.head} statement has to have condition.`);
             }
-            setSystemVariable(context, SystemVariableName.ShouldEnterNextBlock, evaluateCondition(statement.test, state, shipIdentifier));
+            setSystemVariable(context, SystemVariableName.ShouldEnterNextBlock, evaluateCondition(statement.test, world, shipId));
             return;
         case StatementType.Repeat:
             const position = getLast(context.position);
@@ -274,21 +267,48 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-export const doNextStep = (roboAst: IRoboAst, state: State, shipIdentifier: ShipIdentifier, context: IRuntimeContext) => {
+const evaluateActionStatement = (statement: IStatement, world: IWorldModel, shipId: string): boolean => {
+    switch (statement.head) {
+        case StatementType.Fly:
+            moveShip(world, shipId, MovingDirection.Foward);
+            return true;
+        case StatementType.Left:
+            moveShip(world, shipId, MovingDirection.Left);
+            return true;
+        case StatementType.Right:
+            moveShip(world, shipId, MovingDirection.Right);
+            return true;
+        default:
+            return false;
+    }
+};
+
+export const doNextStep = (roboAst: IRoboAst, world: IWorldModel, shipId: string, context: IRuntimeContext) => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
         return context;
     }
+
+    if (context.minorActionsLeft <= 0) {
+        console.log('No actions left, let other players play too.');
+        return context;
+    }
     context = deepCopy(context);
+
+    context.minorActionsLeft--;
     const statement = getStatement(roboAst, context);
     console.log(statement);
 
+    context.wasActionExecuted = evaluateActionStatement(statement, world, shipId);
+    if (context.wasActionExecuted) {
+         context.minorActionsLeft = defaultMinorActionsCount;
+    }
     setPositionAttributes(statement, getLast(context.position));
-    evaluateBlockCondition(statement, context, state, shipIdentifier);
+    evaluateBlockCondition(statement, context, world, shipId);
 
-    context.position = getNextPosition(roboAst, state, shipIdentifier, context);
-    console.log('new position:');
-    console.log(context.position);
+    context.position = getNextPosition(roboAst, context);
+    console.log('new context:');
+    console.log(context);
 
     return context;
 };
