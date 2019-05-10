@@ -11,6 +11,7 @@ export enum WorldObject {
     Asteroid = 'A',
     Wormhole = 'W',
     Laser = 'laser',
+    LaserHorizontal = 'laserHorizontal',
     LaserStart = 'laser-start',
     LaserEnd = 'laser-end',
     Explosion = 'explosion',
