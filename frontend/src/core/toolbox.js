@@ -13,6 +13,14 @@ export const completeToolbox = [
     fields: { direction: 'right' },
   },
   { type: 'shoot' },
+  {
+    type: 'turn',
+    fields: { direction: 'left' },
+  },
+  {
+    type: 'turn',
+    fields: { direction: 'right' },
+  },
   { type: 'repeat' },
   { type: 'while' },
   { type: 'color' },
@@ -24,8 +32,7 @@ export const completeToolbox = [
 
 export function expandBlocks(toolbox) {
   const expandedBlockLists = toolbox.map(block => expandBlock(block));
-  const expandedBlocks = [].concat.apply([], expandedBlockLists);
-  return expandedBlocks;
+  return [].concat.apply([], expandedBlockLists);
 }
 
 
@@ -43,6 +50,18 @@ function expandBlock(block) {
         },
         {
           type: 'fly',
+          fields: { direction: 'right' },
+        },
+      ];
+    }
+    case 'turn': {
+      return [
+        {
+          type: 'turn',
+          fields: { direction: 'left' },
+        },
+        {
+          type: 'turn',
           fields: { direction: 'right' },
         },
       ];

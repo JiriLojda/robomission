@@ -11,6 +11,21 @@ export default function GameObject({ imageId, width, height, position, bottom, l
     bottom,
     left,
   };
+  if (imageId === 'spaceship_down') {
+    imageStyle.transform = 'rotate(180deg)';
+    imageId = 'spaceship';
+  }
+  if (imageId === 'spaceship_right') {
+    imageStyle.transform = 'rotate(90deg)';
+    imageId = 'spaceship';
+  }
+  if (imageId === 'spaceship_left') {
+    imageStyle.transform = 'rotate(-90deg)';
+    imageId = 'spaceship';
+  }
+  if (imageId === 'spaceship_up') {
+    imageId = 'spaceship';
+  }
   return (
     <Instructable instruction={`task-${imageId}`} position="bottom-left">
       <Image imageId={imageId} style={imageStyle} />

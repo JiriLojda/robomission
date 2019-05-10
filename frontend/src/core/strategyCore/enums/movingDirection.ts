@@ -1,5 +1,5 @@
 export enum MovingDirection {
-    Foward = 'foward',
+    Forward = 'ahead',
     Left = 'left',
     Right = 'right',
 }

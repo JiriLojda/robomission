@@ -8,4 +8,6 @@ export enum StatementType {
     Shoot = 'shoot',
     Left = 'left',
     Right = 'right',
+    TurnRight = 'turn-right',
+    TurnLeft = 'turn-left',
 }

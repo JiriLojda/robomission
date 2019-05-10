@@ -128,6 +128,7 @@ export default {
 
   'blockly.start': 'start',
   'blockly.fly': 'leť',
+  'blockly.turn': 'otoč se',
   'blockly.ahead': 'vpřed',
   'blockly.left': 'vlevo',
   'blockly.right': 'vpravo',

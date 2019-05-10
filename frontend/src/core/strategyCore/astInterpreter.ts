@@ -7,12 +7,15 @@ import {getShip, getShipPosition, moveShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
 import {
     getObjectsOnPosition,
-    removeLaserAndExplosionObjects, setObjectsOnPosition,
+    removeLaserAndExplosionObjects,
+    setObjectsOnPosition,
     updateShipInWorld,
     World
 } from "./models/world";
 import {Position} from "./models/position";
 import {destructableObjects, WorldObject} from "./enums/worldObject";
+import {Ship} from "./models/ship";
+import {Direction} from "./enums/direction";
 
 const defaultMinorActionsCount = 100;
 
@@ -295,6 +298,21 @@ const makeShipShoot = (world: World, shipId: string): World => {
     return newWorld;
 };
 
+const turnShip = (ship: Ship, direction: 'left' | 'right'): Ship => {
+    switch (ship.direction) {
+        case Direction.Right:
+            return ship.set("direction", direction === 'right' ? Direction.Down : Direction.Up);
+        case Direction.Left:
+            return ship.set("direction", direction === 'right' ? Direction.Up : Direction.Down);
+        case Direction.Up:
+            return ship.set("direction", direction === 'right' ? Direction.Right : Direction.Left);
+        case Direction.Down:
+            return ship.set("direction", direction === 'right' ? Direction.Left : Direction.Right);
+        default:
+            throw new Error(`Unknown ship direction '${ship.direction}'.`);
+    }
+};
+
 const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World => {
     const ship = getShip(world, shipId);
 
@@ -304,13 +322,17 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
 
     switch (statement.head) {
         case StatementType.Fly:
-            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Foward));
+            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Forward));
         case StatementType.Left:
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         case StatementType.Shoot:
             return makeShipShoot(world, shipId);
+        case StatementType.TurnLeft:
+            return updateShipInWorld(world, ship, turnShip(ship, 'left'));
+        case StatementType.TurnRight:
+            return updateShipInWorld(world, ship, turnShip(ship, 'right'));
         default:
             return world;
     }

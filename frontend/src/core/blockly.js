@@ -61,11 +61,12 @@ function blockToAst(block) {
       return colorBlockToAst(block);
     case 'position':
       return positionBlockToAst(block);
+    case 'turn':
+      return turnBlockToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
 }
-
 
 function startBlockToAst(block) {
   const nextBlock = getNextBlock(block);
@@ -77,24 +78,21 @@ function startBlockToAst(block) {
 function repeatBlockToAst(block) {
   const count = parseInt(getFieldValue(block, 'count'), 10);
   const body = getBody(block);
-  const astNode = { head: 'repeat', count, body };
-  return astNode;
+  return {head: 'repeat', count, body};
 }
 
 
 function whileBlockToAst(block) {
   const test = blockToAst(getValueBlock(block, 'test'));
   const body = getBody(block);
-  const astNode = { head: 'while', test, body };
-  return astNode;
+  return {head: 'while', test, body};
 }
 
 
 function ifBlockToAst(block) {
   const test = blockToAst(getValueBlock(block, 'test'));
   const body = getBody(block);
-  const astNode = { head: 'if', test, body };
-  return astNode;
+  return {head: 'if', test, body};
 }
 
 
@@ -106,23 +104,25 @@ function ifElseBlockToAst(block) {
     statement: { head: 'else', body: bodyElse },
     location: getLocation(block),
   };
-  const astNode = { head: 'if', test, body, orelse };
-  return astNode;
+  return {head: 'if', test, body, orelse};
 }
 
 
 function flyBlockToAst(block) {
   const direction = getFieldValue(block, 'direction');
   const command = (direction === 'ahead') ? 'fly' : direction;
-  const astNode = { head: command };
-  return astNode;
+  return {head: command};
+}
+
+function turnBlockToAst(block) {
+  const direction = getFieldValue(block, 'direction');
+  return { head: `turn-${direction}` };
 }
 
 
 // eslint-disable-next-line no-unused-vars
 function shootBlockToAst(block) {
-  const astNode = { head: 'shoot' };
-  return astNode;
+  return {head: 'shoot'};
 }
 
 
@@ -146,8 +146,7 @@ function getBody(block, name = 'body') {
     return [];
   }
   const firstBlock = bodyNode.childNodes[0];
-  const body = getSequence(firstBlock);
-  return body;
+  return getSequence(firstBlock);
 }
 
 
@@ -169,36 +168,31 @@ function blockToAstWithLocation(block) {
 
 function getFieldValue(block, name) {
   const field = getField(block, name);
-  const value = field.textContent;
-  return value;
+  return field.textContent;
 }
 
 
 function getField(block, name) {
   const id = block.getAttribute('id');
-  const field = block.querySelector(`block[id="${id}"] > field[name="${name}"]`);
-  return field;
+  return block.querySelector(`block[id="${id}"] > field[name="${name}"]`);
 }
 
 
 function getStatement(block, name) {
   const id = block.getAttribute('id');
-  const statement = block.querySelector(`block[id="${id}"] > statement[name="${name}"]`);
-  return statement;
+  return block.querySelector(`block[id="${id}"] > statement[name="${name}"]`);
 }
 
 
 function getValueBlock(block, name) {
   const id = block.getAttribute('id');
-  const field = block.querySelector(`block[id="${id}"] > value[name="${name}"] > block`);
-  return field;
+  return block.querySelector(`block[id="${id}"] > value[name="${name}"] > block`);
 }
 
 
 function getNextBlock(block) {
   const id = block.getAttribute('id');
-  const nextBlock = block.querySelector(`block[id="${id}"] > next > block`);
-  return nextBlock;
+  return block.querySelector(`block[id="${id}"] > next > block`);
 }
 
 
