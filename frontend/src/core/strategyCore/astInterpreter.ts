@@ -3,20 +3,14 @@ import {Comparator} from "./enums/comparator";
 import {ConditionType} from "./enums/conditionType";
 import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {getShip, getShipPosition, moveShip} from "./utils/worldModelUtils";
+import {getShip, getShipPosition, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
 import {
-    getObjectsOnPosition,
     removeLaserAndExplosionObjects,
-    setObjectsOnPosition,
     updateShipInWorld,
     World
 } from "./models/world";
 import {Position} from "./models/position";
-import {destructableObjects, WorldObject} from "./enums/worldObject";
-import {Ship} from "./models/ship";
-import {Direction} from "./enums/direction";
-import {List} from "immutable";
 
 const defaultMinorActionsCount = 100;
 
@@ -275,69 +269,6 @@ const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext,
 const setPositionAttributes = (statement: IStatement, position: IPositionItem) => {
     if (statement.head === StatementType.Repeat && position.repeatCount === undefined) {
         position.repeatCount = statement.count;
-    }
-};
-
-const makeShipShoot = (world: World, shipId: string): World => {
-    const ship = getShip(world, shipId);
-
-    if (!ship) {
-        throw new Error(`Cannot find a ship with id '${shipId}'.`);
-    }
-
-    let newWorld = world;
-    getPositionsToShootOn(ship, world).forEach(shootPosition => {
-        let objects = getObjectsOnPosition(world, shootPosition.x, shootPosition.y);
-        if (objects.some(item => destructableObjects.contains(item))) {
-           objects = objects.push(WorldObject.Explosion);
-        }
-        if (ship.direction === Direction.Left || ship.direction === Direction.Right) {
-            objects = objects.push(WorldObject.LaserHorizontal);
-        } else {
-            objects = objects.push(WorldObject.Laser);
-        }
-        objects = objects.filter(item => !destructableObjects.contains(item));
-        newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
-    });
-
-    return newWorld;
-};
-
-const range = (from: number, to: number): List<number> =>
-    List([...Array(to - from).keys()])
-        .map(key => key + from);
-
-const getPositionsToShootOn = (ship: Ship, world: World): List<Position> => {
-    switch (ship.direction) {
-        case Direction.Up:
-            return range(0, ship.position.y)
-                .map(y => new Position({y, x: ship.position.x}));
-        case Direction.Left:
-            return range(0, ship.position.x)
-                .map(x => new Position({x, y: ship.position.y}));
-        case Direction.Down:
-            return range(ship.position.y + 1, world.size.y)
-                .map(y => new Position({y, x: ship.position.x}));
-        case Direction.Right:
-            return range(ship.position.x + 1, world.size.x)
-                .map(x => new Position({x, y: ship.position.y}));
-        default:
-            throw new Error(`Unknown ship direction '${ship.direction}'.`);
-    }
-};
-
-const turnShip = (ship: Ship, direction: 'left' | 'right'): Ship => {
-    switch (ship.direction) {
-        case Direction.Right:
-            return ship.set("direction", direction === 'right' ? Direction.Down : Direction.Up);
-        case Direction.Left:
-            return ship.set("direction", direction === 'right' ? Direction.Up : Direction.Down);
-        case Direction.Up:
-            return ship.set("direction", direction === 'right' ? Direction.Right : Direction.Left);
-        case Direction.Down:
-            return ship.set("direction", direction === 'right' ? Direction.Left : Direction.Right);
-        default:
-            throw new Error(`Unknown ship direction '${ship.direction}'.`);
     }
 };
 
