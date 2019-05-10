@@ -4,6 +4,7 @@ import {Ship} from "./ship";
 import {Position} from "./position";
 import {List, Record} from "immutable";
 import {EditorWorldModel} from "./editorWorldModel";
+import {Direction} from "../enums/direction";
 
 interface IWorldModelParameters {
     surface: List<List<TileColor>>;
@@ -66,7 +67,7 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
 export const removeLaserAndExplosionObjects = (world: World): World =>
     world.set('objects', world.objects.map(line => line.map(tile => tile.filter(item => item !== WorldObject.Laser && item !== WorldObject.Explosion))));
 
-export const convertEditorWorldModelToIWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
+export const convertEditorWorldModelToWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),
     ships,
     objects: convertArraysToLists(editorModel.map(line => line.map(tile => convertTileTraitsToObjects(tile[1])))),
@@ -76,14 +77,29 @@ export const convertEditorWorldModelToIWorld = (editorModel: EditorWorldModel, s
 export const convertWorldToEditorModel = (worldModel: World): EditorWorldModel =>
     worldModel.surface.map((line, y) => line.map((tileColor, x): [TileColor, string[]] => {
         const tileObjects: string[] = worldModel.objects.get(y)!.get(x)!.toArray();
-        const doesContainShip = worldModel.ships.find(ship => ship.position.x === x && ship.position.y === y);
+        const foundShip = worldModel.ships.find(ship => ship.position.x === x && ship.position.y === y);
 
-        if (doesContainShip) {
-            tileObjects.push(WorldObject.Ship);
+        if (foundShip) {
+            tileObjects.push(getShipIdentifier(foundShip));
         }
 
         return [tileColor, tileObjects];
     }).toArray()).toArray();
+
+const getShipIdentifier = (ship: Ship): WorldObject => {
+    switch (ship.direction) {
+        case Direction.Up:
+            return WorldObject.ShipUp;
+        case Direction.Down:
+            return WorldObject.ShipDown;
+        case Direction.Left:
+            return WorldObject.ShipLeft;
+        case Direction.Right:
+            return WorldObject.ShipRight;
+        default:
+            throw new Error(`Unknown ship.direction '${ship.direction}'.`);
+    }
+};
 
 const convertTileTraitsToObjects = (tileTraits: string[]): WorldObject[] =>
     tileTraits.map(convertStringToWorldObject);

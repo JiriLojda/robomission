@@ -4,10 +4,10 @@
  * To see how the BlocklyXml is supposed to look use:
  * https://blockly-demo.appspot.com/static/demos/code/index.html
  */
-export function generateBlocklyXml(roboAst) {
+export function generateBlocklyXml(roboAst, x = 210, y = 10) {
   const blocklyXml = `
     <xml xmlns="http://www.w3.org/1999/xhtml">
-      <block type="start" deletable="false" x="210" y="10">
+      <block type="start" deletable="false" x="${x}" y="${y}">
       ${generateNextBlocksIfPresent(roboAst.body)}
       </block>
     </xml>
@@ -42,6 +42,10 @@ function generateStatementBlock(node, nextNodes) {
       return generateFlyBlock('right', nextNodes);
     case 'shoot':
       return generateShootBlock(nextNodes);
+    case 'turn-right':
+      return generateTurnBlock('right', nextNodes);
+    case 'turn-left':
+      return generateTurnBlock('left', nextNodes);
     default:
       throw new Error(`Unknown node type: ${statement.head}`);
   }
@@ -51,6 +55,15 @@ function generateStatementBlock(node, nextNodes) {
 function generateFlyBlock(direction, nextNodes) {
   return `
     <block type="fly">
+      <field name="direction">${direction}</field>
+      ${generateNextBlocksIfPresent(nextNodes)}
+    </block>
+  `;
+}
+
+function generateTurnBlock(direction, nextNodes) {
+  return `
+    <block type="turn">
       <field name="direction">${direction}</field>
       ${generateNextBlocksIfPresent(nextNodes)}
     </block>

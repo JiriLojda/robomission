@@ -28,7 +28,7 @@ export class TestEditor extends React.PureComponent {
 
     _onXmlChange = (e) => {
         const roboAst = blocklyXmlToRoboAst(e);
-        console.log(roboAst);
+        console.log(e);
         this.setState(() => ({roboAst, runtimeContext: emptyRuntimeContext}));
     };
 
@@ -79,8 +79,8 @@ export class TestEditor extends React.PureComponent {
                 ref={(ref) => {
                     this.blocklyEditor = ref;
                 }}
-                workspaceConfiguration={{}}
-                toolboxBlocks={completeToolbox}
+                workspaceConfiguration={{trashcan: true, collapse: true}}
+                toolboxCategories={[{name: 'default', blocks: completeToolbox}]}
                 initialXml={getEmptyXml()}
                 xmlDidChange={this._onXmlChange}
                 wrapperDivClassName="flocs-blockly"

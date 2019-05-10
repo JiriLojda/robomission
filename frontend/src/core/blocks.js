@@ -43,6 +43,25 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'turn',
+    message0: `${translate('blockly.turn')} %1`,
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'direction',
+        options: [
+          [translate('blockly.left'), 'left'],
+          [translate('blockly.right'), 'right'],
+        ],
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: colors.command,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'shoot',
     message0: translate('blockly.shoot'),
     args0: [],

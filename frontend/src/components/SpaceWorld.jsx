@@ -49,6 +49,10 @@ SpaceWorld.defaultProps = {
 
 const IMAGE_TYPES = {
   S: 'spaceship',
+  1: 'spaceship_down',
+  2: 'spaceship_up',
+  3: 'spaceship_left',
+  4: 'spaceship_right',
   A: 'asteroid',
   M: 'meteoroid',
   D: 'diamond',
