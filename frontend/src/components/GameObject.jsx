@@ -26,6 +26,10 @@ export default function GameObject({ imageId, width, height, position, bottom, l
   if (imageId === 'spaceship_up') {
     imageId = 'spaceship';
   }
+  if (imageId === 'laser_horizontal') {
+    imageStyle.transform = 'rotate(90deg)';
+    imageId = 'laser';
+  }
   return (
     <Instructable instruction={`task-${imageId}`} position="bottom-left">
       <Image imageId={imageId} style={imageStyle} />

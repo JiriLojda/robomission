@@ -65,7 +65,8 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
 };
 
 export const removeLaserAndExplosionObjects = (world: World): World =>
-    world.set('objects', world.objects.map(line => line.map(tile => tile.filter(item => item !== WorldObject.Laser && item !== WorldObject.Explosion))));
+    world.set('objects', world.objects.map(line => line.map(tile => tile
+        .filter(item => item !== WorldObject.Laser && item !== WorldObject.Explosion && item !== WorldObject.LaserHorizontal))));
 
 export const convertEditorWorldModelToWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),

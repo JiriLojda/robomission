@@ -16,6 +16,7 @@ import {Position} from "./models/position";
 import {destructableObjects, WorldObject} from "./enums/worldObject";
 import {Ship} from "./models/ship";
 import {Direction} from "./enums/direction";
+import {List} from "immutable";
 
 const defaultMinorActionsCount = 100;
 
@@ -285,17 +286,44 @@ const makeShipShoot = (world: World, shipId: string): World => {
     }
 
     let newWorld = world;
-    for (let i = 0; i < ship.position.y; i++) {
-        let objects = getObjectsOnPosition(world, ship.position.x, i);
+    getPositionsToShootOn(ship, world).forEach(shootPosition => {
+        let objects = getObjectsOnPosition(world, shootPosition.x, shootPosition.y);
         if (objects.some(item => destructableObjects.contains(item))) {
            objects = objects.push(WorldObject.Explosion);
         }
-        objects = objects.push(WorldObject.Laser);
+        if (ship.direction === Direction.Left || ship.direction === Direction.Right) {
+            objects = objects.push(WorldObject.LaserHorizontal);
+        } else {
+            objects = objects.push(WorldObject.Laser);
+        }
         objects = objects.filter(item => !destructableObjects.contains(item));
-        newWorld = setObjectsOnPosition(newWorld, ship.position.x, i, objects);
-    }
+        newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
+    });
 
     return newWorld;
+};
+
+const range = (from: number, to: number): List<number> =>
+    List([...Array(to - from).keys()])
+        .map(key => key + from);
+
+const getPositionsToShootOn = (ship: Ship, world: World): List<Position> => {
+    switch (ship.direction) {
+        case Direction.Up:
+            return range(0, ship.position.y)
+                .map(y => new Position({y, x: ship.position.x}));
+        case Direction.Left:
+            return range(0, ship.position.x)
+                .map(x => new Position({x, y: ship.position.y}));
+        case Direction.Down:
+            return range(ship.position.y + 1, world.size.y)
+                .map(y => new Position({y, x: ship.position.x}));
+        case Direction.Right:
+            return range(ship.position.x + 1, world.size.x)
+                .map(x => new Position({x, y: ship.position.y}));
+        default:
+            throw new Error(`Unknown ship direction '${ship.direction}'.`);
+    }
 };
 
 const turnShip = (ship: Ship, direction: 'left' | 'right'): Ship => {

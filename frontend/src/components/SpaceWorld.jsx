@@ -62,6 +62,7 @@ const IMAGE_TYPES = {
   Z: 'wormhole4',
   explosion: 'explosion',
   laser: 'laser',
+  laserHorizontal: 'laser_horizontal',
   'laser-start': 'laser-start',
   'laser-end': 'laser-end',
   'spaceship-broken': 'spaceship-broken',
