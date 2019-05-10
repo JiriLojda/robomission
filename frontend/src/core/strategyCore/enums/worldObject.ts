@@ -1,4 +1,4 @@
-import {List} from "immutable";
+import {List, Set} from "immutable";
 
 export enum WorldObject {
     Ship = 'S',
@@ -9,10 +9,11 @@ export enum WorldObject {
     Laser = 'laser',
     LaserStart = 'laser-start',
     LaserEnd = 'laser-end',
+    Explosion = 'explosion',
 }
 
-export const destructableObjects: List<WorldObject> = List([
+export const destructableObjects: Set<WorldObject> = List([
     WorldObject.Ship,
     WorldObject.Meteoroid,
     WorldObject.Asteroid,
-]);
+]).toSet();

@@ -5,9 +5,14 @@ import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
 import {getShip, getShipPosition, moveShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
-import {addObjectOnPosition, removeLaserObjects, updateShipInWorld, World} from "./models/world";
+import {
+    getObjectsOnPosition,
+    removeLaserAndExplosionObjects, setObjectsOnPosition,
+    updateShipInWorld,
+    World
+} from "./models/world";
 import {Position} from "./models/position";
-import {WorldObject} from "./enums/worldObject";
+import {destructableObjects, WorldObject} from "./enums/worldObject";
 
 const defaultMinorActionsCount = 100;
 
@@ -278,7 +283,13 @@ const makeShipShoot = (world: World, shipId: string): World => {
 
     let newWorld = world;
     for (let i = 0; i < ship.position.y; i++) {
-        newWorld = addObjectOnPosition(newWorld, ship.position.x, i, WorldObject.Laser);
+        let objects = getObjectsOnPosition(world, ship.position.x, i);
+        if (objects.some(item => destructableObjects.contains(item))) {
+           objects = objects.push(WorldObject.Explosion);
+        }
+        objects = objects.push(WorldObject.Laser);
+        objects = objects.filter(item => !destructableObjects.contains(item));
+        newWorld = setObjectsOnPosition(newWorld, ship.position.x, i, objects);
     }
 
     return newWorld;
@@ -321,7 +332,7 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
     const statement = getStatement(roboAst, context);
     console.log(statement);
 
-    const withoutLasers = removeLaserObjects(world);
+    const withoutLasers = removeLaserAndExplosionObjects(world);
     const newWorld = evaluateActionStatement(statement, withoutLasers, shipId);
     context.wasActionExecuted = newWorld !== world;
     if (context.wasActionExecuted) {

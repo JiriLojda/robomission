@@ -63,8 +63,8 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
     return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, newObjects)));
 };
 
-export const removeLaserObjects = (world: World): World =>
-    world.set('objects', world.objects.map(line => line.map(tile => tile.filter(item => item !== WorldObject.Laser))));
+export const removeLaserAndExplosionObjects = (world: World): World =>
+    world.set('objects', world.objects.map(line => line.map(tile => tile.filter(item => item !== WorldObject.Laser && item !== WorldObject.Explosion))));
 
 export const convertEditorWorldModelToIWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),
@@ -102,7 +102,7 @@ export const demoWorld: World = new World({
     surface: convertArraysToLists(range(5).map(_ =>
         range(5).map(_ => TileColor.Black))),
     ships: List([new Ship({id: 'S1', position: new Position({x: 2, y: 4})})]),
-    objects: convertArraysToLists(range(5).map(_ =>
-        range(5).map(_ => []))),
+    objects: convertArraysToLists(range(5).map((_, lineIndex) =>
+        range(5).map(_ => lineIndex === 0 ? [WorldObject.Asteroid] : []))),
     size: new Position({ x: 5, y: 5 }),
 });
