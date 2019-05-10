@@ -5,8 +5,9 @@ import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
 import {getShip, getShipPosition, moveShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
-import {updateShipInWorld, World} from "./models/world";
+import {addObjectOnPosition, removeLaserObjects, updateShipInWorld, World} from "./models/world";
 import {Position} from "./models/position";
+import {WorldObject} from "./enums/worldObject";
 
 const defaultMinorActionsCount = 100;
 
@@ -268,11 +269,26 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
+const makeShipShoot = (world: World, shipId: string): World => {
+    const ship = getShip(world, shipId);
+
+    if (!ship) {
+        throw new Error(`Cannot find a ship with id '${shipId}'.`);
+    }
+
+    let newWorld = world;
+    for (let i = 0; i < ship.position.y; i++) {
+        newWorld = addObjectOnPosition(newWorld, ship.position.x, i, WorldObject.Laser);
+    }
+
+    return newWorld;
+};
+
 const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
-        throw new Error(`Cannot find a ship with id '${shipId}'.`)
+        throw new Error(`Cannot find a ship with id '${shipId}'.`);
     }
 
     switch (statement.head) {
@@ -282,6 +298,8 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
+        case StatementType.Shoot:
+            return makeShipShoot(world, shipId);
         default:
             return world;
     }
@@ -303,7 +321,8 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
     const statement = getStatement(roboAst, context);
     console.log(statement);
 
-    const newWorld = evaluateActionStatement(statement, world, shipId);
+    const withoutLasers = removeLaserObjects(world);
+    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId);
     context.wasActionExecuted = newWorld !== world;
     if (context.wasActionExecuted) {
          context.minorActionsLeft = defaultMinorActionsCount;

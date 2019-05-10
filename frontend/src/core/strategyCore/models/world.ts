@@ -32,11 +32,39 @@ export const updateShipInWorld = (world: World, oldShip: Ship, newShip: Ship): W
     return world.set("ships", world.ships.update(index, () => newShip));
 };
 
-type test<T> = T extends (infer U)[] ? List<U> : T;
-
 const convertArraysToLists = <T extends unknown[], U>(array: T): U => {
     return List(array.map(e => Array.isArray(e) ? convertArraysToLists(e) : e)) as any;
 };
+
+const assertPositionInWorld = (world: World, x: number, y: number): void => {
+    if (world.size.x <= x || world.size.y <= y) {
+        throw new Error(`Position [${x}, ${y}] is outside of world size [${world.size.x}, ${world.size.y}].`);
+    }
+    if (!world.objects.get(y) || !world.objects.get(y)!.get(x)) {
+        throw new Error(`The world is badly constructed, position [${x}, ${y}] is within world.size, but undefined.`);
+    }
+};
+
+export const addObjectOnPosition = (world: World, x: number, y: number, obj: WorldObject): World => {
+    assertPositionInWorld(world, x, y);
+
+    return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, world.objects.get(y)!.get(x)!.push(obj))));
+};
+
+export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObject> => {
+    assertPositionInWorld(world, x, y);
+
+    return world.objects.get(y)!.get(x)!;
+};
+
+export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObject>): World => {
+    assertPositionInWorld(world, x, y);
+
+    return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, newObjects)));
+};
+
+export const removeLaserObjects = (world: World): World =>
+    world.set('objects', world.objects.map(line => line.map(tile => tile.filter(item => item !== WorldObject.Laser))));
 
 export const convertEditorWorldModelToIWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),
