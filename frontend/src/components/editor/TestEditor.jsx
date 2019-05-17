@@ -9,6 +9,7 @@ import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
 import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter.ts";
 import {demoWorld, convertWorldToEditorModel} from '../../core/strategyCore/models/world.ts'
+import {isUserProgramError, getUserProgramErrorDisplayName} from "../../core/strategyCore/enums/userProgramError";
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
 
@@ -23,6 +24,7 @@ export class TestEditor extends React.PureComponent {
             roboAst: blocklyXmlToRoboAst(getEmptyXml()),
             runtimeContext: emptyRuntimeContext,
             world: demoWorld,
+            userProgramError: undefined,
         };
     }
 
@@ -33,11 +35,18 @@ export class TestEditor extends React.PureComponent {
     };
 
     _makeStep = () => {
-        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: true}}));
+        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: true}, userProgramError: undefined}));
 
-        const [runtimeContext, world] = doNextStep(this.state.roboAst, this.state.world, 'S1', this.state.runtimeContext);
+        const result = doNextStep(this.state.roboAst, this.state.world, 'S1', this.state.runtimeContext);
 
-        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, world, runtimeContext}));
+        if (isUserProgramError(result)) {
+            this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, userProgramError: result}));
+            return;
+        }
+
+        const [runtimeContext, world] = result;
+
+        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, world, runtimeContext }));
     };
 
     _resetRuntimeContext = () => {
@@ -74,6 +83,7 @@ export class TestEditor extends React.PureComponent {
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._resetRuntimeContext}
                 />
+                {getUserProgramErrorDisplayName(this.state.userProgramError)}
             </span>
             <ReactBlocklyComponent.BlocklyEditor
                 ref={(ref) => {

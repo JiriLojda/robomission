@@ -3,14 +3,11 @@ import {Comparator} from "./enums/comparator";
 import {ConditionType} from "./enums/conditionType";
 import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {getShip, getShipPosition, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
+import {canMove, getShip, getShipPosition, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
-import {
-    removeLaserAndExplosionObjects,
-    updateShipInWorld,
-    World
-} from "./models/world";
+import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {Position} from "./models/position";
+import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 
 const defaultMinorActionsCount = 100;
 
@@ -272,7 +269,7 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World => {
+const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World | UserProgramError => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -281,10 +278,19 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
 
     switch (statement.head) {
         case StatementType.Fly:
+            if (!canMove(world, ship, MovingDirection.Forward)) {
+                return UserProgramError.ShipFlewOutFromWorld;
+            }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Forward));
         case StatementType.Left:
+            if (!canMove(world, ship, MovingDirection.Left)) {
+                return UserProgramError.ShipFlewOutFromWorld;
+            }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
+            if (!canMove(world, ship, MovingDirection.Right)) {
+                return UserProgramError.ShipFlewOutFromWorld;
+            }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         case StatementType.Shoot:
             return makeShipShoot(world, shipId);
@@ -297,7 +303,7 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
     }
 };
 
-export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, context: IRuntimeContext): [IRuntimeContext, World] => {
+export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, context: IRuntimeContext): [IRuntimeContext, World] | UserProgramError => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
         return [context, world];
@@ -315,6 +321,11 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
 
     const withoutLasers = removeLaserAndExplosionObjects(world);
     const newWorld = evaluateActionStatement(statement, withoutLasers, shipId);
+
+    if (isUserProgramError(newWorld)) {
+        return newWorld;
+    }
+
     context.wasActionExecuted = newWorld !== world;
     if (context.wasActionExecuted) {
          context.minorActionsLeft = defaultMinorActionsCount;
