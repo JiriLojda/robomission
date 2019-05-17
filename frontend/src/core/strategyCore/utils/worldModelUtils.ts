@@ -5,6 +5,7 @@ import {Position} from "../models/position";
 import {destructableObjects, WorldObject} from "../enums/worldObject";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
+import {getNextDirection, getPositionInDirection} from "./directionUtils";
 
 export const getShip = (world: World, shipId: string): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
@@ -20,33 +21,47 @@ export const getShipPosition = (world: World, shipId: string): Position | undefi
 };
 
 export const moveShip = (world: World, ship: Ship, direction: MovingDirection): Ship => {
-    if (!canMove(world, ship.position, direction)) {
+    if (!canMove(world, ship, direction)) {
         throw new Error('Cannot move the ship.');
     }
 
     let newPosition = getPositionsInFrontOfShip(ship, world).get(0)!;
 
     if (direction === MovingDirection.Right) {
-        newPosition = getPositionsInFrontOfShip(turnShip(ship.set('position', newPosition), 'right'), world)
-            .get(0)!;
+        const nextDirection = getNextDirection(ship.direction, Direction.Right);
+        newPosition = getPositionInDirection(newPosition, nextDirection);
     }
     if (direction === MovingDirection.Left) {
-        newPosition = getPositionsInFrontOfShip(turnShip(ship.set('position', newPosition), 'left'), world)
-            .get(0)!;
+        const nextDirection = getNextDirection(ship.direction, Direction.Left);
+        newPosition = getPositionInDirection(newPosition, nextDirection);
     }
 
-    return ship.set("position", new Position(newPosition));
+    return ship.set("position", newPosition);
 };
 
-export const canMove = (world: World, position: Position, direction: MovingDirection): boolean => {
-    if (direction === MovingDirection.Left && position.x === 0) {
-        return false;
-    }
-    if (direction === MovingDirection.Right && position.x >= world.size.x - 1) {
+export const canMove = (world: World, ship: Ship, direction: MovingDirection): boolean => {
+    const positionsInFrontOfShip = getPositionsInFrontOfShip(ship, world);
+
+    if (positionsInFrontOfShip.isEmpty()) {
         return false;
     }
 
-    return position.y > 0;
+    const newPosition = positionsInFrontOfShip.get(0)!;
+
+    if (direction === MovingDirection.Right) {
+        const nextDirection = getNextDirection(ship.direction, Direction.Right);
+        const finalPosition = getPositionInDirection(newPosition, nextDirection);
+        return finalPosition.x >= 0 && finalPosition.y >= 0
+            && finalPosition.x < world.size.x && finalPosition.y < world.size.y;
+    }
+    if (direction === MovingDirection.Left) {
+        const nextDirection = getNextDirection(ship.direction, Direction.Left);
+        const finalPosition = getPositionInDirection(newPosition, nextDirection);
+        return finalPosition.x >= 0 && finalPosition.y >= 0
+            && finalPosition.x < world.size.x && finalPosition.y < world.size.y;
+    }
+
+    return true;
 };
 
 
