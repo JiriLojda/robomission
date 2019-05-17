@@ -14,6 +14,7 @@ import {
     UserProgramError
 } from "../../core/strategyCore/enums/userProgramError";
 import {BlocklyEditor} from "react-blockly-component";
+import {ErrorMessage} from "../uiComponents/ErrorMessage";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -99,7 +100,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._resetRuntimeContext}
                 />
-                {getUserProgramErrorDisplayName(this.state.userProgramError)}
+                <ErrorMessage>{getUserProgramErrorDisplayName(this.state.userProgramError)}</ErrorMessage>
             </span>
             <ReactBlocklyComponent.BlocklyEditor
                 ref={(ref: BlocklyEditor) => {

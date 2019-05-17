@@ -1,6 +1,7 @@
 // include global css styles
 import 'normalize.css';
 import './styles.css';
+import './bootstrap.min.css';
 
 import theme from './theme';
 
