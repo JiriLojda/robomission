@@ -28,7 +28,7 @@ interface IPositionItem {
 type Variable = {name: string; value: unknown};
 type SystemVariable = {name: SystemVariableName, value: unknown};
 
-interface IRuntimeContext {
+export interface IRuntimeContext {
     position: IPositionItem[]
     variables: Variable[];
     systemVariables: SystemVariable[];
@@ -68,7 +68,7 @@ interface IStatement {
     count?: number;
 }
 
-interface IRoboAst extends IStatement{
+export interface IRoboAst extends IStatement{
     head: StatementType.Start;
     body: IBlock[];
 }

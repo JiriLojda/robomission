@@ -1,5 +1,5 @@
 import React from 'react';
-import {TestEditor} from "../components/editor/TestEditor";
+import {StrategyEditor} from "../components/editor/StrategyEditor";
 
 
 export class StrategyPage extends React.Component {
@@ -14,7 +14,7 @@ export class StrategyPage extends React.Component {
                     right: 0,
                 }}
             >
-                <TestEditor />
+                <StrategyEditor />
             </div>
         );
     }

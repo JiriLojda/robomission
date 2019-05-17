@@ -1,23 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import ReactBlocklyComponent from 'react-blockly-component';
+import * as ReactBlocklyComponent from 'react-blockly-component';
 import {blocklyXmlToRoboAst} from '../../core/blockly';
 import {generateBlocklyXml} from '../../core/blocklyXmlGenerator';
 import {completeToolbox} from "../../core/toolbox";
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
-import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter.ts";
-import {demoWorld, convertWorldToEditorModel} from '../../core/strategyCore/models/world.ts'
-import {isUserProgramError, getUserProgramErrorDisplayName} from "../../core/strategyCore/enums/userProgramError";
+import {doNextStep, emptyRuntimeContext, IRoboAst, IRuntimeContext} from "../../core/strategyCore/astInterpreter";
+import {demoWorld, convertWorldToEditorModel, World} from '../../core/strategyCore/models/world'
+import {
+    isUserProgramError,
+    getUserProgramErrorDisplayName,
+    UserProgramError
+} from "../../core/strategyCore/enums/userProgramError";
+import {BlocklyEditor} from "react-blockly-component";
+
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
 
-const getDeepCopy = obj => JSON.parse(JSON.stringify(obj));
+interface IProps {
+}
 
-export class TestEditor extends React.PureComponent {
+interface IState {
+    blocklySettings: {trashcan: boolean, disable: boolean};
+    roboAst: IRoboAst;
+    runtimeContext: IRuntimeContext;
+    world: World;
+    userProgramError?: UserProgramError;
+}
 
-    constructor(props) {
+export class StrategyEditor extends React.PureComponent<IProps, IState> {
+
+    constructor(props: IProps) {
         super(props);
         this.state = {
             blocklySettings: { trashcan: true, disable: false },
@@ -28,7 +42,9 @@ export class TestEditor extends React.PureComponent {
         };
     }
 
-    _onXmlChange = (e) => {
+    blocklyEditor: BlocklyEditor | null = null;
+
+    _onXmlChange = (e: unknown) => {
         const roboAst = blocklyXmlToRoboAst(e);
         console.log(e);
         this.setState(() => ({roboAst, runtimeContext: emptyRuntimeContext}));
@@ -64,7 +80,7 @@ export class TestEditor extends React.PureComponent {
                 width: 4,
                 cursor: 'col-resize',
             }}
-            onChange={() => this.blocklyEditor.resize()}
+            onChange={() => this.blocklyEditor && this.blocklyEditor.resize()}
         >
             <span>
                 <SpaceWorld
@@ -86,7 +102,7 @@ export class TestEditor extends React.PureComponent {
                 {getUserProgramErrorDisplayName(this.state.userProgramError)}
             </span>
             <ReactBlocklyComponent.BlocklyEditor
-                ref={(ref) => {
+                ref={(ref: BlocklyEditor) => {
                     this.blocklyEditor = ref;
                 }}
                 workspaceConfiguration={{trashcan: true, collapse: true}}
