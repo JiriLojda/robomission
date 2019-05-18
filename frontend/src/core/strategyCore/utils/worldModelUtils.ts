@@ -1,5 +1,5 @@
 import {MovingDirection} from "../enums/movingDirection";
-import {getObjectsOnPosition, setObjectsOnPosition, World} from "../models/world";
+import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
 import {Ship} from "../models/ship";
 import {Position} from "../models/position";
 import {destructableObjects, WorldObject} from "../enums/worldObject";
@@ -51,17 +51,15 @@ export const canMove = (world: World, ship: Ship, direction: MovingDirection): b
     if (direction === MovingDirection.Right) {
         const nextDirection = getNextDirection(ship.direction, Direction.Right);
         const finalPosition = getPositionInDirection(newPosition, nextDirection);
-        return finalPosition.x >= 0 && finalPosition.y >= 0
-            && finalPosition.x < world.size.x && finalPosition.y < world.size.y;
+        return isEnterablePosition(finalPosition, world);
     }
     if (direction === MovingDirection.Left) {
         const nextDirection = getNextDirection(ship.direction, Direction.Left);
         const finalPosition = getPositionInDirection(newPosition, nextDirection);
-        return finalPosition.x >= 0 && finalPosition.y >= 0
-            && finalPosition.x < world.size.x && finalPosition.y < world.size.y;
+        return isEnterablePosition(finalPosition, world);
     }
 
-    return true;
+    return isEnterablePosition(newPosition, world);
 };
 
 

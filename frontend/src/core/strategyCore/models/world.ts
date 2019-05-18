@@ -1,5 +1,5 @@
 import {TileColor} from "../enums/tileColor";
-import {WorldObject} from "../enums/worldObject";
+import {shipBlockingObjects, WorldObject} from "../enums/worldObject";
 import {Ship} from "./ship";
 import {Position} from "./position";
 import {List, Record} from "immutable";
@@ -112,6 +112,16 @@ const convertStringToWorldObject = (input: string): WorldObject => {
         }
     }
     throw new Error(`Unknown world object '${input}'`);
+};
+
+export const isEnterablePosition = (position: Position, world: World): boolean => {
+    if (position.x < 0 || position.y < 0 || position.x >= world.size.x || position.y >= world.size.y) {
+        return false;
+    }
+
+    const objects = getObjectsOnPosition(world, position.x, position.y);
+
+    return objects.every(o => !shipBlockingObjects.contains(o));
 };
 
 const range = (size: number) => [...Array(size).keys()];

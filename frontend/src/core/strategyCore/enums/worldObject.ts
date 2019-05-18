@@ -26,3 +26,13 @@ export const destructableObjects: Set<WorldObject> = List([
     WorldObject.Meteoroid,
     WorldObject.Asteroid,
 ]).toSet();
+
+export const shipBlockingObjects: Set<WorldObject> = List([
+    WorldObject.Ship,
+    WorldObject.ShipUp,
+    WorldObject.ShipDown,
+    WorldObject.ShipLeft,
+    WorldObject.ShipRight,
+    WorldObject.Meteoroid,
+    WorldObject.Asteroid,
+]).toSet();
