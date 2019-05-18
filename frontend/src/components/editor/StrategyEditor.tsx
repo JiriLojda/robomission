@@ -67,7 +67,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
     };
 
     _resetRuntimeContext = () => {
-        this.setState(() => ({runtimeContext: emptyRuntimeContext, world: demoWorld}));
+        this.setState(() => ({runtimeContext: emptyRuntimeContext, world: demoWorld, userProgramError: undefined}));
     };
 
     render() {

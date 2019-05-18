@@ -6,6 +6,6 @@ interface IProps {
 
 export const ErrorMessage: React.SFC<IProps> = (props: IProps) =>
     props.children ?
-    <span className="alert alert-danger">
+    <span className="alert alert-danger" style={{display: 'block'}}>
         {props.children}
     </span> : null;
