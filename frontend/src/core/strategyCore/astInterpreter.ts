@@ -279,17 +279,17 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
     switch (statement.head) {
         case StatementType.Fly:
             if (!canMove(world, ship, MovingDirection.Forward)) {
-                return UserProgramError.ShipFlewOutFromWorld;
+                return UserProgramError.ShipCannotMove;
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Forward));
         case StatementType.Left:
             if (!canMove(world, ship, MovingDirection.Left)) {
-                return UserProgramError.ShipFlewOutFromWorld;
+                return UserProgramError.ShipCannotMove;
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
             if (!canMove(world, ship, MovingDirection.Right)) {
-                return UserProgramError.ShipFlewOutFromWorld;
+                return UserProgramError.ShipCannotMove;
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         case StatementType.Shoot:
@@ -334,10 +334,6 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
     evaluateBlockCondition(statement, context, world, shipId);
 
     context.position = getNextPosition(roboAst, context);
-    console.log('new context:');
-    console.log(context);
-    console.log("new world");
-    console.log(newWorld);
 
     return [context, newWorld];
 };

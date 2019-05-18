@@ -1,5 +1,5 @@
 export enum UserProgramError {
-    ShipFlewOutFromWorld = 'ShipFlewOutFromWorld',
+    ShipCannotMove = 'ShipCannotMove',
 }
 
 export const isUserProgramError = (variable: any): variable is UserProgramError => {
@@ -14,8 +14,8 @@ export const isUserProgramError = (variable: any): variable is UserProgramError 
 
 export const getUserProgramErrorDisplayName = (userProgramError?: UserProgramError) => {
     switch (userProgramError) {
-        case UserProgramError.ShipFlewOutFromWorld:
-            return 'Your ship flew out from this world.';
+        case UserProgramError.ShipCannotMove:
+            return 'Your ship cannot move this way.';
         default:
             return undefined;
     }

@@ -100,7 +100,9 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._resetRuntimeContext}
                 />
-                <ErrorMessage>{getUserProgramErrorDisplayName(this.state.userProgramError)}</ErrorMessage>
+                <ErrorMessage>
+                    {getUserProgramErrorDisplayName(this.state.userProgramError)}
+                </ErrorMessage>
             </span>
             <ReactBlocklyComponent.BlocklyEditor
                 ref={(ref: BlocklyEditor) => {
