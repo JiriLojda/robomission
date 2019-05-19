@@ -67,8 +67,8 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
                     return innerValidation;
                 }
             }
-            if (!!statement.orElse) {
-                for (const innerStatement of statement.orElse.statement.body!) {
+            if (!!statement.orelse) {
+                for (const innerStatement of statement.orelse.statement.body!) {
                     const innerValidation = isStatementValid(innerStatement.statement);
                     if (!innerValidation.isValid) {
                         return innerValidation;
@@ -115,10 +115,10 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
 const isValidConditionStatement = (statement: IStatement): IValidatorResult =>
     getValidatorResult(!!statement.test, InvalidProgramReason.MissingTestCondition);
 
-const areOnlyRequiredPropertiesSet = <T extends keyof IStatement>(statement: IStatement, required: T[]): IValidatorResult => {
-    const stringRequired = required.map(e => e.toString());
+const areOnlyAllowedPropertiesSet = <T extends keyof IStatement>(statement: IStatement, allowed: T[]): IValidatorResult => {
+    const stringAllowed = allowed.map(e => e.toString());
     for (const prop in statement) {
-        if (stringRequired.indexOf(prop) < 0 && !!(statement as any)[prop]) {
+        if (stringAllowed.indexOf(prop) < 0 && !!(statement as any)[prop]) {
             return {isValid: false, reason: InvalidProgramReason.DefinedAdditionalProp};
         }
     }
@@ -129,7 +129,7 @@ const areOnlyRequiredPropertiesSet = <T extends keyof IStatement>(statement: ISt
 type StatementValidator = (statement: IStatement) => IValidatorResult;
 
 const getStatementValidator = <T extends keyof IStatement>(
-    requiredProps: T[],
+    allowedProps: T[],
     additionalValidator: StatementValidator = () => getValidatorResult(true, InvalidProgramReason.None),
     isCondition: boolean = false
 ): StatementValidator =>
@@ -140,7 +140,7 @@ const getStatementValidator = <T extends keyof IStatement>(
                 return statementValidation;
             }
         }
-        const propValidation = areOnlyRequiredPropertiesSet(statement, requiredProps);
+        const propValidation = areOnlyAllowedPropertiesSet(statement, allowedProps);
         if (!propValidation.isValid) {
             return propValidation;
         }
@@ -163,10 +163,10 @@ const isTurnLeftStatementValid = getStatementValidator(['head']);
 
 const isElseStatementValid = getStatementValidator(['head', 'body']);
 const isIfStatementValid = getStatementValidator(
-    ['head', 'body', 'test', 'orElse'],
+    ['head', 'body', 'test', 'orelse'],
     statement => {
-        if (!!statement.orElse) {
-            const orElseValidation = isElseStatementValid(statement.orElse.statement);
+        if (!!statement.orelse) {
+            const orElseValidation = isElseStatementValid(statement.orelse.statement);
             if (!orElseValidation.isValid) {
                 return orElseValidation;
             }

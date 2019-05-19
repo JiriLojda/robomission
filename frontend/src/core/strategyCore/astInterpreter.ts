@@ -9,6 +9,7 @@ import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models
 import {Position} from "./models/position";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {Condition, IPositionItem, IRoboAst, IRuntimeContext, IStatement} from "./models/programTypes";
+import {Set} from "immutable";
 
 const defaultMinorActionsCount = 100;
 
@@ -20,12 +21,12 @@ export const emptyRuntimeContext: IRuntimeContext = {
     minorActionsLeft: defaultMinorActionsCount,
 };
 
-const scopeStatements = [
+const scopeStatements = Set([
     StatementType.While,
     StatementType.Repeat,
     StatementType.If,
     StatementType.Else,
-];
+]);
 
 const getLast = <T>(array: T[]): T => {
     if (array.length === 0) {
@@ -116,7 +117,7 @@ const doesBlockEnd = (statement: IStatement, index: number) => {
     return statement.body.length <= index;
 };
 
-const isScopeStatement = (statement: IStatement) => scopeStatements.indexOf(statement.head) > -1;
+const isScopeStatement = (statement: IStatement) => scopeStatements.contains(statement.head);
 
 const shouldReevaluateScopeStatement = (statement: IStatement) => ['while', 'repeat'].indexOf(statement.head) > -1;
 
@@ -124,7 +125,7 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext) => {
     const statements = getStatementsForPosition(roboAst, context);
     let currentStatementIndex = statements.length - 1;
     const result = context.position.slice(0);
-    while (currentStatementIndex > 0) {
+    while (currentStatementIndex >= 0) {
         if (isScopeStatement(statements[currentStatementIndex])) {
             const shouldEnterNextBlockVar = getSystemVariable(context, SystemVariableName.ShouldEnterNextBlock);
 
@@ -153,17 +154,16 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext) => {
                 result[result.length - 1] = incrementPositionItem(getLast(result));
                 return result;
             }
-        }
-        if (!isScopeStatement(statements[currentStatementIndex])) {
-            if (statements[currentStatementIndex - 1].body.length <= getLast(result).index + 1) {
+        } else {
+            if (statements[currentStatementIndex - 1] && statements[currentStatementIndex - 1].body.length <= getLast(result).index + 1) {
                 result.pop();
                 if (!shouldReevaluateScopeStatement(statements[currentStatementIndex - 1])) {
-                    currentStatementIndex--;
+                    currentStatementIndex -= 2;
                     continue;
                 }
                 return result;
             } else {
-                result[result.length - 1] = statements[currentStatementIndex - 1].body.length === getLast(result).index + 1 ?
+                result[result.length - 1] = statements[currentStatementIndex - 1] && statements[currentStatementIndex - 1].body.length === getLast(result).index + 1 ?
                     getPositionItem(0) : incrementPositionItem(getLast(result));
                 return result;
             }
