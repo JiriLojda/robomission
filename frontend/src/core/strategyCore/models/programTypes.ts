@@ -48,7 +48,7 @@ export interface IBlock {
 export interface IStatement {
     head: StatementType;
     body?: IBlock[];
-    orElse?: IBlock;
+    orelse?: IBlock;
     test?: Condition;
     count?: number;
 }
