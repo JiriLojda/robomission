@@ -8,6 +8,7 @@ import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {Position} from "./models/position";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
+import {Condition, IPositionItem, IRoboAst, IRuntimeContext, IStatement} from "./models/programTypes";
 
 const defaultMinorActionsCount = 100;
 
@@ -18,60 +19,6 @@ export const emptyRuntimeContext: IRuntimeContext = {
     wasActionExecuted: false,
     minorActionsLeft: defaultMinorActionsCount,
 };
-
-interface IPositionItem {
-    index: number;
-    elseBranchEntered: boolean;
-    repeatCount?: number;
-}
-
-type Variable = {name: string; value: unknown};
-type SystemVariable = {name: SystemVariableName, value: unknown};
-
-export interface IRuntimeContext {
-    position: IPositionItem[]
-    variables: Variable[];
-    systemVariables: SystemVariable[];
-    wasActionExecuted: boolean;
-    minorActionsLeft: number;
-}
-
-interface ICondition {
-    head: ConditionType;
-    comparator: Comparator;
-    value: TileColor | number;
-}
-
-interface IColorCondition extends ICondition {
-    head: ConditionType.Color;
-    comparator: Comparator.Equal | Comparator.NonEqual;
-    value: TileColor;
-}
-
-interface IPositionCondition extends ICondition {
-    head: ConditionType.Position;
-    value: number;
-}
-
-type Condition = IColorCondition | IPositionCondition;
-
-interface IBlock {
-    location: {blockId: string};
-    statement: IStatement;
-}
-
-interface IStatement {
-    head: StatementType;
-    body?: IBlock[];
-    orElse?: IBlock;
-    test?: Condition;
-    count?: number;
-}
-
-export interface IRoboAst extends IStatement{
-    head: StatementType.Start;
-    body: IBlock[];
-}
 
 const scopeStatements = [
     StatementType.While,

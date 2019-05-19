@@ -1,20 +1,26 @@
 import React from 'react';
 import * as ReactBlocklyComponent from 'react-blockly-component';
+import {BlocklyEditor} from 'react-blockly-component';
 import {blocklyXmlToRoboAst} from '../../core/blockly';
 import {generateBlocklyXml} from '../../core/blocklyXmlGenerator';
 import {completeToolbox} from "../../core/toolbox";
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
-import {doNextStep, emptyRuntimeContext, IRoboAst, IRuntimeContext} from "../../core/strategyCore/astInterpreter";
-import {demoWorld, convertWorldToEditorModel, World} from '../../core/strategyCore/models/world'
+import {doNextStep, emptyRuntimeContext} from "../../core/strategyCore/astInterpreter";
+import {convertWorldToEditorModel, demoWorld, World} from '../../core/strategyCore/models/world'
 import {
-    isUserProgramError,
     getUserProgramErrorDisplayName,
+    isUserProgramError,
     UserProgramError
 } from "../../core/strategyCore/enums/userProgramError";
-import {BlocklyEditor} from "react-blockly-component";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
+import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
+import {isRoboAstValid} from "../../core/strategyCore/programValidator";
+import {
+    getInvalidProgramReasonDisplayName,
+    InvalidProgramReason
+} from "../../core/strategyCore/enums/invalidProgramReason";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -28,6 +34,7 @@ interface IState {
     runtimeContext: IRuntimeContext;
     world: World;
     userProgramError?: UserProgramError;
+    validationResult: InvalidProgramReason;
 }
 
 export class StrategyEditor extends React.PureComponent<IProps, IState> {
@@ -40,6 +47,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             runtimeContext: emptyRuntimeContext,
             world: demoWorld,
             userProgramError: undefined,
+            validationResult: InvalidProgramReason.None,
         };
     }
 
@@ -47,23 +55,26 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
 
     _onXmlChange = (e: unknown) => {
         const roboAst = blocklyXmlToRoboAst(e);
-        console.log(e);
-        this.setState(() => ({roboAst, runtimeContext: emptyRuntimeContext}));
+        const validationResult = isRoboAstValid(roboAst);
+        this.setState(() => ({roboAst, runtimeContext: emptyRuntimeContext, validationResult: validationResult.reason}));
     };
 
     _makeStep = () => {
-        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: true}, userProgramError: undefined}));
+        if (this.state.validationResult !== InvalidProgramReason.None) {
+            return;
+        }
+        this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: true}, userProgramError: undefined}));
 
         const result = doNextStep(this.state.roboAst, this.state.world, 'S1', this.state.runtimeContext);
 
         if (isUserProgramError(result)) {
-            this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, userProgramError: result}));
+            this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: false}, userProgramError: result}));
             return;
         }
 
         const [runtimeContext, world] = result;
 
-        this.setState(() => ({blocklySettings: {...this.state.blocklySettings, disable: false}, world, runtimeContext }));
+        this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: false}, world, runtimeContext }));
     };
 
     _resetRuntimeContext = () => {
@@ -102,6 +113,13 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                 />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
+                </ErrorMessage>
+                <ErrorMessage>
+                    {
+                        this.state.validationResult !== InvalidProgramReason.None ?
+                            getInvalidProgramReasonDisplayName(this.state.validationResult) :
+                            undefined
+                    }
                 </ErrorMessage>
             </span>
             <ReactBlocklyComponent.BlocklyEditor
