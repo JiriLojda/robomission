@@ -72,11 +72,7 @@ const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
     return result;
 };
 
-const getComparedObject = (condition: Condition, world: World, shipPosition?: Position) => {
-    if (!shipPosition) {
-        throw new Error("getComparedObject: Cannot evaluate condition when no ship is present.")
-    }
-
+const getComparedObject = (condition: Condition, world: World, shipPosition: Position) => {
     switch (condition.head) {
         case ConditionType.Color:
             const tile = world.surface.get(shipPosition.y)!.get(shipPosition.x);
@@ -90,6 +86,10 @@ const getComparedObject = (condition: Condition, world: World, shipPosition?: Po
 
 const evaluateCondition = (condition: Condition, world: World, shipId: string) => {
     const shipPosition = getShipPosition(world, shipId);
+
+    if (!shipPosition) {
+        throw new Error('Cannot evaluate a condition when ship is not present.');
+    }
 
     switch (condition.comparator) {
         case Comparator.Equal:

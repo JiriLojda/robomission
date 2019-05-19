@@ -17,7 +17,7 @@ export const getShipPosition = (world: World, shipId: string): Position | undefi
         return undefined;
     }
 
-    return {...ship.position};
+    return ship.position;
 };
 
 export const moveShip = (world: World, ship: Ship, direction: MovingDirection): Ship => {
