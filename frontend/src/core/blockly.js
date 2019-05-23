@@ -26,8 +26,7 @@ function initBlock(block) {
 
 export function blocklyXmlToRoboAst(blocklyXml) {
   const blocklyDom = Blockly.Xml.textToDom(blocklyXml);
-  const roboAst = blocklyDomToRoboAst(blocklyDom);
-  return roboAst;
+  return blocklyDomToRoboAst(blocklyDom);
 }
 
 
@@ -63,6 +62,10 @@ function blockToAst(block) {
       return positionBlockToAst(block);
     case 'turn':
       return turnBlockToAst(block);
+    case 'tile':
+      return tileBlockToAst(block);
+    case 'position_value':
+      return positionValueBlockToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -139,6 +142,17 @@ function positionBlockToAst(block) {
   return { head: 'position', comparator, value };
 }
 
+function positionValueBlockToAst(block) {
+  const x = parseInt(getFieldValue(block, 'x'));
+  const y = parseInt(getFieldValue(block, 'y'));
+  return { head: 'position_value', x, y };
+}
+
+function tileBlockToAst(block) {
+  const position = blockToAst(getValueBlock(block, 'position'));
+  const value = getFieldValue(block, 'value');
+  return { head: 'tile', value, position, comparator: 'contains' };
+}
 
 function getBody(block, name = 'body') {
   const bodyNode = getStatement(block, name);

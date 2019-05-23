@@ -17,7 +17,7 @@ export enum WorldObject {
     Explosion = 'explosion',
 }
 
-export const destructableObjects: Set<WorldObject> = List([
+export const destructableObjects: Set<WorldObject> = Set([
     WorldObject.Ship,
     WorldObject.ShipUp,
     WorldObject.ShipDown,
@@ -25,9 +25,9 @@ export const destructableObjects: Set<WorldObject> = List([
     WorldObject.ShipRight,
     WorldObject.Meteoroid,
     WorldObject.Asteroid,
-]).toSet();
+]);
 
-export const shipBlockingObjects: Set<WorldObject> = List([
+export const shipBlockingObjects: Set<WorldObject> = Set([
     WorldObject.Ship,
     WorldObject.ShipUp,
     WorldObject.ShipDown,
@@ -35,4 +35,15 @@ export const shipBlockingObjects: Set<WorldObject> = List([
     WorldObject.ShipRight,
     WorldObject.Meteoroid,
     WorldObject.Asteroid,
-]).toSet();
+]);
+
+export const shipRepresentingObjects: Set<WorldObject> = Set([
+    WorldObject.ShipRight,
+    WorldObject.ShipLeft,
+    WorldObject.ShipDown,
+    WorldObject.ShipUp,
+    WorldObject.Ship,
+]);
+
+export const unifyShips = (objects: List<WorldObject>): List<WorldObject> =>
+    objects.map(o => shipRepresentingObjects.contains(o) ? WorldObject.Ship : o);

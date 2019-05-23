@@ -1,6 +1,7 @@
 import {StatementType} from "./enums/statementType";
 import {InvalidProgramReason} from "./enums/invalidProgramReason";
-import {IRoboAst, IStatement} from "./models/programTypes";
+import {IColorCondition, IPositionCondition, IRoboAst, IStatement, ITileCondition} from "./models/programTypes";
+import {ConditionType} from "./enums/conditionType";
 
 export interface IValidatorResult {
     isValid: boolean;
@@ -112,8 +113,17 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
     }
 };
 
-const isValidConditionStatement = (statement: IStatement): IValidatorResult =>
+const hasTestProperty = (statement: IStatement): IValidatorResult =>
     getValidatorResult(!!statement.test, InvalidProgramReason.MissingTestCondition);
+
+const isValidConditionStatement: StatementValidator = statement => {
+    const testExistance = hasTestProperty(statement);
+    if (!testExistance.isValid) {
+        return testExistance;
+    }
+
+    return isTestStatementValid(statement.test!);
+};
 
 const areOnlyAllowedPropertiesSet = <T extends keyof IStatement>(statement: IStatement, allowed: T[]): IValidatorResult => {
     const stringAllowed = allowed.map(e => e.toString());
@@ -147,6 +157,22 @@ const getStatementValidator = <T extends keyof IStatement>(
 
         return additionalValidator(statement);
     };
+
+const isTestStatementValid = (condition: IColorCondition | IPositionCondition | ITileCondition): IValidatorResult => {
+    switch (condition.head) {
+        case ConditionType.Color:
+            return getValidatorResult(true, InvalidProgramReason.None);
+        case ConditionType.Position:
+            return getValidatorResult(true, InvalidProgramReason.None);
+        case ConditionType.Tile:
+            return getValidatorResult(
+                !!condition.position && !!condition.position.x && !!condition.position.y,
+                InvalidProgramReason.MissingParameter
+            );
+        default:
+            throw new Error(`Unknown condition type ${condition!.head}`);
+    }
+};
 
 // single statement validators
 const isStartStatementValid: StatementValidator = () => ({isValid: true, reason: InvalidProgramReason.None});

@@ -5,11 +5,18 @@ import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
 import {canMove, getShip, getShipPosition, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
-import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
+import {
+    getObjectsOnPositionWithShips,
+    removeLaserAndExplosionObjects,
+    updateShipInWorld,
+    World
+} from "./models/world";
 import {Position} from "./models/position";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {Condition, IPositionItem, IRoboAst, IRuntimeContext, IStatement} from "./models/programTypes";
 import {List, Set} from "immutable";
+import {unifyShips, WorldObject} from "./enums/worldObject";
+import {convertUserPositionToInternal} from "./utils/positionUtils";
 
 const defaultMinorActionsCount = 100;
 
@@ -75,13 +82,16 @@ const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
     return result;
 };
 
-const getComparedObject = (condition: Condition, world: World, shipPosition: Position) => {
+const getComparedObject = (condition: Condition, world: World, shipPosition: Position): number | TileColor | List<WorldObject> => {
     switch (condition.head) {
         case ConditionType.Color:
             const tile = world.surface.get(shipPosition.y)!.get(shipPosition.x);
             return tile || TileColor.Black;
         case ConditionType.Position:
             return shipPosition.x + 1;
+        case ConditionType.Tile:
+            const internalPosition = convertUserPositionToInternal(condition.position.x, condition.position.y, world);
+            return getObjectsOnPositionWithShips(world, internalPosition.x, internalPosition.y);
         default:
             throw new Error(`Unknown condition type: ${condition!.head}.`);
     }
@@ -107,9 +117,22 @@ const evaluateCondition = (condition: Condition, world: World, shipId: string) =
             return condition.value > getComparedObject(condition, world, shipPosition);
         case Comparator.SmallerOrEqual:
             return condition.value >= getComparedObject(condition, world, shipPosition);
-        default:
-            throw new Error(`Unknown comparator: '${condition!.comparator}'`);
+        case Comparator.Contains: {
+            const objects = getComparedObject(condition, world, shipPosition);
+            if (!List.isList(objects)) {
+                throw new Error(`Condition with contains comparator has bad value ${condition}.`);
+            }
+            return unifyShips(objects).contains(condition.value);
+        }
+        case Comparator.NotContains: {
+            const objects = getComparedObject(condition, world, shipPosition);
+            if (!List.isList(objects)) {
+                throw new Error(`Condition with contains comparator has bad value ${condition}.`);
+            }
+            return !unifyShips(objects).contains(condition.value);
+        }
     }
+    throw new Error(`Unknown condition ${condition}.`);
 };
 
 const isScopeStatement = (statement: IStatement) => scopeStatements.contains(statement.head);

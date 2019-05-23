@@ -5,4 +5,6 @@ export enum Comparator {
     BiggerOrEqual = '>=',
     Smaller = '<',
     SmallerOrEqual = '<=',
+    Contains = 'contains',
+    NotContains = 'notContains',
 }
