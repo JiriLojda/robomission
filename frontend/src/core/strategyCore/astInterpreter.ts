@@ -9,7 +9,7 @@ import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models
 import {Position} from "./models/position";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {Condition, IPositionItem, IRoboAst, IRuntimeContext, IStatement} from "./models/programTypes";
-import {Set} from "immutable";
+import {List, Set} from "immutable";
 
 const defaultMinorActionsCount = 100;
 
@@ -27,6 +27,8 @@ const scopeStatements = Set([
     StatementType.If,
     StatementType.Else,
 ]);
+
+const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
 const getLast = <T>(array: T[]): T => {
     if (array.length === 0) {
@@ -110,67 +112,57 @@ const evaluateCondition = (condition: Condition, world: World, shipId: string) =
     }
 };
 
-const doesBlockEnd = (statement: IStatement, index: number) => {
-    if (!statement.body) {
-        throw new Error('Only block statements can have scope that ends, block statements has to have body.');
-    }
-    return statement.body.length <= index;
-};
-
 const isScopeStatement = (statement: IStatement) => scopeStatements.contains(statement.head);
 
 const shouldReevaluateScopeStatement = (statement: IStatement) => ['while', 'repeat'].indexOf(statement.head) > -1;
 
-const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext) => {
+const movePosition = (statements: List<IStatement>, position: List<IPositionItem>): List<IPositionItem> => {
+    if (statements.isEmpty() || position.isEmpty()) {
+        return List();
+    }
+    const lastStatement = getLastImmutable(statements);
+    const lastPosition = getLastImmutable(position);
+    if (!lastStatement.body) {
+        return movePosition(statements.pop(), position);
+    }
+    if (statements.size > position.size) {
+        return movePosition(statements.slice(0, position.size), position);
+    }
+    if (statements.size !== position.size) {
+        throw new Error(`movePosition: statements.size '${statements.size}' !== position.size '${position.size}'`);
+    }
+    if (lastStatement.body.length > lastPosition.index + 1) {
+        return position.set(position.size - 1, incrementPositionItem(lastPosition));
+    }
+    if (shouldReevaluateScopeStatement(lastStatement)) {
+        return position.pop();
+    }
+    return movePosition(statements.pop(), position.pop());
+};
+
+const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPositionItem[] => {
     const statements = getStatementsForPosition(roboAst, context);
-    let currentStatementIndex = statements.length - 1;
     const result = context.position.slice(0);
-    while (currentStatementIndex >= 0) {
-        if (isScopeStatement(statements[currentStatementIndex])) {
-            const shouldEnterNextBlockVar = getSystemVariable(context, SystemVariableName.ShouldEnterNextBlock);
 
-            if (shouldEnterNextBlockVar === undefined) {
-                throw new Error(`Variable '${SystemVariableName.ShouldEnterNextBlock}' is not set when on block statement.`);
-            }
+    if (isScopeStatement(getLast(statements))) {
+        const shouldEnterNextBlockVar = getSystemVariable(context, SystemVariableName.ShouldEnterNextBlock);
 
-            if (shouldEnterNextBlockVar.value && getLast(statements).body.length > 0) {
-                result.push(getPositionItem(0));
-                return result;
-            }
+        if (shouldEnterNextBlockVar === undefined) {
+            throw new Error(`Variable '${SystemVariableName.ShouldEnterNextBlock}' is not set when on block statement.`);
+        }
 
-            if (!shouldEnterNextBlockVar.value && statements[currentStatementIndex].orelse && statements[currentStatementIndex].orelse.statement.body.length > 0) {
-                result.push(getPositionItem(0, true));
-                return result;
-            }
+        if (shouldEnterNextBlockVar.value && getLast(statements).body.length > 0) {
+            result.push(getPositionItem(0));
+            return result;
+        }
 
-            if (doesBlockEnd(statements[currentStatementIndex - 1], getLast(result).index + 1)) {
-                result.pop();
-                if (!shouldReevaluateScopeStatement(statements[currentStatementIndex - 1])) {
-                    currentStatementIndex--;
-                    continue;
-                }
-                return result;
-            } else {
-                result[result.length - 1] = incrementPositionItem(getLast(result));
-                return result;
-            }
-        } else {
-            if (statements[currentStatementIndex - 1] && statements[currentStatementIndex - 1].body.length <= getLast(result).index + 1) {
-                result.pop();
-                if (!shouldReevaluateScopeStatement(statements[currentStatementIndex - 1])) {
-                    currentStatementIndex -= 2;
-                    continue;
-                }
-                return result;
-            } else {
-                result[result.length - 1] = statements[currentStatementIndex - 1] && statements[currentStatementIndex - 1].body.length === getLast(result).index + 1 ?
-                    getPositionItem(0) : incrementPositionItem(getLast(result));
-                return result;
-            }
+        if (!shouldEnterNextBlockVar.value && getLast(statements).orelse && getLast(statements).orelse.statement.body.length > 0) {
+            result.push(getPositionItem(0, true));
+            return result;
         }
     }
 
-    return [];
+    return movePosition(List(statements), List(result)).toArray();
 };
 
 const getSystemVariable = (context: IRuntimeContext, variableName: string) => {
