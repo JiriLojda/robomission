@@ -23,6 +23,8 @@ export const completeToolbox = [
   },
   { type: 'repeat' },
   { type: 'while' },
+  { type: 'position_value' },
+  { type: 'tile' },
   { type: 'color' },
   { type: 'position' },
   { type: 'if' },

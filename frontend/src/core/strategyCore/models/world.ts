@@ -1,7 +1,7 @@
 import {TileColor} from "../enums/tileColor";
 import {shipBlockingObjects, WorldObject} from "../enums/worldObject";
 import {Ship} from "./ship";
-import {Position} from "./position";
+import {isOnPosition, Position} from "./position";
 import {List, Record} from "immutable";
 import {EditorWorldModel} from "./editorWorldModel";
 import {Direction} from "../enums/direction";
@@ -56,6 +56,14 @@ export const getObjectsOnPosition = (world: World, x: number, y: number): List<W
     assertPositionInWorld(world, x, y);
 
     return world.objects.get(y)!.get(x)!;
+};
+
+export const getObjectsOnPositionWithShips = (world: World, x: number, y: number): List<WorldObject> => {
+    const otherObjects = getObjectsOnPosition(world, x, y);
+    if (world.ships.some(ship => isOnPosition(ship.position, x, y))) {
+        return otherObjects.push(WorldObject.Ship);
+    }
+    return otherObjects;
 };
 
 export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObject>): World => {

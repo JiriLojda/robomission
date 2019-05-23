@@ -6,6 +6,7 @@ import { translate } from '../localization';
 const colors = {
   header: 45,
   command: 180,
+  position: 200,
   test: 65,
   loop: 120,
   conditional: 345,
@@ -92,6 +93,56 @@ const blocks = [
           [translate('blockly.red'), 'r'],
           [translate('blockly.yellow'), 'y'],
           [translate('blockly.black'), 'k'],
+        ],
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.test,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'position_value',
+    message0: `position x = %1 y = %2`,
+    args0: [
+      {
+        type: 'field_number',
+        name: 'x',
+        value: 1,
+        min: 1,
+        max: 5
+      },
+      {
+        type: 'field_number',
+        name: 'y',
+        value: 1,
+        min: 1,
+        max: 5
+      },
+    ],
+    output: 'Position',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'tile',
+    message0: `tile on %1 contains %2`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'position',
+        check: 'Position',
+      },
+      {
+        type: 'field_dropdown',
+        name: 'value',
+        options: [
+          ['Ship', 'S'],
+          ['Diamond', 'D'],
+          ['Meteoroid', 'M'],
+          ['Asteroid', 'A'],
+          ['Wormhole', 'W'],
         ],
       },
     ],

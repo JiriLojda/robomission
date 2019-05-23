@@ -4,6 +4,7 @@ export enum InvalidProgramReason {
     NoOrBadStartStatement = 'NoOrBadStartStatement',
     InvalidStatement = 'InvalidStatement',
     MissingTestCondition = 'MissingTestCondition',
+    MissingParameter = 'MissingParameter',
     DefinedAdditionalProp = 'DefinedAdditionalProp',
     UnknownStatementType = 'UnknownStatementType',
     None = 'None',
@@ -11,6 +12,7 @@ export enum InvalidProgramReason {
 
 export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.MissingTestCondition,
+    InvalidProgramReason.MissingParameter,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -25,6 +27,8 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return getBadParserMessage('some statement has an unknown type.');
         case InvalidProgramReason.MissingTestCondition:
             return 'You have to set condition in each conditional block.';
+        case InvalidProgramReason.MissingParameter:
+            return 'One of your statements is missing a parameter.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

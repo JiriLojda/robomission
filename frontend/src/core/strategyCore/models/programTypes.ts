@@ -3,6 +3,7 @@ import {ConditionType} from "../enums/conditionType";
 import {Comparator} from "../enums/comparator";
 import {TileColor} from "../enums/tileColor";
 import {StatementType} from "../enums/statementType";
+import {WorldObject} from "../enums/worldObject";
 
 export interface IPositionItem {
     index: number;
@@ -10,8 +11,8 @@ export interface IPositionItem {
     repeatCount?: number;
 }
 
-export type Variable = {name: string; value: unknown};
-export type SystemVariable = {name: SystemVariableName, value: unknown};
+export type Variable = { name: string; value: unknown };
+export type SystemVariable = { name: SystemVariableName, value: unknown };
 
 export interface IRuntimeContext {
     position: IPositionItem[]
@@ -24,7 +25,20 @@ export interface IRuntimeContext {
 export interface ICondition {
     head: ConditionType;
     comparator: Comparator;
-    value: TileColor | number;
+    value: TileColor | number | WorldObject;
+}
+
+export interface IPositionValue {
+    head: 'position_value';
+    x: number;
+    y: number;
+}
+
+export interface ITileCondition extends ICondition {
+    head: ConditionType.Tile;
+    value: WorldObject;
+    comparator: Comparator.Contains | Comparator.NotContains;
+    position: IPositionValue;
 }
 
 export interface IColorCondition extends ICondition {
@@ -35,13 +49,14 @@ export interface IColorCondition extends ICondition {
 
 export interface IPositionCondition extends ICondition {
     head: ConditionType.Position;
+    comparator: Comparator.Equal | Comparator.NonEqual | Comparator.SmallerOrEqual | Comparator.Smaller | Comparator.BiggerOrEqual | Comparator.Bigger;
     value: number;
 }
 
-export type Condition = IColorCondition | IPositionCondition;
+export type Condition = IColorCondition | IPositionCondition | ITileCondition;
 
 export interface IBlock {
-    location: {blockId: string};
+    location: { blockId: string };
     statement: IStatement;
 }
 
@@ -53,7 +68,7 @@ export interface IStatement {
     count?: number;
 }
 
-export interface IRoboAst extends IStatement{
+export interface IRoboAst extends IStatement {
     head: StatementType.Start;
     body: IBlock[];
 }
