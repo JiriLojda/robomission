@@ -21,6 +21,7 @@ import {
     getInvalidProgramReasonDisplayName,
     InvalidProgramReason
 } from "../../core/strategyCore/enums/invalidProgramReason";
+import {allStrategyCategories} from "../../core/strategyCore/constants/strategyToolbox";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -127,7 +128,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     this.blocklyEditor = ref;
                 }}
                 workspaceConfiguration={{trashcan: true, collapse: true}}
-                toolboxCategories={[{name: 'default', blocks: completeToolbox}]}
+                toolboxCategories={allStrategyCategories}
                 initialXml={getEmptyXml()}
                 xmlDidChange={this._onXmlChange}
                 wrapperDivClassName="flocs-blockly"
