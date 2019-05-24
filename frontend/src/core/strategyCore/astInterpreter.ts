@@ -271,6 +271,11 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
         return [context, world];
     }
 
+    if (roboAst.body.length === 0) {
+        console.log('Empty program, please create something before running it.');
+        return [context, world];
+    }
+
     if (context.minorActionsLeft <= 0) {
         console.log('No actions left, let other players play too.');
         return [context, world];
