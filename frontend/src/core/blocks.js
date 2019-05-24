@@ -103,7 +103,7 @@ const blocks = [
   },
   {
     id: 'position_value',
-    message0: `position x = %1 y = %2`,
+    message0: `${translate('blockly.position')} x = %1 y = %2`,
     args0: [
       {
         type: 'field_number',
@@ -127,7 +127,7 @@ const blocks = [
   },
   {
     id: 'tile',
-    message0: `tile on %1 %2 %3`,
+    message0: `${translate('blockly.tile')} %1 %2 %3`,
     args0: [
       {
         type: 'input_value',
@@ -138,19 +138,19 @@ const blocks = [
         type: 'field_dropdown',
         name: 'comparator',
         options: [
-          ['Contains', 'contains'],
-          ['Not Contains', 'notContains'],
+          [translate('blockly.contains'), 'contains'],
+          [translate('blockly.notContains'), 'notContains'],
         ],
       },
       {
         type: 'field_dropdown',
         name: 'value',
         options: [
-          ['Ship', 'S'],
-          ['Diamond', 'D'],
-          ['Meteoroid', 'M'],
-          ['Asteroid', 'A'],
-          ['Wormhole', 'W'],
+          [translate('object.ship'), 'S'],
+          [translate('object.diamond'), 'D'],
+          [translate('object.meteoroid'), 'M'],
+          [translate('object.asteroid'), 'A'],
+          [translate('object.wormhole'), 'W'],
         ],
       },
     ],
