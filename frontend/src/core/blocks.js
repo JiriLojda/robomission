@@ -10,6 +10,7 @@ const colors = {
   test: 65,
   loop: 120,
   conditional: 345,
+  variable: 278,
 };
 
 
@@ -298,6 +299,58 @@ const blocks = [
     previousStatement: null,
     nextStatement: null,
     colour: colors.conditional,
+    tooltip: '',
+    helpUrl: '',
+  },
+    //variables
+  {
+    id: 'setVariable',
+    message0: `set %1 to %2`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'field_input',
+        name: 'value',
+        text: 'value',
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: colors.variable,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'getStringVariable',
+    message0: `get %1 as string`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+    ],
+    output: 'String',
+    colour: colors.variable,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'getNumericVariable',
+    message0: `get %1 as a number`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+    ],
+    output: 'Number',
+    colour: colors.variable,
     tooltip: '',
     helpUrl: '',
   },

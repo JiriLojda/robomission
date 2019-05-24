@@ -10,4 +10,7 @@ export enum StatementType {
     Right = 'right',
     TurnRight = 'turn-right',
     TurnLeft = 'turn-left',
+    SetVariable = 'setVariable',
+    GetStringVariable = 'getStringVariable',
+    GetNumericVariable = 'getNumericVariable',
 }

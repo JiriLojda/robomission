@@ -106,6 +106,12 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             }
             return getValidatorResult(true, InvalidProgramReason.None);
         }
+        case StatementType.SetVariable:
+            return isSetVariableStatementValid(statement);
+        case StatementType.GetNumericVariable:
+            return isGetNumericVariableStatementValid(statement);
+        case StatementType.GetStringVariable:
+            return isGetStringVariableStatementValid(statement);
         case StatementType.Else:
             throw new Error('Else type should be handled inside If case.');
         default:
@@ -186,6 +192,9 @@ const isShootStatementValid = getStatementValidator(['head']);
 const isTurnRightStatementValid = getStatementValidator(['head']);
 const isTurnLeftStatementValid = getStatementValidator(['head']);
 
+const isSetVariableStatementValid = getStatementValidator(['head', 'name', 'value']);
+const isGetStringVariableStatementValid = getStatementValidator(['head', 'name']);
+const isGetNumericVariableStatementValid = getStatementValidator(['head', 'name']);
 
 const isElseStatementValid = getStatementValidator(['head', 'body']);
 const isIfStatementValid = getStatementValidator(
