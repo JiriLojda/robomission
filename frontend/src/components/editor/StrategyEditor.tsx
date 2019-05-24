@@ -3,7 +3,6 @@ import * as ReactBlocklyComponent from 'react-blockly-component';
 import {BlocklyEditor} from 'react-blockly-component';
 import {blocklyXmlToRoboAst} from '../../core/blockly';
 import {generateBlocklyXml} from '../../core/blocklyXmlGenerator';
-import {completeToolbox} from "../../core/toolbox";
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
