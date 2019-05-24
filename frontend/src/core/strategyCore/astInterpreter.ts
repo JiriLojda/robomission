@@ -5,18 +5,21 @@ import {TileColor} from "./enums/tileColor";
 import {SystemVariableName} from "./enums/systemVariableName";
 import {canMove, getShip, getShipPosition, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
-import {
-    getObjectsOnPositionWithShips,
-    removeLaserAndExplosionObjects,
-    updateShipInWorld,
-    World
-} from "./models/world";
+import {getObjectsOnPositionWithShips, removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {Position} from "./models/position";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
-import {Condition, IPositionItem, IRoboAst, IRuntimeContext, IStatement} from "./models/programTypes";
+import {
+    Condition,
+    IPositionItem,
+    IRoboAst,
+    IRuntimeContext,
+    ISetVariableStatement,
+    IStatement
+} from "./models/programTypes";
 import {List, Set} from "immutable";
 import {unifyShips, WorldObject} from "./enums/worldObject";
 import {convertUserPositionToInternal} from "./utils/positionUtils";
+import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
 
 const defaultMinorActionsCount = 100;
 
@@ -188,19 +191,6 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPosition
     return movePosition(List(statements), List(result)).toArray();
 };
 
-const getSystemVariable = (context: IRuntimeContext, variableName: string) => {
-    return context.systemVariables.find(variable => variable.name === variableName);
-};
-
-const setSystemVariable = (context: IRuntimeContext, variableName: SystemVariableName, variableValue: unknown) => {
-    const existing = getSystemVariable(context, variableName);
-    if (!existing) {
-        context.systemVariables.push({name: variableName, value: variableValue});
-    } else {
-        existing.value = variableValue;
-    }
-};
-
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
 const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: string) => {
@@ -231,7 +221,7 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-const evaluateActionStatement = (statement: IStatement, world: World, shipId: string): World | UserProgramError => {
+const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, world: World, shipId: string, context: IRuntimeContext): World | UserProgramError => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -260,6 +250,12 @@ const evaluateActionStatement = (statement: IStatement, world: World, shipId: st
             return updateShipInWorld(world, ship, turnShip(ship, 'left'));
         case StatementType.TurnRight:
             return updateShipInWorld(world, ship, turnShip(ship, 'right'));
+        case StatementType.SetVariable:
+            if (!statement.name || !statement.value) {
+                throw new Error('While setting variable statement has to have name and value.');
+            }
+            setUserVariable(context, statement.name, statement.value);
+            return world;
         default:
             return world;
     }
@@ -287,7 +283,7 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
     console.log(statement);
 
     const withoutLasers = removeLaserAndExplosionObjects(world);
-    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId);
+    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId, context);
 
     if (isUserProgramError(newWorld)) {
         return newWorld;

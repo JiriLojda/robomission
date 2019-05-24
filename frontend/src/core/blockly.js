@@ -66,6 +66,12 @@ function blockToAst(block) {
       return tileBlockToAst(block);
     case 'position_value':
       return positionValueBlockToAst(block);
+    case 'setVariable':
+      return setVariableBlockToAst(block);
+    case 'getStringVariable':
+      return getStringVariableBlockToAst(block);
+    case 'getNumericVariable':
+      return getNumericVariableBlockToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -153,6 +159,22 @@ function tileBlockToAst(block) {
   const comparator = getFieldValue(block, 'comparator');
   const value = getFieldValue(block, 'value');
   return { head: 'tile', value, position, comparator };
+}
+
+function setVariableBlockToAst(block) {
+  const name = getFieldValue(block, 'name');
+  const value = getFieldValue(block, 'value');
+  return { head: 'setVariable', name, value };
+}
+
+function getStringVariableBlockToAst(block) {
+  const name = getFieldValue(block, 'name');
+  return {head: 'getStringVariable', name};
+}
+
+function getNumericVariableBlockToAst(block) {
+  const name = getFieldValue(block, 'name');
+  return {head: 'getNumericVariable', name};
 }
 
 function getBody(block, name = 'body') {

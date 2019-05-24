@@ -11,7 +11,7 @@ export interface IPositionItem {
     repeatCount?: number;
 }
 
-export type Variable = { name: string; value: unknown };
+export type Variable = { name: string; value: string };
 export type SystemVariable = { name: SystemVariableName, value: unknown };
 
 export interface IRuntimeContext {
@@ -66,6 +66,18 @@ export interface IStatement {
     orelse?: IBlock;
     test?: Condition;
     count?: number;
+    name?: string;
+    value?: string;
+}
+
+export interface ISetVariableStatement extends IStatement {
+    head: StatementType.SetVariable;
+    body: undefined;
+    orelse: undefined;
+    test: undefined;
+    count: undefined;
+    name: string;
+    value: string;
 }
 
 export interface IRoboAst extends IStatement {
