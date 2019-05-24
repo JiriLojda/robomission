@@ -127,12 +127,20 @@ const blocks = [
   },
   {
     id: 'tile',
-    message0: `tile on %1 contains %2`,
+    message0: `tile on %1 %2 %3`,
     args0: [
       {
         type: 'input_value',
         name: 'position',
         check: 'Position',
+      },
+      {
+        type: 'field_dropdown',
+        name: 'comparator',
+        options: [
+          ['Contains', 'contains'],
+          ['Not Contains', 'notContains'],
+        ],
       },
       {
         type: 'field_dropdown',

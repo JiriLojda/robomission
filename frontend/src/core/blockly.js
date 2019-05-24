@@ -150,8 +150,9 @@ function positionValueBlockToAst(block) {
 
 function tileBlockToAst(block) {
   const position = blockToAst(getValueBlock(block, 'position'));
+  const comparator = getFieldValue(block, 'comparator');
   const value = getFieldValue(block, 'value');
-  return { head: 'tile', value, position, comparator: 'contains' };
+  return { head: 'tile', value, position, comparator };
 }
 
 function getBody(block, name = 'body') {
