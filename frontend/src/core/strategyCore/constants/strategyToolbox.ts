@@ -1,26 +1,37 @@
-export const allStrategyCategories = [
+import {BlockType} from "../enums/blockType";
+
+export type BlocklyBlock = {
+    readonly type: BlockType,
+    readonly fields?: any
+};
+export type BlocklyToolboxCategory = {
+    readonly name: string,
+    readonly blocks: BlocklyBlock[]
+};
+
+export const allStrategyCategories: BlocklyToolboxCategory[] = [
     {
         name: 'commands',
         blocks: [
             {
-                type: 'fly',
+                type: BlockType.Fly,
                 fields: {direction: 'ahead'},
             },
             {
-                type: 'fly',
+                type: BlockType.Fly,
                 fields: {direction: 'left'},
             },
             {
-                type: 'fly',
+                type: BlockType.Fly,
                 fields: {direction: 'right'},
             },
-            {type: 'shoot'},
+            {type: BlockType.Shoot},
             {
-                type: 'turn',
+                type: BlockType.Turn,
                 fields: {direction: 'left'},
             },
             {
-                type: 'turn',
+                type: BlockType.Turn,
                 fields: {direction: 'right'},
             },
         ],
@@ -28,37 +39,46 @@ export const allStrategyCategories = [
     {
         name: 'variables',
         blocks: [
-            {type: 'setVariable'},
-            {type: 'getStringVariable'},
-            {type: 'getNumericVariable'},
+            {type: BlockType.SetVariable},
+            {type: BlockType.GetStringVariable},
+            {type: BlockType.GetNumericNumber},
         ],
     },
     {
         name: 'cycles',
         blocks: [
-            {type: 'repeat'},
-            {type: 'while'},
+            {type: BlockType.Repeat},
+            {type: BlockType.While},
         ]
     },
     {
         name: 'values',
         blocks: [
-            {type: 'position_value'},
+            {type: BlockType.PositionValue},
         ]
     },
     {
         name: 'conditions',
         blocks: [
-            {type: 'tile'},
-            {type: 'color'},
-            {type: 'position'},
+            {type: BlockType.Tile},
+            {type: BlockType.Color},
+            {type: BlockType.Position},
+            {type: BlockType.StringCompare},
+            {type: BlockType.NumbersCompare},
         ]
     },
     {
         name: 'branching',
         blocks: [
-            {type: 'if'},
-            {type: 'if-else'},
+            {type: BlockType.If},
+            {type: BlockType.IfElse},
+        ]
+    },
+    {
+        name: 'logic',
+        blocks: [
+            {type: BlockType.LogicBinariOperation},
+            {type: BlockType.LogicNot},
         ]
     },
 ];

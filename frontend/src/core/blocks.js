@@ -11,6 +11,7 @@ const colors = {
   loop: 120,
   conditional: 345,
   variable: 278,
+  logic: 310,
 };
 
 
@@ -351,6 +352,117 @@ const blocks = [
     ],
     output: 'Number',
     colour: colors.variable,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'numbersCompare',
+    message0: `number %1 %2 number %3`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'leftValue',
+        check: 'Number'
+      },
+      {
+        type: 'field_dropdown',
+        name: 'comparator',
+        options: [
+          ['=', '=='],
+          ['≠', '!='],
+          ['>', '>'],
+          ['≥', '>='],
+          ['<', '<'],
+          ['≤', '<='],
+        ],
+      },
+      {
+        type: 'input_value',
+        name: 'rightValue',
+        check: 'Number'
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.test,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'stringCompare',
+    message0: `string %1 %2 string %3`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'leftValue',
+        check: 'String'
+      },
+      {
+        type: 'field_dropdown',
+        name: 'comparator',
+        options: [
+          ['=', '=='],
+          ['≠', '!='],
+          ['>', '>'],
+          ['≥', '>='],
+          ['<', '<'],
+          ['≤', '<='],
+          [translate('blockly.contains'), 'contains'],
+          [translate('blockly.notContains'), 'notContains'],
+        ],
+      },
+      {
+        type: 'input_value',
+        name: 'rightValue',
+        check: 'String'
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.test,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'logic_binary',
+    message0: `%1 %2 %3`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'leftValue',
+        check: 'Boolean'
+      },
+      {
+        type: 'field_dropdown',
+        name: 'comparator',
+        options: [
+            ['and', 'and'],
+            ['or', 'or'],
+            ['equal', 'eq'],
+            ['non-equal', 'nonEq'],
+        ],
+      },
+      {
+        type: 'input_value',
+        name: 'rightValue',
+        check: 'Boolean'
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.logic,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'logic_not',
+    message0: `not %1`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'leftValue',
+        check: 'Boolean'
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.logic,
     tooltip: '',
     helpUrl: '',
   },
