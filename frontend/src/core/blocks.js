@@ -355,8 +355,9 @@ const blocks = [
     tooltip: '',
     helpUrl: '',
   },
+    //comparators
   {
-    id: 'numbersCompare',
+    id: 'numericCompare',
     message0: `number %1 %2 number %3`,
     args0: [
       {
@@ -421,6 +422,7 @@ const blocks = [
     tooltip: '',
     helpUrl: '',
   },
+    //logic
   {
     id: 'logic_binary',
     message0: `%1 %2 %3`,
@@ -457,7 +459,7 @@ const blocks = [
     args0: [
       {
         type: 'input_value',
-        name: 'leftValue',
+        name: 'value',
         check: 'Boolean'
       },
     ],

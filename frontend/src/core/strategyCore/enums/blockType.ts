@@ -14,7 +14,7 @@ export enum BlockType {
     SetVariable = 'setVariable',
     GetStringVariable = 'getStringVariable',
     GetNumericNumber = 'getNumericVariable',
-    NumbersCompare = 'numbersCompare',
+    NumericCompare = 'numericCompare',
     StringCompare = 'stringCompare',
     LogicBinariOperation = 'logic_binary',
     LogicNot = 'logic_not',

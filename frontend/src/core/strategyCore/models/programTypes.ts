@@ -24,8 +24,8 @@ export interface IRuntimeContext {
 
 export interface ICondition {
     head: ConditionType;
-    comparator: Comparator;
-    value: TileColor | number | WorldObject;
+    comparator?: Comparator;
+    value?: TileColor | number | WorldObject | ICondition;
 }
 
 export interface IPositionValue {
@@ -53,7 +53,35 @@ export interface IPositionCondition extends ICondition {
     value: number;
 }
 
-export type Condition = IColorCondition | IPositionCondition | ITileCondition;
+export interface INotCondition extends ICondition {
+    head: ConditionType.Not;
+    comparator: undefined;
+    value: Condition;
+}
+
+export interface IBinaryLogicCondition extends ICondition {
+    head: ConditionType.LogicBinaryOperation;
+    comparator: Comparator.And | Comparator.Or | Comparator.Equivalent | Comparator.NonEquivalent;
+    value: undefined;
+    leftValue: Condition;
+    rightValue: Condition;
+}
+
+export interface ICompareCondition extends ICondition {
+    head: ConditionType.NumericCompare | ConditionType.StringCompare;
+    comparator: Comparator.Equal | Comparator.NonEqual | Comparator.SmallerOrEqual | Comparator.Smaller | Comparator.BiggerOrEqual | Comparator.Bigger;
+    value: undefined;
+    leftValue: IStatement;
+    rightValue: IStatement;
+}
+
+export type Condition =
+    IColorCondition |
+    IPositionCondition |
+    ITileCondition |
+    INotCondition |
+    IBinaryLogicCondition |
+    ICompareCondition;
 
 export interface IBlock {
     location: { blockId: string };

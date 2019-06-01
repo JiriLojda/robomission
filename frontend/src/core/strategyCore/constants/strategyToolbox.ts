@@ -64,7 +64,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.Color},
             {type: BlockType.Position},
             {type: BlockType.StringCompare},
-            {type: BlockType.NumbersCompare},
+            {type: BlockType.NumericCompare},
         ]
     },
     {
