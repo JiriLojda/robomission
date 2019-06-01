@@ -75,6 +75,9 @@ export interface ICompareCondition extends ICondition {
     rightValue: IStatement;
 }
 
+export const isCompareCondition = (condition: Condition): condition is ICompareCondition =>
+    condition.head === ConditionType.NumericCompare || condition.head === ConditionType.StringCompare;
+
 export type Condition =
     IColorCondition |
     IPositionCondition |

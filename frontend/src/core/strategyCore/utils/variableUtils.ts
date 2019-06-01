@@ -25,6 +25,15 @@ export const getUserVariable = (context: IRuntimeContext, variableName: string):
     return context.variables.find(variable => variable.name === variableName)!;
 };
 
+export const isUserVariableNumber = (context: IRuntimeContext, variableName: string): boolean => {
+    if (!doesUserVariableExist(context, variableName)) {
+        return false;
+    }
+    const variable = getUserVariable(context, variableName);
+
+    return !isNaN(Number(variable.value));
+};
+
 export const getUserVariableAsNumber = (context: IRuntimeContext, variableName: string): number => {
     const variable = getUserVariable(context, variableName);
 
