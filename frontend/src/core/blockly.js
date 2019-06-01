@@ -72,6 +72,14 @@ function blockToAst(block) {
       return getStringVariableBlockToAst(block);
     case 'getNumericVariable':
       return getNumericVariableBlockToAst(block);
+    case 'stringCompare':
+      return stringCompareBlockToAst(block);
+    case 'numericCompare':
+      return numericCompareBlockToAst(block);
+    case 'logic_binary':
+      return logicBinaryBlockToAst(block);
+    case 'logic_not':
+      return logicNotBlockToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -129,8 +137,7 @@ function turnBlockToAst(block) {
 }
 
 
-// eslint-disable-next-line no-unused-vars
-function shootBlockToAst(block) {
+function shootBlockToAst() {
   return {head: 'shoot'};
 }
 
@@ -177,6 +184,25 @@ function getNumericVariableBlockToAst(block) {
   return {head: 'getNumericVariable', name};
 }
 
+function binaryOperationBlockToAst(block, operationName) {
+  const leftValue = blockToAst(getValueBlock(block, 'leftValue'));
+  const rightValue = blockToAst(getValueBlock(block, 'rightValue'));
+  const comparator = getFieldValue(block, 'comparator');
+  return {head: operationName, leftValue, rightValue, comparator};
+}
+
+const numericCompareBlockToAst = block => binaryOperationBlockToAst(block, 'numericCompare');
+
+const stringCompareBlockToAst = block => binaryOperationBlockToAst(block, 'stringCompare');
+
+const logicBinaryBlockToAst = block => binaryOperationBlockToAst(block, 'logic_binary');
+
+function logicNotBlockToAst(block) {
+  const value = blockToAst(getValueBlock(block, 'value'));
+  return {head: 'logic_not', value};
+}
+
+//helpers
 function getBody(block, name = 'body') {
   const bodyNode = getStatement(block, name);
   if (bodyNode == null) {

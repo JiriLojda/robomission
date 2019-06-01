@@ -7,4 +7,8 @@ export enum Comparator {
     SmallerOrEqual = '<=',
     Contains = 'contains',
     NotContains = 'notContains',
+    And = 'and',
+    Or = 'or',
+    Equivalent = 'eq',
+    NonEquivalent = 'nonEq',
 }

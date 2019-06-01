@@ -113,13 +113,25 @@ const evaluateCondition = (condition: Condition, world: World, shipId: string) =
         case Comparator.NonEqual:
             return condition.value !== getComparedObject(condition, world, shipPosition);
         case Comparator.Bigger:
-            return condition.value < getComparedObject(condition, world, shipPosition);
+            if (condition.value) {
+                return condition.value < getComparedObject(condition, world, shipPosition);
+            }
+            return true;
         case Comparator.BiggerOrEqual:
-            return condition.value <= getComparedObject(condition, world, shipPosition);
+            if (condition.value) {
+                return condition.value <= getComparedObject(condition, world, shipPosition);
+            }
+            return true;
         case Comparator.Smaller:
-            return condition.value > getComparedObject(condition, world, shipPosition);
+            if (condition.value) {
+                return condition.value > getComparedObject(condition, world, shipPosition);
+            }
+            return true;
         case Comparator.SmallerOrEqual:
-            return condition.value >= getComparedObject(condition, world, shipPosition);
+            if (condition.value) {
+                return condition.value >= getComparedObject(condition, world, shipPosition);
+            }
+            return true;
         case Comparator.Contains: {
             const objects = getComparedObject(condition, world, shipPosition);
             if (!List.isList(objects)) {

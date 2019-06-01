@@ -1,6 +1,6 @@
 import {StatementType} from "./enums/statementType";
 import {InvalidProgramReason} from "./enums/invalidProgramReason";
-import {IColorCondition, IPositionCondition, IRoboAst, IStatement, ITileCondition} from "./models/programTypes";
+import {Condition, IBinaryLogicCondition, ICompareCondition, IRoboAst, IStatement} from "./models/programTypes";
 import {ConditionType} from "./enums/conditionType";
 
 export interface IValidatorResult {
@@ -131,10 +131,10 @@ const isValidConditionStatement: StatementValidator = statement => {
     return isTestStatementValid(statement.test!);
 };
 
-const areOnlyAllowedPropertiesSet = <T extends keyof IStatement>(statement: IStatement, allowed: T[]): IValidatorResult => {
+const areOnlyAllowedPropertiesSet = <T, K extends keyof T>(statement: T, allowed: K[]): IValidatorResult => {
     const stringAllowed = allowed.map(e => e.toString());
     for (const prop in statement) {
-        if (stringAllowed.indexOf(prop) < 0 && !!(statement as any)[prop]) {
+        if (statement.hasOwnProperty(prop) && stringAllowed.indexOf(prop) < 0 && !!(statement as any)[prop]) {
             return {isValid: false, reason: InvalidProgramReason.DefinedAdditionalProp};
         }
     }
@@ -164,7 +164,32 @@ const getStatementValidator = <T extends keyof IStatement>(
         return additionalValidator(statement);
     };
 
-const isTestStatementValid = (condition: IColorCondition | IPositionCondition | ITileCondition): IValidatorResult => {
+const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult => {
+    const valuesExistanceValidation = areOnlyAllowedPropertiesSet(
+        operation,
+        ['leftValue', 'rightValue', 'head', 'comparator']
+    );
+    if (!valuesExistanceValidation.isValid)
+        return valuesExistanceValidation;
+    if (!operation.rightValue || !operation.leftValue)
+        return getValidatorResult(false, InvalidProgramReason.MissingParameter);
+    const leftValueValidation = operation.head === ConditionType.LogicBinaryOperation ?
+        isTestStatementValid(operation.leftValue) :
+        isStatementValid(operation.leftValue);
+    if (!leftValueValidation.isValid)
+        return leftValueValidation;
+    const rightValueValidation = operation.head === ConditionType.LogicBinaryOperation ?
+        isTestStatementValid(operation.rightValue) :
+        isStatementValid(operation.leftValue);
+    if (!rightValueValidation.isValid)
+        return rightValueValidation;
+    return getValidatorResult(
+        !!operation.comparator,
+        InvalidProgramReason.MissingParameter
+    );
+};
+
+const isTestStatementValid = (condition: Condition): IValidatorResult => {
     switch (condition.head) {
         case ConditionType.Color:
             return getValidatorResult(true, InvalidProgramReason.None);
@@ -175,6 +200,23 @@ const isTestStatementValid = (condition: IColorCondition | IPositionCondition | 
                 !!condition.position && !!condition.position.x && !!condition.position.y,
                 InvalidProgramReason.MissingParameter
             );
+        case ConditionType.Not: {
+            const valuesExistanceValidation = areOnlyAllowedPropertiesSet(
+                condition,
+                ['head', 'comparator', 'value']
+            );
+            if (!valuesExistanceValidation.isValid)
+                return valuesExistanceValidation;
+            if (!condition.value)
+                return getValidatorResult(false, InvalidProgramReason.MissingParameter);
+            return isTestStatementValid(condition.value);
+        }
+        case ConditionType.LogicBinaryOperation:
+            return isBinaryOperationValid(condition);
+        case ConditionType.StringCompare:
+            return isBinaryOperationValid(condition);
+        case ConditionType.NumericCompare:
+            return isBinaryOperationValid(condition);
         default:
             throw new Error(`Unknown condition type ${condition!.head}`);
     }
