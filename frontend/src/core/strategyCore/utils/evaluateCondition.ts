@@ -1,4 +1,4 @@
-import {Condition} from "../models/programTypes";
+import {Condition, IBinaryLogicCondition} from "../models/programTypes";
 import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
 import {TileColor} from "../enums/tileColor";
@@ -24,7 +24,7 @@ const getComparedObject = (condition: Condition, world: World, shipPosition: Pos
     }
 };
 
-export const evaluateCondition = (condition: Condition, world: World, shipId: string) => {
+const handleObjectComparison = (condition: Condition, world: World, shipId: string): boolean => {
     const shipPosition = getShipPosition(world, shipId);
 
     if (!shipPosition) {
@@ -70,6 +70,38 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: st
             }
             return !unifyShips(objects).contains(condition.value);
         }
+        default:
+            throw new Error(`Unknown comparator ${condition.comparator}.`);
     }
-    throw new Error(`Unknown condition ${condition}.`);
+};
+
+const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: string): boolean => {
+    switch (condition.comparator) {
+        case Comparator.And:
+            return evaluateCondition(condition.leftValue, world, shipId) &&
+                evaluateCondition(condition.rightValue, world, shipId);
+        case Comparator.Or:
+            return evaluateCondition(condition.leftValue, world, shipId) ||
+                evaluateCondition(condition.rightValue, world, shipId);
+        case Comparator.Equivalent:
+            return evaluateCondition(condition.leftValue, world, shipId) ===
+                evaluateCondition(condition.rightValue, world, shipId);
+        case Comparator.NonEquivalent:
+            return evaluateCondition(condition.leftValue, world, shipId) !==
+                evaluateCondition(condition.rightValue, world, shipId);
+        default:
+            throw new Error(`Unknown logical comparator ${condition.comparator}.`);
+    }
+};
+
+export const evaluateCondition = (condition: Condition, world: World, shipId: string): boolean => {
+    if (condition.head === ConditionType.Not) {
+        return !evaluateCondition(condition.value, world, shipId);
+    }
+
+    if (condition.head === ConditionType.LogicBinaryOperation) {
+        return handleLogicalBinaryOperation(condition, world, shipId);
+    }
+
+    return handleObjectComparison(condition, world, shipId);
 };
