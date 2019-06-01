@@ -12,6 +12,7 @@ const colors = {
   conditional: 345,
   variable: 278,
   logic: 310,
+  constants: 239,
 };
 
 
@@ -465,6 +466,54 @@ const blocks = [
     ],
     output: 'Boolean',
     colour: colors.logic,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'constant_boolean',
+    message0: `%1`,
+    args0: [
+      {
+        type: 'field_dropdown',
+        name: 'value',
+        options: [
+          ['true', 'true'],
+          ['false', 'false'],
+        ],
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.constants,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'constant_string',
+    message0: `%1`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'value',
+        text: 'input',
+      },
+    ],
+    output: 'String',
+    colour: colors.constants,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'constant_number',
+    message0: `%1`,
+    args0: [
+      {
+        type: 'field_number',
+        name: 'value',
+        value: 0,
+      },
+    ],
+    output: 'Number',
+    colour: colors.constants,
     tooltip: '',
     helpUrl: '',
   },

@@ -25,7 +25,7 @@ export interface IRuntimeContext {
 export interface ICondition {
     head: ConditionType;
     comparator?: Comparator;
-    value?: TileColor | number | WorldObject | ICondition;
+    value?: TileColor | number | WorldObject | ICondition | string;
 }
 
 export interface IPositionValue {
@@ -78,13 +78,20 @@ export interface ICompareCondition extends ICondition {
 export const isCompareCondition = (condition: Condition): condition is ICompareCondition =>
     condition.head === ConditionType.NumericCompare || condition.head === ConditionType.StringCompare;
 
+export interface IConstantBoolean extends ICondition {
+    head: ConditionType.ConstantBoolean;
+    value: string;
+    comparator: undefined;
+}
+
 export type Condition =
     IColorCondition |
     IPositionCondition |
     ITileCondition |
     INotCondition |
     IBinaryLogicCondition |
-    ICompareCondition;
+    ICompareCondition |
+    IConstantBoolean;
 
 export interface IBlock {
     location: { blockId: string };

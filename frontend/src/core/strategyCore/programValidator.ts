@@ -67,6 +67,10 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             return isGetNumericVariableStatementValid(statement);
         case StatementType.GetStringVariable:
             return isGetStringVariableStatementValid(statement);
+        case StatementType.ConstantNumber:
+            return isConstantStatementValid(statement);
+        case StatementType.ConstantString:
+            return isConstantStatementValid(statement);
         case StatementType.Else:
             throw new Error('Else type should be handled inside If case.');
         default:
@@ -208,6 +212,8 @@ const isTestStatementValid = (condition: Condition): IValidatorResult => {
             return isBinaryOperationValid(condition);
         case ConditionType.NumericCompare:
             return isBinaryOperationValid(condition);
+        case ConditionType.ConstantBoolean:
+            return hasExactProperties(condition, ['head', 'value']);
         default:
             throw new Error(`Unknown condition type ${condition!.head}`);
     }
@@ -228,6 +234,8 @@ const isTurnLeftStatementValid = getStatementValidator(['head']);
 const isSetVariableStatementValid = getStatementValidator(['head', 'name', 'value']);
 const isGetStringVariableStatementValid = getStatementValidator(['head', 'name']);
 const isGetNumericVariableStatementValid = getStatementValidator(['head', 'name']);
+
+const isConstantStatementValid: StatementValidator = statement => hasExactProperties(statement, ['head', 'value']);
 
 const isElseStatementValid = getStatementValidator(['head', 'body']);
 const isIfStatementValid = getStatementValidator(
