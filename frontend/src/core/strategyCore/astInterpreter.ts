@@ -134,26 +134,36 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPosition
 
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
-const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: string) => {
+const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: string): UserProgramError | null => {
     switch (statement.head) {
         case StatementType.If:
-        case StatementType.While:
+        case StatementType.While: {
             if (!statement.test) {
                 throw new Error(`${statement.head} statement has to have condition.`);
             }
-            setSystemVariable(context, SystemVariableName.ShouldEnterNextBlock, evaluateCondition(statement.test, world, shipId));
-            return;
+            const conditionResult = evaluateCondition(statement.test, world, shipId, context);
+            if (isUserProgramError(conditionResult)) {
+                return conditionResult;
+            }
+            setSystemVariable(
+                context,
+                SystemVariableName.ShouldEnterNextBlock,
+                conditionResult
+            );
+            return null;
+        }
         case StatementType.Repeat:
             const position = getLast(context.position);
             if (!statement.count || !position.repeatCount || statement.count <= 0 || position.repeatCount <= 0) {
                 setSystemVariable(context, SystemVariableName.ShouldEnterNextBlock, false);
                 position.repeatCount = undefined;
-                return;
+                return null;
             }
             position.repeatCount--;
             setSystemVariable(context, SystemVariableName.ShouldEnterNextBlock, true);
-            return;
+            return null;
     }
+    return null
 };
 
 const setPositionAttributes = (statement: IStatement, position: IPositionItem) => {
@@ -235,7 +245,11 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
          context.minorActionsLeft = defaultMinorActionsCount;
     }
     setPositionAttributes(statement, getLast(context.position));
-    evaluateBlockCondition(statement, context, world, shipId);
+    const conditionEvaluation = evaluateBlockCondition(statement, context, world, shipId);
+
+    if (conditionEvaluation) {
+        return conditionEvaluation;
+    }
 
     context.position = getNextPosition(roboAst, context);
 
