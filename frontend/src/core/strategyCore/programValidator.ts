@@ -37,75 +37,30 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             return isFlyStatementValid(statement);
         case StatementType.Shoot:
             return isShootStatementValid(statement);
-        case StatementType.Start: {
-            const validation = isStartStatementValid(statement);
-            if (!validation.isValid) {
-                return validation;
-            }
-
-            for (const innerStatement of statement.body!) {
-                const innerValidation = isStatementValid(innerStatement.statement);
-                if (!innerValidation.isValid) {
-                    return innerValidation;
-                }
-            }
-            return getValidatorResult(true, InvalidProgramReason.None);
-        }
-
+        case StatementType.Start:
+            return useValidators(
+                [isStartStatementValid, validateBody],
+                statement,
+            );
         case StatementType.TurnLeft:
             return isTurnLeftStatementValid(statement);
         case StatementType.TurnRight:
             return isTurnRightStatementValid(statement);
-        case StatementType.If: {
-            const validation = isIfStatementValid(statement);
-            if (!validation.isValid) {
-                return validation;
-            }
-
-            for (const innerStatement of statement.body!) {
-                const innerValidation = isStatementValid(innerStatement.statement);
-                if (!innerValidation.isValid) {
-                    return innerValidation;
-                }
-            }
-            if (!!statement.orelse) {
-                for (const innerStatement of statement.orelse.statement.body!) {
-                    const innerValidation = isStatementValid(innerStatement.statement);
-                    if (!innerValidation.isValid) {
-                        return innerValidation;
-                    }
-                }
-            }
-            return getValidatorResult(true, InvalidProgramReason.None);
-        }
-        case StatementType.Repeat: {
-            const validation = isRepeatStatementValid(statement);
-            if (!validation.isValid) {
-                return validation;
-            }
-
-            for (const innerStatement of statement.body!) {
-                const innerValidation = isStatementValid(innerStatement.statement);
-                if (!innerValidation.isValid) {
-                    return innerValidation;
-                }
-            }
-            return getValidatorResult(true, InvalidProgramReason.None);
-        }
-        case StatementType.While: {
-            const validation = isWhileStatementValid(statement);
-            if (!validation.isValid) {
-                return validation;
-            }
-
-            for (const innerStatement of statement.body!) {
-                const innerValidation = isStatementValid(innerStatement.statement);
-                if (!innerValidation.isValid) {
-                    return innerValidation;
-                }
-            }
-            return getValidatorResult(true, InvalidProgramReason.None);
-        }
+        case StatementType.If:
+            return useValidators(
+                [isIfStatementValid, validateBody, validateElseBody],
+                statement,
+            );
+        case StatementType.Repeat:
+            return useValidators(
+                [isRepeatStatementValid, validateBody],
+                statement,
+            );
+        case StatementType.While:
+            return useValidators(
+                [isWhileStatementValid, validateBody],
+                statement,
+            );
         case StatementType.SetVariable:
             return isSetVariableStatementValid(statement);
         case StatementType.GetNumericVariable:
@@ -119,17 +74,36 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
     }
 };
 
-const hasTestProperty = (statement: IStatement): IValidatorResult =>
-    getValidatorResult(!!statement.test, InvalidProgramReason.MissingTestCondition);
+const validateBody = (statement: IStatement): IValidatorResult => {
+    if (!statement.body)
+        return getValidatorResult(false, InvalidProgramReason.UndefinedRequiredProp);
 
-const isValidConditionStatement: StatementValidator = statement => {
-    const testExistance = hasTestProperty(statement);
-    if (!testExistance.isValid) {
-        return testExistance;
+    for (const innerStatement of statement.body!) {
+        const innerValidation = isStatementValid(innerStatement.statement);
+        if (!innerValidation.isValid) {
+            return innerValidation;
+        }
     }
 
-    return isTestStatementValid(statement.test!);
+    return getValidatorResult(true, InvalidProgramReason.None);
 };
+
+const checkParameterExistance = <T, K extends keyof T>(statement: T, parameters: K[], customReason: InvalidProgramReason = InvalidProgramReason.MissingParameter): IValidatorResult => {
+    for (const parameter of parameters) {
+        if (!statement.hasOwnProperty(parameter) || !statement[parameter]) {
+            return getValidatorResult(false, customReason);
+        }
+    }
+    return getValidatorResult(true, InvalidProgramReason.None);
+};
+
+const hasTestProperty = (statement: IStatement): IValidatorResult =>
+    checkParameterExistance(statement, ['test'], InvalidProgramReason.MissingTestCondition);
+
+const isValidConditionStatement: StatementValidator = statement => useValidators(
+    [hasTestProperty, s => isTestStatementValid(s.test!)],
+    statement,
+);
 
 const areOnlyAllowedPropertiesSet = <T, K extends keyof T>(statement: T, allowed: K[]): IValidatorResult => {
     const stringAllowed = allowed.map(e => e.toString());
@@ -150,44 +124,64 @@ const getStatementValidator = <T extends keyof IStatement>(
     isCondition: boolean = false
 ): StatementValidator =>
     (statement: IStatement) => {
-        if (isCondition) {
-            const statementValidation = isValidConditionStatement(statement);
-            if (!statementValidation.isValid) {
-                return statementValidation;
-            }
-        }
-        const propValidation = areOnlyAllowedPropertiesSet(statement, allowedProps);
-        if (!propValidation.isValid) {
-            return propValidation;
-        }
-
-        return additionalValidator(statement);
+        const firstValidators = isCondition ? [isValidConditionStatement] : [];
+        return useValidators(
+            [
+                ...firstValidators,
+                s => areOnlyAllowedPropertiesSet(s, allowedProps),
+                additionalValidator
+            ],
+            statement,
+        )
     };
 
-const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult => {
-    const valuesExistanceValidation = areOnlyAllowedPropertiesSet(
-        operation,
-        ['leftValue', 'rightValue', 'head', 'comparator']
+type GenericValidator<T> = (arg: T) => IValidatorResult;
+const useValidators = <T>(validators: GenericValidator<T>[], statement: T): IValidatorResult => {
+    for (const validator of validators) {
+        const result = validator(statement);
+        if (!result.isValid)
+            return result;
+    }
+    return getValidatorResult(true, InvalidProgramReason.None);
+};
+
+const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[]): IValidatorResult =>
+    useValidators(
+        [
+            s => areOnlyAllowedPropertiesSet(s, props),
+            s => checkParameterExistance(s, props),
+        ],
+        statement
     );
-    if (!valuesExistanceValidation.isValid)
-        return valuesExistanceValidation;
-    if (!operation.rightValue || !operation.leftValue)
-        return getValidatorResult(false, InvalidProgramReason.MissingParameter);
-    const leftValueValidation = operation.head === ConditionType.LogicBinaryOperation ?
-        isTestStatementValid(operation.leftValue) :
-        isStatementValid(operation.leftValue);
-    if (!leftValueValidation.isValid)
-        return leftValueValidation;
-    const rightValueValidation = operation.head === ConditionType.LogicBinaryOperation ?
-        isTestStatementValid(operation.rightValue) :
-        isStatementValid(operation.leftValue);
-    if (!rightValueValidation.isValid)
-        return rightValueValidation;
-    return getValidatorResult(
-        !!operation.comparator,
-        InvalidProgramReason.MissingParameter
+
+const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult => {
+    if (operation.head === ConditionType.LogicBinaryOperation) {
+        return useValidators(
+            [
+                op => isTestStatementValid(op.leftValue),
+                op => isTestStatementValid(op.rightValue),
+            ],
+            operation,
+        );
+    }
+
+    return useValidators(
+      [
+          op => isStatementValid(op.leftValue),
+          op => isStatementValid(op.rightValue),
+      ],
+      operation,
     );
 };
+
+const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult =>
+    useValidators(
+        [
+            op => hasExactProperties(op, ['leftValue', 'rightValue', 'head', 'comparator']),
+            validateLeftAndRightValues,
+        ],
+        operation,
+    );
 
 const isTestStatementValid = (condition: Condition): IValidatorResult => {
     switch (condition.head) {
@@ -200,17 +194,14 @@ const isTestStatementValid = (condition: Condition): IValidatorResult => {
                 !!condition.position && !!condition.position.x && !!condition.position.y,
                 InvalidProgramReason.MissingParameter
             );
-        case ConditionType.Not: {
-            const valuesExistanceValidation = areOnlyAllowedPropertiesSet(
+        case ConditionType.Not:
+            return useValidators(
+                [
+                    c => hasExactProperties(c, ['head', 'value']),
+                    c => isTestStatementValid(c.value),
+                ],
                 condition,
-                ['head', 'comparator', 'value']
             );
-            if (!valuesExistanceValidation.isValid)
-                return valuesExistanceValidation;
-            if (!condition.value)
-                return getValidatorResult(false, InvalidProgramReason.MissingParameter);
-            return isTestStatementValid(condition.value);
-        }
         case ConditionType.LogicBinaryOperation:
             return isBinaryOperationValid(condition);
         case ConditionType.StringCompare:
@@ -243,15 +234,19 @@ const isIfStatementValid = getStatementValidator(
     ['head', 'body', 'test', 'orelse'],
     statement => {
         if (!!statement.orelse) {
-            const orElseValidation = isElseStatementValid(statement.orelse.statement);
-            if (!orElseValidation.isValid) {
-                return orElseValidation;
-            }
+            return isElseStatementValid(statement.orelse.statement);
         }
         return getValidatorResult(true, InvalidProgramReason.None);
     },
     true
 );
+
+const validateElseBody = (statement: IStatement): IValidatorResult => {
+    if (!!statement.orelse) {
+        return validateBody(statement.orelse.statement);
+    }
+    return getValidatorResult(true, InvalidProgramReason.None);
+};
 
 const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],
