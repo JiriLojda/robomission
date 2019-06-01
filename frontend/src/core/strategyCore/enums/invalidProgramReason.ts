@@ -7,6 +7,7 @@ export enum InvalidProgramReason {
     MissingParameter = 'MissingParameter',
     DefinedAdditionalProp = 'DefinedAdditionalProp',
     UnknownStatementType = 'UnknownStatementType',
+    UndefinedRequiredProp = 'UndefinedRequiredProp',
     None = 'None',
 }
 
@@ -29,6 +30,8 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'You have to set condition in each conditional block.';
         case InvalidProgramReason.MissingParameter:
             return 'One of your statements is missing a parameter.';
+        case InvalidProgramReason.UndefinedRequiredProp:
+            return 'One of the statements has some required props undefined.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:
