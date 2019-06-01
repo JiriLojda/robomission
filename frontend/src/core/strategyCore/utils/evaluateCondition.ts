@@ -35,13 +35,13 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
         case Comparator.NonEqual:
             return leftValue !== rightValue;
         case Comparator.Bigger:
-            return leftValue < rightValue;
-        case Comparator.BiggerOrEqual:
-            return leftValue <= rightValue;
-        case Comparator.Smaller:
             return leftValue > rightValue;
-        case Comparator.SmallerOrEqual:
+        case Comparator.BiggerOrEqual:
             return leftValue >= rightValue;
+        case Comparator.Smaller:
+            return leftValue < rightValue;
+        case Comparator.SmallerOrEqual:
+            return leftValue <= rightValue;
         default:
             throw new Error(`Unknown basic comparator ${comparator}.`);
     }
@@ -136,8 +136,8 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
             throw new Error('Condition has to have defined value');
         }
         return evaluateBasicComparator(
-            condition.value,
             getComparedObject(condition, world, shipPosition),
+            condition.value,
             condition.comparator
         );
     }
