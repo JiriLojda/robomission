@@ -58,6 +58,14 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ]
     },
     {
+        name: 'constants',
+        blocks: [
+            {type: BlockType.ConstantBoolean},
+            {type: BlockType.ConstantNumber},
+            {type: BlockType.ConstantString},
+        ]
+    },
+    {
         name: 'conditions',
         blocks: [
             {type: BlockType.Tile},

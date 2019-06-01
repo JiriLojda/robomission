@@ -13,4 +13,6 @@ export enum StatementType {
     SetVariable = 'setVariable',
     GetStringVariable = 'getStringVariable',
     GetNumericVariable = 'getNumericVariable',
+    ConstantNumber = 'constant_number',
+    ConstantString = 'constant_string',
 }

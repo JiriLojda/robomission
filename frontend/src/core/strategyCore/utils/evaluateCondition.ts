@@ -63,6 +63,19 @@ const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext)
                 return UserProgramError.VariableDoesNotExist;
             return getUserVariable(context, variableName).value;
         }
+        case StatementType.ConstantNumber: {
+            const number = Number(statement.value);
+            if (isNaN(number)) {
+                throw new Error(`Constant number value cannot have value ${statement.value}.`);
+            }
+            return number;
+        }
+        case StatementType.ConstantString: {
+            if (statement.value === undefined) {
+                throw new Error('You have to define constant string value.');
+            }
+            return statement.value;
+        }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);
     }
@@ -162,6 +175,10 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: st
 
     if (condition.head === ConditionType.LogicBinaryOperation) {
         return handleLogicalBinaryOperation(condition, world, shipId, context);
+    }
+
+    if (condition.head === ConditionType.ConstantBoolean) {
+        return Boolean(condition.value);
     }
 
     if (isCompareCondition(condition)) {

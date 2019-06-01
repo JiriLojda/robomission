@@ -18,4 +18,7 @@ export enum BlockType {
     StringCompare = 'stringCompare',
     LogicBinariOperation = 'logic_binary',
     LogicNot = 'logic_not',
+    ConstantBoolean = 'constant_boolean',
+    ConstantNumber = 'constant_number',
+    ConstantString = 'constant_string',
 }

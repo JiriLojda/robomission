@@ -80,6 +80,12 @@ function blockToAst(block) {
       return logicBinaryBlockToAst(block);
     case 'logic_not':
       return logicNotBlockToAst(block);
+    case 'constant_boolean':
+      return constantBooleanToAst(block);
+    case 'constant_number':
+      return constantNumberToAst(block);
+    case 'constant_string':
+      return constantStringToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -201,6 +207,15 @@ function logicNotBlockToAst(block) {
   const value = blockToAst(getValueBlock(block, 'value'));
   return {head: 'logic_not', value};
 }
+
+function constantToAst(block, constantType) {
+  const value = getFieldValue(block, 'value');
+  return {head: `constant_${constantType}`, value};
+}
+
+const constantBooleanToAst = block => constantToAst(block, 'boolean');
+const constantNumberToAst = block => constantToAst(block, 'number');
+const constantStringToAst = block => constantToAst(block, 'string');
 
 //helpers
 function getBody(block, name = 'body') {

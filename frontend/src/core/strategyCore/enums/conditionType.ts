@@ -6,4 +6,5 @@ export enum ConditionType {
     LogicBinaryOperation = 'logic_binary',
     NumericCompare = 'numericCompare',
     StringCompare = 'stringCompare',
+    ConstantBoolean = 'constant_boolean',
 }
