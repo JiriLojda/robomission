@@ -8,6 +8,7 @@ export enum InvalidProgramReason {
     DefinedAdditionalProp = 'DefinedAdditionalProp',
     UnknownStatementType = 'UnknownStatementType',
     UndefinedRequiredProp = 'UndefinedRequiredProp',
+    InvalidValueType = 'InvalidValueType',
     None = 'None',
 }
 
@@ -32,6 +33,8 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'One of your statements is missing a parameter.';
         case InvalidProgramReason.UndefinedRequiredProp:
             return 'One of the statements has some required props undefined.';
+        case InvalidProgramReason.InvalidValueType:
+            return 'One of your value statements has type not matching its usage.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

@@ -4,7 +4,7 @@ import {
     ICompareCondition,
     IRuntimeContext,
     isCompareCondition,
-    IStatement
+    IStatement, ITileCondition
 } from "../models/programTypes";
 import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
@@ -18,6 +18,7 @@ import {Comparator} from "../enums/comparator";
 import {StatementType} from "../enums/statementType";
 import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
 import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserVariableNumber} from "./variableUtils";
+import {invalidProgramError} from "./invalidProgramError";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -110,7 +111,23 @@ const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObje
     return getObjectsOnPositionWithShips(world, internalPosition.x, internalPosition.y);
 };
 
-const handleObjectComparison = (condition: Condition, world: World, shipId: string): boolean => {
+const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext): Position | UserProgramError => {
+    const x = getObjectFromStatement(condition.position.x, context);
+    if (isUserProgramError(x))
+        return x;
+    if (typeof x === 'string')
+        throw invalidProgramError('position can only have number arguments');
+
+    const y = getObjectFromStatement(condition.position.y, context);
+    if (isUserProgramError(y))
+        return y;
+    if (typeof y === 'string')
+        throw invalidProgramError('position can only have number arguments');
+
+    return new Position({x, y});
+};
+
+const handleObjectComparison = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
     const shipPosition = getShipPosition(world, shipId);
 
     if (!shipPosition) {
@@ -122,12 +139,18 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     }
 
     if (condition.comparator === Comparator.Contains) {
-        const objects = getWorldObjectsOnTile(new Position(condition.position), world);
+        const position = getPositionArgument(condition, context);
+        if (isUserProgramError(position))
+            return position;
+        const objects = getWorldObjectsOnTile(position, world);
         return unifyShips(objects).contains(condition.value);
     }
 
     if (condition.comparator === Comparator.NotContains) {
-        const objects = getWorldObjectsOnTile(new Position(condition.position), world);
+        const position = getPositionArgument(condition, context);
+        if (isUserProgramError(position))
+            return position;
+        const objects = getWorldObjectsOnTile(position, world);
         return !unifyShips(objects).contains(condition.value);
     }
 
@@ -185,5 +208,5 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: st
         return handleComparatorConditions(condition, context);
     }
 
-    return handleObjectComparison(condition, world, shipId);
+    return handleObjectComparison(condition, world, shipId, context);
 };

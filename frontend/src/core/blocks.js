@@ -109,18 +109,14 @@ const blocks = [
     message0: `${translate('blockly.position')} x = %1 y = %2`,
     args0: [
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'x',
-        value: 1,
-        min: 1,
-        max: 5
+        check: 'Number',
       },
       {
-        type: 'field_number',
+        type: 'input_value',
         name: 'y',
-        value: 1,
-        min: 1,
-        max: 5
+        check: 'Number',
       },
     ],
     output: 'Position',
