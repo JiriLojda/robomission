@@ -162,8 +162,8 @@ function positionBlockToAst(block) {
 }
 
 function positionValueBlockToAst(block) {
-  const x = parseInt(getFieldValue(block, 'x'));
-  const y = parseInt(getFieldValue(block, 'y'));
+  const x = blockToAst(getValueBlock(block, 'x'));
+  const y = blockToAst(getValueBlock(block, 'y'));
   return { head: 'position_value', x, y };
 }
 

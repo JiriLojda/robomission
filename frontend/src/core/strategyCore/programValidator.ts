@@ -2,6 +2,7 @@ import {StatementType} from "./enums/statementType";
 import {InvalidProgramReason} from "./enums/invalidProgramReason";
 import {Condition, IBinaryLogicCondition, ICompareCondition, IRoboAst, IStatement} from "./models/programTypes";
 import {ConditionType} from "./enums/conditionType";
+import {ValueStatementType} from "./enums/valueStatementType";
 
 export interface IValidatorResult {
     isValid: boolean;
@@ -63,19 +64,59 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             );
         case StatementType.SetVariable:
             return isSetVariableStatementValid(statement);
-        case StatementType.GetNumericVariable:
-            return isGetNumericVariableStatementValid(statement);
-        case StatementType.GetStringVariable:
-            return isGetStringVariableStatementValid(statement);
-        case StatementType.ConstantNumber:
-            return isConstantStatementValid(statement);
-        case StatementType.ConstantString:
-            return isConstantStatementValid(statement);
         case StatementType.Else:
             throw new Error('Else type should be handled inside If case.');
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }
+};
+
+const isValueStatementValid = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
+    if (!statement.head) {
+        return getValidatorResult(false, InvalidProgramReason.InvalidStatement);
+    }
+
+    switch (statement.head) {
+        case StatementType.ConstantString:
+        case StatementType.ConstantNumber:
+            return useValidators(
+                [
+                    isConstantStatementValid,
+                    s => validateCorrectValueType(s, type),
+                ],
+                statement,
+            );
+        case StatementType.GetStringVariable:
+            return useValidators(
+                [
+                    isGetStringVariableStatementValid,
+                    s => validateCorrectValueType(s, type),
+                ],
+                statement,
+            );
+        case StatementType.GetNumericVariable:
+            return useValidators(
+                [
+                    isGetNumericVariableStatementValid,
+                    s => validateCorrectValueType(s, type),
+                ],
+                statement,
+            );
+        default:
+            return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
+    }
+};
+
+const validateCorrectValueType = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
+    switch (statement.head) {
+        case StatementType.GetStringVariable:
+        case StatementType.ConstantString:
+            return getValidatorResult(type === ValueStatementType.String, InvalidProgramReason.InvalidValueType);
+        case StatementType.GetNumericVariable:
+        case StatementType.ConstantNumber:
+            return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
+   }
+   throw new Error(`Tried to validate valueType of non-value type statement ${statement.head}.`);
 };
 
 const validateBody = (statement: IStatement): IValidatorResult => {
@@ -92,7 +133,7 @@ const validateBody = (statement: IStatement): IValidatorResult => {
     return getValidatorResult(true, InvalidProgramReason.None);
 };
 
-const checkParameterExistance = <T, K extends keyof T>(statement: T, parameters: K[], customReason: InvalidProgramReason = InvalidProgramReason.MissingParameter): IValidatorResult => {
+const checkParameterExistence = <T, K extends keyof T>(statement: T, parameters: K[], customReason: InvalidProgramReason = InvalidProgramReason.MissingParameter): IValidatorResult => {
     for (const parameter of parameters) {
         if (!statement.hasOwnProperty(parameter) || !statement[parameter]) {
             return getValidatorResult(false, customReason);
@@ -102,7 +143,7 @@ const checkParameterExistance = <T, K extends keyof T>(statement: T, parameters:
 };
 
 const hasTestProperty = (statement: IStatement): IValidatorResult =>
-    checkParameterExistance(statement, ['test'], InvalidProgramReason.MissingTestCondition);
+    checkParameterExistence(statement, ['test'], InvalidProgramReason.MissingTestCondition);
 
 const isValidConditionStatement: StatementValidator = statement => useValidators(
     [hasTestProperty, s => isTestStatementValid(s.test!)],
@@ -153,12 +194,12 @@ const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[]): IVa
     useValidators(
         [
             s => areOnlyAllowedPropertiesSet(s, props),
-            s => checkParameterExistance(s, props),
+            s => checkParameterExistence(s, props),
         ],
         statement
     );
 
-const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult => {
+const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareCondition, type: ValueStatementType): IValidatorResult => {
     if (operation.head === ConditionType.LogicBinaryOperation) {
         return useValidators(
             [
@@ -171,18 +212,18 @@ const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareC
 
     return useValidators(
       [
-          op => isStatementValid(op.leftValue),
-          op => isStatementValid(op.rightValue),
+          op => isValueStatementValid(op.leftValue, type),
+          op => isValueStatementValid(op.rightValue, type),
       ],
       operation,
     );
 };
 
-const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition): IValidatorResult =>
+const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition, type: ValueStatementType): IValidatorResult =>
     useValidators(
         [
             op => hasExactProperties(op, ['leftValue', 'rightValue', 'head', 'comparator']),
-            validateLeftAndRightValues,
+            op => validateLeftAndRightValues(op, type),
         ],
         operation,
     );
@@ -207,11 +248,11 @@ const isTestStatementValid = (condition: Condition): IValidatorResult => {
                 condition,
             );
         case ConditionType.LogicBinaryOperation:
-            return isBinaryOperationValid(condition);
+            return isBinaryOperationValid(condition, ValueStatementType.Boolean);
         case ConditionType.StringCompare:
-            return isBinaryOperationValid(condition);
+            return isBinaryOperationValid(condition, ValueStatementType.String);
         case ConditionType.NumericCompare:
-            return isBinaryOperationValid(condition);
+            return isBinaryOperationValid(condition, ValueStatementType.Number);
         case ConditionType.ConstantBoolean:
             return hasExactProperties(condition, ['head', 'value']);
         default:
