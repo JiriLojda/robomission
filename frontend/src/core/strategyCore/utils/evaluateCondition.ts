@@ -4,7 +4,8 @@ import {
     ICompareCondition,
     IRuntimeContext,
     isCompareCondition,
-    IStatement, ITileCondition
+    IStatement,
+    ITileCondition
 } from "../models/programTypes";
 import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
@@ -111,7 +112,7 @@ const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObje
     return getObjectsOnPositionWithShips(world, internalPosition.x, internalPosition.y);
 };
 
-const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext): Position | UserProgramError => {
+const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext, world: World): Position | UserProgramError => {
     const x = getObjectFromStatement(condition.position.x, context);
     if (isUserProgramError(x))
         return x;
@@ -123,6 +124,9 @@ const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext
         return y;
     if (typeof y === 'string')
         throw invalidProgramError('position can only have number arguments');
+
+    if (x < 1 || x > world.size.x || y < 1 || y > world.size.y)
+        return UserProgramError.ReferencedPositionIsNotOnMap;
 
     return new Position({x, y});
 };
@@ -139,7 +143,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     }
 
     if (condition.comparator === Comparator.Contains) {
-        const position = getPositionArgument(condition, context);
+        const position = getPositionArgument(condition, context, world);
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
@@ -147,7 +151,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     }
 
     if (condition.comparator === Comparator.NotContains) {
-        const position = getPositionArgument(condition, context);
+        const position = getPositionArgument(condition, context, world);
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
