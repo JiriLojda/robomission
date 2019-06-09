@@ -375,6 +375,27 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'setVariableNumeric',
+    message0: `set %1 to %2`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'value',
+        check: 'Number',
+      },
+    ],
+    previousStatement: null,
+    nextStatement: null,
+    colour: colors.variable,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'getStringVariable',
     message0: `get %1 as string`,
     args0: [

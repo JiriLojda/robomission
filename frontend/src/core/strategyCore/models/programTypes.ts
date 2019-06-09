@@ -106,7 +106,7 @@ export interface IStatement {
     test?: Condition;
     count?: number;
     name?: string;
-    value?: string;
+    value?: string | IStatement;
 }
 
 export interface INumberBinaryStatement extends IStatement {
@@ -130,6 +130,16 @@ export interface ISetVariableStatement extends IStatement {
     count: undefined;
     name: string;
     value: string;
+}
+
+export interface ISetVariableNumericStatement extends IStatement {
+    head: StatementType.SetVariableNumeric;
+    body: undefined;
+    orelse: undefined;
+    test: undefined;
+    count: undefined;
+    name: string;
+    value: IStatement;
 }
 
 export interface IRoboAst extends IStatement {

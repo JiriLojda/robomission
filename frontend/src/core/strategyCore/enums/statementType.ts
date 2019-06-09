@@ -11,6 +11,7 @@ export enum StatementType {
     TurnRight = 'turn-right',
     TurnLeft = 'turn-left',
     SetVariable = 'setVariable',
+    SetVariableNumeric = 'setVariableNumeric',
     GetStringVariable = 'getStringVariable',
     GetNumericVariable = 'getNumericVariable',
     ConstantNumber = 'constant_number',
