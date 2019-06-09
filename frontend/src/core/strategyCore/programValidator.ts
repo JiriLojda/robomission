@@ -1,6 +1,13 @@
 import {StatementType} from "./enums/statementType";
 import {InvalidProgramReason} from "./enums/invalidProgramReason";
-import {Condition, IBinaryLogicCondition, ICompareCondition, IRoboAst, IStatement} from "./models/programTypes";
+import {
+    Condition,
+    IBinaryLogicCondition,
+    ICompareCondition,
+    INumberBinaryStatement,
+    IRoboAst,
+    IStatement
+} from "./models/programTypes";
 import {ConditionType} from "./enums/conditionType";
 import {ValueStatementType} from "./enums/valueStatementType";
 
@@ -115,6 +122,16 @@ const validateCorrectValueType = (statement: IStatement, type: ValueStatementTyp
         case StatementType.GetNumericVariable:
         case StatementType.ConstantNumber:
             return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
+        case StatementType.NumberBinary:
+            return useValidators(
+                [
+                    () => getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType),
+                    s => hasExactProperties(s as INumberBinaryStatement, ["leftValue", "rightValue", "operation", "head"]),
+                    s => validateCorrectValueType((s as INumberBinaryStatement).leftValue, ValueStatementType.Number),
+                    s => validateCorrectValueType((s as INumberBinaryStatement).rightValue, ValueStatementType.Number),
+                ],
+                statement
+            );
    }
    throw new Error(`Tried to validate valueType of non-value type statement ${statement.head}.`);
 };

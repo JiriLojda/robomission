@@ -125,6 +125,38 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'number_binary',
+    message0: `%1 %2 %3`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'leftValue',
+        check: 'Number',
+      },
+      {
+        type: 'field_dropdown',
+        name: 'operator',
+        options: [
+          ['+', '+'],
+          ['-', '-'],
+          ['*', '*'],
+          ['/', '/'],
+          ['^', '^'],
+          ['sqrt', 'sqrt'],
+        ],
+      },
+      {
+        type: 'input_value',
+        name: 'rightValue',
+        check: 'Number',
+      },
+    ],
+    output: 'Position',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'tile',
     message0: `${translate('blockly.tile')} %1 %2 %3`,
     args0: [

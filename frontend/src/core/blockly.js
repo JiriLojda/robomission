@@ -86,6 +86,8 @@ function blockToAst(block) {
       return constantNumberToAst(block);
     case 'constant_string':
       return constantStringToAst(block);
+    case 'number_binary':
+      return numberBinaryToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -216,6 +218,14 @@ function constantToAst(block, constantType) {
 const constantBooleanToAst = block => constantToAst(block, 'boolean');
 const constantNumberToAst = block => constantToAst(block, 'number');
 const constantStringToAst = block => constantToAst(block, 'string');
+
+function numberBinaryToAst(block) {
+  const leftValue = blockToAst(getValueBlock(block, 'leftValue'));
+  const rightValue = blockToAst(getValueBlock(block), 'rightValue');
+  const operation = getFieldValue(block, 'operation');
+
+  return {head: 'number_binary', leftValue, rightValue, operation};
+}
 
 //helpers
 function getBody(block, name = 'body') {

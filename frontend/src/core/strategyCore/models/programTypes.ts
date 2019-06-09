@@ -4,6 +4,7 @@ import {Comparator} from "../enums/comparator";
 import {TileColor} from "../enums/tileColor";
 import {StatementType} from "../enums/statementType";
 import {WorldObject} from "../enums/worldObject";
+import {NumberOperation} from "../enums/numberOperation";
 
 export interface IPositionItem {
     index: number;
@@ -106,6 +107,19 @@ export interface IStatement {
     count?: number;
     name?: string;
     value?: string;
+}
+
+export interface INumberBinaryStatement extends IStatement {
+    head: StatementType.NumberBinary;
+    body: undefined;
+    orelse: undefined;
+    test: undefined;
+    count: undefined;
+    name: undefined;
+    value: undefined;
+    leftValue: IStatement;
+    rightValue: IStatement;
+    operation: NumberOperation;
 }
 
 export interface ISetVariableStatement extends IStatement {
