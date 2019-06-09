@@ -125,6 +125,26 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'position_value_relative',
+    message0: `relative ${translate('blockly.position')} to ship x = %1 y = %2`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'x',
+        check: 'Number',
+      },
+      {
+        type: 'input_value',
+        name: 'y',
+        check: 'Number',
+      },
+    ],
+    output: 'Position',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'number_binary',
     message0: `%1 %2 %3`,
     args0: [
