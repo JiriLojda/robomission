@@ -5,6 +5,7 @@ export enum BlockType {
     Shoot = 'shoot',
     Color = 'color',
     PositionValue = 'position_value',
+    PositionValueRelative = 'position_value_relative',
     Tile = 'tile',
     Position = 'position',
     Repeat = 'repeat',
@@ -12,6 +13,7 @@ export enum BlockType {
     If = 'if',
     IfElse = 'if-else',
     SetVariable = 'setVariable',
+    SetVariableNumeric = 'setVariableNumeric',
     GetStringVariable = 'getStringVariable',
     GetNumericNumber = 'getNumericVariable',
     NumericCompare = 'numericCompare',
@@ -21,4 +23,5 @@ export enum BlockType {
     ConstantBoolean = 'constant_boolean',
     ConstantNumber = 'constant_number',
     ConstantString = 'constant_string',
+    NumberBinary = 'number_binary',
 }

@@ -40,6 +40,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         name: 'variables',
         blocks: [
             {type: BlockType.SetVariable},
+            {type: BlockType.SetVariableNumeric},
             {type: BlockType.GetStringVariable},
             {type: BlockType.GetNumericNumber},
         ],
@@ -55,6 +56,8 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         name: 'values',
         blocks: [
             {type: BlockType.PositionValue},
+            {type: BlockType.PositionValueRelative},
+            {type: BlockType.NumberBinary},
         ]
     },
     {
