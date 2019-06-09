@@ -1,7 +1,7 @@
 import {
     Condition,
     IBinaryLogicCondition,
-    ICompareCondition,
+    ICompareCondition, INumberBinaryStatement,
     IRuntimeContext,
     isCompareCondition,
     IStatement,
@@ -20,6 +20,7 @@ import {StatementType} from "../enums/statementType";
 import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
 import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserVariableNumber} from "./variableUtils";
 import {invalidProgramError} from "./invalidProgramError";
+import {NumberOperation} from "../enums/numberOperation";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -29,6 +30,23 @@ const basicComparators = List<Comparator>([
     Comparator.Smaller,
     Comparator.SmallerOrEqual,
 ]);
+
+const evaluateNumberBinaryOperation = (leftValue: number, rightValue: number, operation: NumberOperation): number => {
+    switch (operation) {
+        case NumberOperation.Plus:
+            return leftValue + rightValue;
+        case NumberOperation.Minus:
+            return leftValue - rightValue;
+        case NumberOperation.Multiply:
+            return leftValue * rightValue;
+        case NumberOperation.Divide:
+            return leftValue / rightValue;
+        case NumberOperation.Power:
+            return leftValue ** rightValue;
+        default:
+            throw invalidProgramError(`unknown number operation ${operation}`);
+    }
+};
 
 const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Comparator): boolean => {
     switch (comparator) {
@@ -77,6 +95,16 @@ const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext)
                 throw new Error('You have to define constant string value.');
             }
             return statement.value;
+        }
+        case StatementType.NumberBinary: {
+            const statementTyped = statement as INumberBinaryStatement;
+            const leftValue = getObjectFromStatement(statementTyped.leftValue, context);
+            const rightValue = getObjectFromStatement(statementTyped.rightValue, context);
+            if (typeof leftValue === 'string' || typeof rightValue === 'string') {
+                throw invalidProgramError('number operation needs number arguments');
+            }
+
+            return evaluateNumberBinaryOperation(leftValue, rightValue, statementTyped.operation);
         }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);

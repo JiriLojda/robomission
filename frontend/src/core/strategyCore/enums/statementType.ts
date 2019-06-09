@@ -15,4 +15,5 @@ export enum StatementType {
     GetNumericVariable = 'getNumericVariable',
     ConstantNumber = 'constant_number',
     ConstantString = 'constant_string',
+    NumberBinary = 'number_binary',
 }
