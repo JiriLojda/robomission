@@ -65,7 +65,9 @@ function blockToAst(block) {
     case 'tile':
       return tileBlockToAst(block);
     case 'position_value':
-      return positionValueBlockToAst(block);
+      return positionValueBlockToAst(block, false);
+    case 'position_value_relative':
+      return positionValueBlockToAst(block, true);
     case 'setVariable':
       return setVariableBlockToAst(block);
     case 'getStringVariable':
@@ -163,10 +165,10 @@ function positionBlockToAst(block) {
   return { head: 'position', comparator, value };
 }
 
-function positionValueBlockToAst(block) {
+function positionValueBlockToAst(block, isRelative) {
   const x = blockToAst(getValueBlock(block, 'x'));
   const y = blockToAst(getValueBlock(block, 'y'));
-  return { head: 'position_value', x, y };
+  return { head: `position_value${isRelative ? '_relative' : ''}`, x, y };
 }
 
 function tileBlockToAst(block) {

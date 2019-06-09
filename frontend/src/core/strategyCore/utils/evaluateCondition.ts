@@ -14,13 +14,14 @@ import {List} from "immutable";
 import {unifyShips, WorldObject} from "../enums/worldObject";
 import {ConditionType} from "../enums/conditionType";
 import {convertUserPositionToInternal} from "./positionUtils";
-import {getShipPosition} from "./worldModelUtils";
+import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
 import {StatementType} from "../enums/statementType";
 import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
 import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserVariableNumber} from "./variableUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
+import {Ship} from "../models/ship";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -140,7 +141,7 @@ const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObje
     return getObjectsOnPositionWithShips(world, internalPosition.x, internalPosition.y);
 };
 
-const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext, world: World): Position | UserProgramError => {
+const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext, world: World, ship: Ship): Position | UserProgramError => {
     const x = getObjectFromStatement(condition.position.x, context);
     if (isUserProgramError(x))
         return x;
@@ -156,13 +157,18 @@ const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext
     if (x < 1 || x > world.size.x || y < 1 || y > world.size.y)
         return UserProgramError.ReferencedPositionIsNotOnMap;
 
+    if (condition.position.head === 'position_value_relative') {
+        return new Position({x: ship.position.x + x, y: ship.position.y + y});
+    }
+
     return new Position({x, y});
 };
 
 const handleObjectComparison = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
+    const ship = getShip(world, shipId);
     const shipPosition = getShipPosition(world, shipId);
 
-    if (!shipPosition) {
+    if (!shipPosition || !ship) {
         throw new Error('Cannot evaluate a condition when ship is not present.');
     }
 
@@ -171,7 +177,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     }
 
     if (condition.comparator === Comparator.Contains) {
-        const position = getPositionArgument(condition, context, world);
+        const position = getPositionArgument(condition, context, world, ship);
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
@@ -179,7 +185,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     }
 
     if (condition.comparator === Comparator.NotContains) {
-        const position = getPositionArgument(condition, context, world);
+        const position = getPositionArgument(condition, context, world, ship);
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);

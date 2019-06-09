@@ -30,7 +30,7 @@ export interface ICondition {
 }
 
 export interface IPositionValue {
-    head: 'position_value';
+    head: 'position_value' | 'position_value_relative';
     x: IStatement;
     y: IStatement;
 }
