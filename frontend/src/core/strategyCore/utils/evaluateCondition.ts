@@ -68,7 +68,7 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
     }
 };
 
-const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError => {
+export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError => {
     switch (statement.head) {
         case StatementType.GetNumericVariable: {
             const variableName = statement.name || '';
@@ -92,7 +92,7 @@ const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext)
             return number;
         }
         case StatementType.ConstantString: {
-            if (statement.value === undefined) {
+            if (statement.value !== 'string') {
                 throw new Error('You have to define constant string value.');
             }
             return statement.value;

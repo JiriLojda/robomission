@@ -4,16 +4,10 @@ import {canMove, getShip, makeShipShoot, moveShip, turnShip} from "./utils/world
 import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
-import {
-    IPositionItem,
-    IRoboAst,
-    IRuntimeContext,
-    ISetVariableStatement,
-    IStatement
-} from "./models/programTypes";
+import {IPositionItem, IRoboAst, IRuntimeContext, ISetVariableStatement, IStatement} from "./models/programTypes";
 import {List, Set} from "immutable";
 import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
-import {evaluateCondition} from "./utils/evaluateCondition";
+import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
 
 const defaultMinorActionsCount = 100;
 
@@ -202,10 +196,20 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
         case StatementType.TurnRight:
             return updateShipInWorld(world, ship, turnShip(ship, 'right'));
         case StatementType.SetVariable:
-            if (!statement.name || !statement.value) {
+            if (!statement.name || !statement.value || typeof statement.value !== 'string') {
                 throw new Error('While setting variable statement has to have name and value.');
             }
             setUserVariable(context, statement.name, statement.value);
+            return world;
+        case StatementType.SetVariableNumeric:
+            if (!statement.name || !statement.value || typeof statement.value === 'string') {
+                throw new Error('While setting variable statement has to have name and value.');
+            }
+            const value = getObjectFromStatement(statement.value, context);
+            if (isUserProgramError(value))
+                return value;
+            
+            setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
             return world;
         default:
             return world;

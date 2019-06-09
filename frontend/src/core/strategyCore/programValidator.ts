@@ -5,7 +5,7 @@ import {
     IBinaryLogicCondition,
     ICompareCondition,
     INumberBinaryStatement,
-    IRoboAst,
+    IRoboAst, ISetVariableNumericStatement,
     IStatement
 } from "./models/programTypes";
 import {ConditionType} from "./enums/conditionType";
@@ -292,6 +292,13 @@ const isTurnLeftStatementValid = getStatementValidator(['head']);
 const isSetVariableStatementValid = getStatementValidator(['head', 'name', 'value']);
 const isGetStringVariableStatementValid = getStatementValidator(['head', 'name']);
 const isGetNumericVariableStatementValid = getStatementValidator(['head', 'name']);
+const isSetVariableNumericStatementValid = (statement: IStatement) => useValidators(
+    [
+        getStatementValidator(['head', 'name', 'value']),
+        s => isValueStatementValid((s as ISetVariableNumericStatement).value, ValueStatementType.Number),
+    ],
+    statement,
+);
 
 const isConstantStatementValid: StatementValidator = statement => hasExactProperties(statement, ['head', 'value']);
 

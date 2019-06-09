@@ -70,6 +70,8 @@ function blockToAst(block) {
       return positionValueBlockToAst(block, true);
     case 'setVariable':
       return setVariableBlockToAst(block);
+    case 'setVariableNumeric':
+      return setVariableNumericBlockToAst(block);
     case 'getStringVariable':
       return getStringVariableBlockToAst(block);
     case 'getNumericVariable':
@@ -182,6 +184,12 @@ function setVariableBlockToAst(block) {
   const name = getFieldValue(block, 'name');
   const value = getFieldValue(block, 'value');
   return { head: 'setVariable', name, value };
+}
+
+function setVariableNumericBlockToAst(block) {
+  const name = getFieldValue(block, 'name');
+  const value = blockToAst(getValueBlock(block, 'value'));
+  return { head: 'setVariableNumeric', name, value };
 }
 
 function getStringVariableBlockToAst(block) {
