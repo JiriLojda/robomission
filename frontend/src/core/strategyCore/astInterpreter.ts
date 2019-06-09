@@ -208,7 +208,7 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
             const value = getObjectFromStatement(statement.value, context);
             if (isUserProgramError(value))
                 return value;
-            
+
             setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
             return world;
         default:
