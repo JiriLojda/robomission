@@ -15,7 +15,7 @@ import {
 } from "../../core/strategyCore/enums/userProgramError";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
-import {isRoboAstValid} from "../../core/strategyCore/programValidator";
+import {isRoboAstValid} from "../../core/strategyCore/validator/programValidator";
 import {
     getInvalidProgramReasonDisplayName,
     InvalidProgramReason

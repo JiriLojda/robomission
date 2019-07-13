@@ -2,7 +2,7 @@ import {Condition, IBinaryLogicCondition, ICompareCondition} from "../models/pro
 import {ConditionType} from "../enums/conditionType";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {ValueStatementType} from "../enums/valueStatementType";
-import {IValidatorResult} from "../programValidator";
+import {IValidatorResult} from "./programValidator";
 import {getValidatorResult, hasExactProperties, useValidators} from "./programValidationUtils";
 import {isValueStatementValid} from "./isValueStatementValid";
 

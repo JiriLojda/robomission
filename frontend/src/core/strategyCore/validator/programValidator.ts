@@ -1,7 +1,7 @@
-import {StatementType} from "./enums/statementType";
-import {InvalidProgramReason} from "./enums/invalidProgramReason";
-import {IRoboAst, IStatement} from "./models/programTypes";
-import {getValidatorResult, useValidators} from "./validator/programValidationUtils";
+import {StatementType} from "../enums/statementType";
+import {InvalidProgramReason} from "../enums/invalidProgramReason";
+import {IRoboAst, IStatement} from "../models/programTypes";
+import {getValidatorResult, useValidators} from "./programValidationUtils";
 import {
     isFlyStatementValid,
     isIfStatementValid,
@@ -15,7 +15,7 @@ import {
     isTurnLeftStatementValid,
     isTurnRightStatementValid,
     isWhileStatementValid
-} from "./validator/statementValidators";
+} from "./statementValidators";
 
 export interface IValidatorResult {
     isValid: boolean;
