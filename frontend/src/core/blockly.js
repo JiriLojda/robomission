@@ -231,10 +231,10 @@ const constantStringToAst = block => constantToAst(block, 'string');
 
 function numberBinaryToAst(block) {
   const leftValue = blockToAst(getValueBlock(block, 'leftValue'));
-  const rightValue = blockToAst(getValueBlock(block), 'rightValue');
-  const operation = getFieldValue(block, 'operation');
+  const rightValue = blockToAst(getValueBlock(block, 'rightValue'));
+  const operator = getFieldValue(block, 'operator');
 
-  return {head: 'number_binary', leftValue, rightValue, operation};
+  return {head: 'number_binary', leftValue, rightValue, operator};
 }
 
 //helpers

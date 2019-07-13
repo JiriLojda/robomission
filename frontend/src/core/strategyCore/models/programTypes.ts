@@ -119,7 +119,7 @@ export interface INumberBinaryStatement extends IStatement {
     value: undefined;
     leftValue: IStatement;
     rightValue: IStatement;
-    operation: NumberOperation;
+    operator: NumberOperation;
 }
 
 export interface ISetVariableStatement extends IStatement {

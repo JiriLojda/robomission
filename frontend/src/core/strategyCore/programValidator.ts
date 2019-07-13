@@ -5,7 +5,8 @@ import {
     IBinaryLogicCondition,
     ICompareCondition,
     INumberBinaryStatement,
-    IRoboAst, ISetVariableNumericStatement,
+    IRoboAst,
+    ISetVariableNumericStatement,
     IStatement
 } from "./models/programTypes";
 import {ConditionType} from "./enums/conditionType";
@@ -71,6 +72,8 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             );
         case StatementType.SetVariable:
             return isSetVariableStatementValid(statement);
+        case StatementType.SetVariableNumeric:
+            return isSetVariableNumericStatementValid(statement);
         case StatementType.Else:
             throw new Error('Else type should be handled inside If case.');
         default:
@@ -109,6 +112,14 @@ const isValueStatementValid = (statement: IStatement, type: ValueStatementType):
                 ],
                 statement,
             );
+        case StatementType.NumberBinary:
+            return useValidators(
+                [
+                    isNumberBinaryValid,
+                    s => validateCorrectValueType(s, type),
+                ],
+                statement,
+            );
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }
@@ -121,17 +132,8 @@ const validateCorrectValueType = (statement: IStatement, type: ValueStatementTyp
             return getValidatorResult(type === ValueStatementType.String, InvalidProgramReason.InvalidValueType);
         case StatementType.GetNumericVariable:
         case StatementType.ConstantNumber:
-            return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
         case StatementType.NumberBinary:
-            return useValidators(
-                [
-                    () => getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType),
-                    s => hasExactProperties(s as INumberBinaryStatement, ["leftValue", "rightValue", "operation", "head"]),
-                    s => validateCorrectValueType((s as INumberBinaryStatement).leftValue, ValueStatementType.Number),
-                    s => validateCorrectValueType((s as INumberBinaryStatement).rightValue, ValueStatementType.Number),
-                ],
-                statement
-            );
+            return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
    }
    throw new Error(`Tried to validate valueType of non-value type statement ${statement.head}.`);
 };
@@ -236,7 +238,7 @@ const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareC
     );
 };
 
-const isBinaryOperationValid = (operation: IBinaryLogicCondition | ICompareCondition, type: ValueStatementType): IValidatorResult =>
+const isBinaryComparatorValid = (operation: IBinaryLogicCondition | ICompareCondition, type: ValueStatementType): IValidatorResult =>
     useValidators(
         [
             op => hasExactProperties(op, ['leftValue', 'rightValue', 'head', 'comparator']),
@@ -265,11 +267,11 @@ const isTestStatementValid = (condition: Condition): IValidatorResult => {
                 condition,
             );
         case ConditionType.LogicBinaryOperation:
-            return isBinaryOperationValid(condition, ValueStatementType.Boolean);
+            return isBinaryComparatorValid(condition, ValueStatementType.Boolean);
         case ConditionType.StringCompare:
-            return isBinaryOperationValid(condition, ValueStatementType.String);
+            return isBinaryComparatorValid(condition, ValueStatementType.String);
         case ConditionType.NumericCompare:
-            return isBinaryOperationValid(condition, ValueStatementType.Number);
+            return isBinaryComparatorValid(condition, ValueStatementType.Number);
         case ConditionType.ConstantBoolean:
             return hasExactProperties(condition, ['head', 'value']);
         default:
@@ -294,7 +296,7 @@ const isGetStringVariableStatementValid = getStatementValidator(['head', 'name']
 const isGetNumericVariableStatementValid = getStatementValidator(['head', 'name']);
 const isSetVariableNumericStatementValid = (statement: IStatement) => useValidators(
     [
-        getStatementValidator(['head', 'name', 'value']),
+        s => hasExactProperties(s, ['head', 'name', 'value']),
         s => isValueStatementValid((s as ISetVariableNumericStatement).value, ValueStatementType.Number),
     ],
     statement,
@@ -327,3 +329,12 @@ const isWhileStatementValid = getStatementValidator(
     true);
 
 const isRepeatStatementValid = getStatementValidator(['head', 'body', 'count']);
+
+const isNumberBinaryValid = (statement: IStatement) => useValidators(
+    [
+        s => hasExactProperties(s as INumberBinaryStatement, ["leftValue", "rightValue", "operator", "head"]),
+        s => validateCorrectValueType((s as INumberBinaryStatement).leftValue, ValueStatementType.Number),
+        s => validateCorrectValueType((s as INumberBinaryStatement).rightValue, ValueStatementType.Number),
+    ],
+    statement
+);
