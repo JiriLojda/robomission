@@ -5,7 +5,7 @@ import {Position} from "../models/position";
 import {destructableObjects, WorldObject} from "../enums/worldObject";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
-import {getNextDirection, getPositionInDirection} from "./directionUtils";
+import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
 
 export const getShip = (world: World, shipId: string): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
@@ -29,11 +29,11 @@ export const moveShip = (world: World, ship: Ship, direction: MovingDirection): 
 
     if (direction === MovingDirection.Right) {
         const nextDirection = getNextDirection(ship.direction, Direction.Right);
-        newPosition = getPositionInDirection(newPosition, nextDirection);
+        newPosition = getNthPositionInDirection(newPosition, nextDirection);
     }
     if (direction === MovingDirection.Left) {
         const nextDirection = getNextDirection(ship.direction, Direction.Left);
-        newPosition = getPositionInDirection(newPosition, nextDirection);
+        newPosition = getNthPositionInDirection(newPosition, nextDirection);
     }
 
     return ship.set("position", newPosition);
@@ -50,12 +50,12 @@ export const canMove = (world: World, ship: Ship, direction: MovingDirection): b
 
     if (direction === MovingDirection.Right) {
         const nextDirection = getNextDirection(ship.direction, Direction.Right);
-        const finalPosition = getPositionInDirection(newPosition, nextDirection);
+        const finalPosition = getNthPositionInDirection(newPosition, nextDirection);
         return isEnterablePosition(finalPosition, world);
     }
     if (direction === MovingDirection.Left) {
         const nextDirection = getNextDirection(ship.direction, Direction.Left);
-        const finalPosition = getPositionInDirection(newPosition, nextDirection);
+        const finalPosition = getNthPositionInDirection(newPosition, nextDirection);
         return isEnterablePosition(finalPosition, world);
     }
 

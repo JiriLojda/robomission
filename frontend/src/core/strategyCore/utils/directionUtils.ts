@@ -36,16 +36,16 @@ export const getNextDirection = (direction: Direction, turnDirection: Direction)
     }
 };
 
-export const getPositionInDirection = (position: Position, direction: Direction): Position => {
+export const getNthPositionInDirection = (position: Position, direction: Direction, n: number = 1): Position => {
     switch (direction) {
         case Direction.Down:
-            return position.set('y', position.y + 1);
+            return position.set('y', position.y + n);
         case Direction.Left:
-            return position.set('x', position.x - 1);
+            return position.set('x', position.x - n);
         case Direction.Right:
-            return position.set('x', position.x + 1);
+            return position.set('x', position.x + n);
         case Direction.Up:
-            return position.set('y', position.y - 1);
+            return position.set('y', position.y - n);
         default:
             throw new Error(`Unknown direction ${direction}.`);
     }
