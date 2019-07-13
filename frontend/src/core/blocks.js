@@ -171,7 +171,7 @@ const blocks = [
         check: 'Number',
       },
     ],
-    output: 'Position',
+    output: 'Number',
     colour: colors.position,
     tooltip: '',
     helpUrl: '',

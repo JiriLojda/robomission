@@ -13,7 +13,6 @@ import {TileColor} from "../enums/tileColor";
 import {List} from "immutable";
 import {unifyShips, WorldObject} from "../enums/worldObject";
 import {ConditionType} from "../enums/conditionType";
-import {convertUserPositionToInternal} from "./positionUtils";
 import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
 import {StatementType} from "../enums/statementType";
@@ -105,7 +104,7 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
                 throw invalidProgramError('number operation needs number arguments');
             }
 
-            return evaluateNumberBinaryOperation(leftValue, rightValue, statementTyped.operation);
+            return evaluateNumberBinaryOperation(leftValue, rightValue, statementTyped.operator);
         }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);
@@ -136,30 +135,31 @@ const getComparedObject = (condition: Condition, world: World, shipPosition: Pos
     }
 };
 
-const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObject> => {
-    const internalPosition = convertUserPositionToInternal(position.x, position.y, world);
-    return getObjectsOnPositionWithShips(world, internalPosition.x, internalPosition.y);
-};
+const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObject> =>
+    getObjectsOnPositionWithShips(world, position.x, position.y);
+
+const isPositionOnMap = (x: number, y: number, world: World): boolean =>
+    x >= 0 && x < world.size.x && y >= 0 && y < world.size.y;
 
 const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext, world: World, ship: Ship): Position | UserProgramError => {
     const x = getObjectFromStatement(condition.position.x, context);
     if (isUserProgramError(x))
         return x;
-    if (typeof x === 'string')
+    if (typeof x !== 'number')
         throw invalidProgramError('position can only have number arguments');
 
     const y = getObjectFromStatement(condition.position.y, context);
     if (isUserProgramError(y))
         return y;
-    if (typeof y === 'string')
+    if (typeof y !== 'number')
         throw invalidProgramError('position can only have number arguments');
 
-    if (x < 1 || x > world.size.x || y < 1 || y > world.size.y)
-        return UserProgramError.ReferencedPositionIsNotOnMap;
-
-    if (condition.position.head === 'position_value_relative') {
+    if (condition.position.head === 'position_value_relative' && isPositionOnMap(x + ship.position.x, y + ship.position.y, world)) {
         return new Position({x: ship.position.x + x, y: ship.position.y + y});
     }
+
+    if (!isPositionOnMap(x, y, world))
+        return UserProgramError.ReferencedPositionIsNotOnMap;
 
     return new Position({x, y});
 };

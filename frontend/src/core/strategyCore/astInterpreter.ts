@@ -235,7 +235,6 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, cont
 
     context.minorActionsLeft--;
     const statement = getStatement(roboAst, context);
-    console.log(statement);
 
     const withoutLasers = removeLaserAndExplosionObjects(world);
     const newWorld = evaluateActionStatement(statement, withoutLasers, shipId, context);
