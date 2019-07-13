@@ -1,5 +1,5 @@
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
-import {IValidatorResult} from "../programValidator";
+import {IValidatorResult} from "./programValidator";
 import {IStatement} from "../models/programTypes";
 import {isTestStatementValid} from "./isTestStatementValid";
 

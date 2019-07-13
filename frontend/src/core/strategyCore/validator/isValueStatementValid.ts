@@ -9,7 +9,7 @@ import {
 } from "./programValidationUtils";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {StatementType} from "../enums/statementType";
-import {IValidatorResult} from "../programValidator";
+import {IValidatorResult} from "./programValidator";
 
 export const isValueStatementValid = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
     if (!statement.head) {
