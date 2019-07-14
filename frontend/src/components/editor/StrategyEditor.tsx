@@ -7,7 +7,7 @@ import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
 import {doNextStep} from "../../core/strategyCore/astInterpreter";
-import {convertWorldToEditorModel, demoWorld, strategyDemoWorld, World} from '../../core/strategyCore/models/world'
+import {convertWorldToEditorModel, strategyDemoWorld, World} from '../../core/strategyCore/models/world'
 import {
     getUserProgramErrorDisplayName,
     isUserProgramError,
@@ -27,9 +27,15 @@ import {List} from "immutable";
 import {basicScanStrategy} from "../../core/strategyCore/predefinedStrategies/basicScanStrategy";
 import {BattleType} from "../../core/strategyCore/battleRunner/BattleType";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
+import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
+import {ResultMessage} from "../uiComponents/ResultMessage";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
+
+//TODO: just temporary (hardcoded id...)
+const isSuccess = (result?: BattleResult): boolean =>
+    !!result && result.type === BattleResultType.Decisive && result.winner === 'playerShip';
 
 interface IProps {
 }
@@ -41,7 +47,7 @@ interface IState {
     world: World;
     userProgramError?: UserProgramError;
     validationResult: InvalidProgramReason;
-    historyDrawingCallback?: Promise<List<World>>;
+    battleResult?: BattleResult;
 }
 
 export class StrategyEditor extends React.PureComponent<IProps, IState> {
@@ -85,11 +91,16 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
     };
 
     _resetRuntimeContext = () => {
-        this.setState(() => ({runtimeContext: getEmptyRuntimeContext(), world: strategyDemoWorld, userProgramError: undefined}));
+        this.setState(() => ({
+            runtimeContext: getEmptyRuntimeContext(),
+            world: strategyDemoWorld,
+            userProgramError: undefined,
+            battleResult: undefined,
+        }));
     };
 
     _drawNewWorld = (newWorld: World) => {
-        this.setState({world: newWorld});
+        this.setState(() => ({world: newWorld}));
     };
 
     _drawHistory = (history: List<World>) => {
@@ -115,6 +126,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             battleType: BattleType.KillAll,
             battleParams: {maxTurns: 20, turnsRan: 0},
         });
+        this.setState(() => ({battleResult: result}));
 
         this._drawHistory(result.history.reverse());
     };
@@ -166,6 +178,10 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                             undefined
                     }
                 </ErrorMessage>
+                <ResultMessage isSuccess={isSuccess(this.state.battleResult)}>
+                    {isSuccess(this.state.battleResult) ? 'You won!!! Yay' :
+                        (this.state.battleResult ? 'Damn son, you lost. Try it again.' : undefined)}
+                </ResultMessage>
             </span>
             <ReactBlocklyComponent.BlocklyEditor
                 ref={(ref: BlocklyEditor) => {
