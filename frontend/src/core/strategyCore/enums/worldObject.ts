@@ -28,6 +28,10 @@ export const destructableObjects: Set<WorldObject> = Set([
     WorldObject.Asteroid,
 ]);
 
+export const laserBlockingObjects: Set<WorldObject> = Set([
+    ...destructableObjects.toArray(),
+]);
+
 export const shipRepresentingObjects: Set<WorldObject> = Set([
     WorldObject.ShipRight,
     WorldObject.ShipLeft,

@@ -2,7 +2,7 @@ import {MovingDirection} from "../enums/movingDirection";
 import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
 import {Ship} from "../models/ship";
 import {arePositionsEqual, Position} from "../models/position";
-import {destructableObjects, WorldObject} from "../enums/worldObject";
+import {destructableObjects, laserBlockingObjects, WorldObject} from "../enums/worldObject";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
 import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
@@ -71,8 +71,11 @@ export const makeShipShoot = (world: World, shipId: string): World => {
     }
 
     let newWorld = world;
-    getPositionsInFrontOfShip(ship, world).forEach(shootPosition => {
+    getPositionsInFrontOfShip(ship, world).reduce((laserStopped, shootPosition) => {
+        if (laserStopped)
+            return true;
         let objects = getObjectsOnPosition(world, shootPosition.x, shootPosition.y);
+        laserStopped = objects.some(o => laserBlockingObjects.contains(o));
         if (objects.some(item => destructableObjects.contains(item))) {
             objects = objects.push(WorldObject.Explosion);
         }
@@ -84,7 +87,8 @@ export const makeShipShoot = (world: World, shipId: string): World => {
         objects = objects.filter(item => !destructableObjects.contains(item));
         newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
         newWorld = killShipsOnPosition(newWorld, shootPosition);
-    });
+        return laserStopped;
+    }, false);
 
     return newWorld;
 };

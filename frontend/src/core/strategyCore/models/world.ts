@@ -150,9 +150,9 @@ export const strategyDemoWorld: World = new World({
         range(5).map(_ => TileColor.Black))),
     ships: List([
         new Ship({id: 'aiShip', position: new Position({x: 0, y: 4}), direction: Direction.Up}),
-        new Ship({id: 'playerShip', position: new Position({x: 4, y: 0}), direction: Direction.Down}),
+        new Ship({id: 'playerShip', position: new Position({x: 0, y: 0}), direction: Direction.Down}),
     ]),
-    objects: convertArraysToLists(range(5).map(() =>
-        range(5).map(() => []))),
+    objects: convertArraysToLists(range(5).map((_, lineIndex) =>
+        range(5).map(() => lineIndex === 1 ? [WorldObject.Asteroid] : []))),
     size: new Position({ x: 5, y: 5 }),
 });
