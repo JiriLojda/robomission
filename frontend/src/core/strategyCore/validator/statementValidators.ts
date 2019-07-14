@@ -1,5 +1,4 @@
 import {
-    getStatementValidator,
     getValidatorResult,
     hasExactProperties,
     StatementValidator,
@@ -9,6 +8,7 @@ import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {ISetVariableNumericStatement, IStatement} from "../models/programTypes";
 import {isValueStatementValid} from "./isValueStatementValid";
 import {ValueStatementType} from "../enums/valueStatementType";
+import {getStatementValidator} from "./getStatementValidator";
 
 export const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],

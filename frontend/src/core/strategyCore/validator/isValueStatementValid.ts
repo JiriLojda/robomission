@@ -1,7 +1,6 @@
 import {INumberBinaryStatement, IStatement} from "../models/programTypes";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {
-    getStatementValidator,
     getValidatorResult,
     hasExactProperties,
     StatementValidator,
@@ -10,6 +9,7 @@ import {
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {StatementType} from "../enums/statementType";
 import {IValidatorResult} from "./programValidator";
+import {getStatementValidator} from "./getStatementValidator";
 
 export const isValueStatementValid = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
     if (!statement.head) {

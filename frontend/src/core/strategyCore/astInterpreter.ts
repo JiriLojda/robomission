@@ -5,26 +5,10 @@ import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {IPositionItem, IRoboAst, IRuntimeContext, ISetVariableStatement, IStatement} from "./models/programTypes";
-import {List, Set} from "immutable";
+import {List} from "immutable";
 import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
 import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
-
-const defaultMinorActionsCount = 100;
-
-export const emptyRuntimeContext: IRuntimeContext = {
-    position: [{index: 0, elseBranchEntered: false, repeatCount: undefined}],
-    variables: [],
-    systemVariables: [],
-    wasActionExecuted: false,
-    minorActionsLeft: defaultMinorActionsCount,
-};
-
-const scopeStatements = Set([
-    StatementType.While,
-    StatementType.Repeat,
-    StatementType.If,
-    StatementType.Else,
-]);
+import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
 
 const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
@@ -219,10 +203,12 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
 export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, context: IRuntimeContext): [IRuntimeContext, World] | UserProgramError => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
+        context.hasEnded = true;
         return [context, world];
     }
 
     if (roboAst.body.length === 0) {
+        context.hasEnded = true;
         console.log('Empty program, please create something before running it.');
         return [context, world];
     }

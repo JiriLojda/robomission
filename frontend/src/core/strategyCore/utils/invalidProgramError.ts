@@ -1,2 +1,4 @@
-export const invalidProgramError = (message: string): Error =>
-    new Error(`Invalid program: '${message}'.`);
+export const invalidProgramError = (message: string, place: string = ''): Error => {
+    const where = place ? ` in ${place}` : '';
+    return new Error(`Invalid program${where}: '${message}'.`);
+};

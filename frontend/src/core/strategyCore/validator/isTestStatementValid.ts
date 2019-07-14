@@ -1,9 +1,15 @@
-import {Condition, IBinaryLogicCondition, ICompareCondition} from "../models/programTypes";
+import {Condition, IBinaryLogicCondition, ICompareCondition, IStatement} from "../models/programTypes";
 import {ConditionType} from "../enums/conditionType";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {IValidatorResult} from "./programValidator";
-import {getValidatorResult, hasExactProperties, useValidators} from "./programValidationUtils";
+import {
+    checkParameterExistence,
+    getValidatorResult,
+    hasExactProperties,
+    StatementValidator,
+    useValidators
+} from "./programValidationUtils";
 import {isValueStatementValid} from "./isValueStatementValid";
 
 export const isTestStatementValid = (condition: Condition): IValidatorResult => {
@@ -37,6 +43,14 @@ export const isTestStatementValid = (condition: Condition): IValidatorResult => 
             throw new Error(`Unknown condition type ${condition!.head}`);
     }
 };
+
+export const isValidConditionStatement: StatementValidator = statement => useValidators(
+    [hasTestProperty, s => isTestStatementValid(s.test!)],
+    statement,
+);
+
+const hasTestProperty = (statement: IStatement): IValidatorResult =>
+    checkParameterExistence(statement, ['test'], InvalidProgramReason.MissingTestCondition);
 
 const validateLeftAndRightValues = (operation: IBinaryLogicCondition | ICompareCondition, type: ValueStatementType): IValidatorResult => {
     if (operation.head === ConditionType.LogicBinaryOperation) {

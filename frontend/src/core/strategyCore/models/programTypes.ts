@@ -21,6 +21,7 @@ export interface IRuntimeContext {
     systemVariables: SystemVariable[];
     wasActionExecuted: boolean;
     minorActionsLeft: number;
+    hasEnded: boolean;
 }
 
 export interface ICondition {

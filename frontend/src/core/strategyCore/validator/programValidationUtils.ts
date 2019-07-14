@@ -1,7 +1,6 @@
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {IValidatorResult} from "./programValidator";
 import {IStatement} from "../models/programTypes";
-import {isTestStatementValid} from "./isTestStatementValid";
 
 export const getValidatorResult = (isValid: boolean, reason: InvalidProgramReason): IValidatorResult => {
     if (!isValid) {
@@ -50,29 +49,4 @@ export const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[
         statement
     );
 
-const hasTestProperty = (statement: IStatement): IValidatorResult =>
-    checkParameterExistence(statement, ['test'], InvalidProgramReason.MissingTestCondition);
-
-const isValidConditionStatement: StatementValidator = statement => useValidators(
-    [hasTestProperty, s => isTestStatementValid(s.test!)],
-    statement,
-);
-
 export type StatementValidator = (statement: IStatement) => IValidatorResult;
-
-export const getStatementValidator = <T extends keyof IStatement>(
-    allowedProps: T[],
-    additionalValidator: StatementValidator = () => getValidatorResult(true, InvalidProgramReason.None),
-    isCondition: boolean = false
-): StatementValidator =>
-    (statement: IStatement) => {
-        const firstValidators = isCondition ? [isValidConditionStatement] : [];
-        return useValidators(
-            [
-                ...firstValidators,
-                s => hasExactProperties(s, allowedProps),
-                additionalValidator
-            ],
-            statement,
-        )
-    };
