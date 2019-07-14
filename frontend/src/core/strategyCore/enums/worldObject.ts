@@ -6,6 +6,7 @@ export enum WorldObject {
     ShipUp = '2',
     ShipLeft = '3',
     ShipRight = '4',
+    ShipBroken = 'spaceship-broken',
     Diamond = 'D',
     Meteoroid = 'M',
     Asteroid = 'A',
@@ -27,22 +28,19 @@ export const destructableObjects: Set<WorldObject> = Set([
     WorldObject.Asteroid,
 ]);
 
-export const shipBlockingObjects: Set<WorldObject> = Set([
-    WorldObject.Ship,
-    WorldObject.ShipUp,
-    WorldObject.ShipDown,
-    WorldObject.ShipLeft,
-    WorldObject.ShipRight,
-    WorldObject.Meteoroid,
-    WorldObject.Asteroid,
-]);
-
 export const shipRepresentingObjects: Set<WorldObject> = Set([
     WorldObject.ShipRight,
     WorldObject.ShipLeft,
     WorldObject.ShipDown,
     WorldObject.ShipUp,
     WorldObject.Ship,
+    WorldObject.ShipBroken,
+]);
+
+export const shipBlockingObjects: Set<WorldObject> = Set([
+    ...shipRepresentingObjects.toArray(),
+    WorldObject.Meteoroid,
+    WorldObject.Asteroid,
 ]);
 
 export const unifyShips = (objects: List<WorldObject>): List<WorldObject> =>

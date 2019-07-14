@@ -1,7 +1,7 @@
 import {MovingDirection} from "../enums/movingDirection";
 import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
 import {Ship} from "../models/ship";
-import {Position} from "../models/position";
+import {arePositionsEqual, Position} from "../models/position";
 import {destructableObjects, WorldObject} from "../enums/worldObject";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
@@ -83,9 +83,17 @@ export const makeShipShoot = (world: World, shipId: string): World => {
         }
         objects = objects.filter(item => !destructableObjects.contains(item));
         newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
+        newWorld = killShipsOnPosition(newWorld, shootPosition);
     });
 
     return newWorld;
+};
+
+const killShipsOnPosition = (world: World, position: Position): World => {
+    const newShips = world.ships
+        .map(s => arePositionsEqual(s.position, position) ? s.merge({isDestroyed: true}) : s);
+
+    return world.merge({ships: newShips});
 };
 
 const range = (from: number, to: number): List<number> =>

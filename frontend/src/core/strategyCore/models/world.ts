@@ -96,6 +96,9 @@ export const convertWorldToEditorModel = (worldModel: World): EditorWorldModel =
     }).toArray()).toArray();
 
 const getShipIdentifier = (ship: Ship): WorldObject => {
+    if (ship.isDestroyed)
+        return WorldObject.ShipBroken;
+
     switch (ship.direction) {
         case Direction.Up:
             return WorldObject.ShipUp;
