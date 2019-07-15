@@ -1,17 +1,19 @@
 import {
     Condition,
     IBinaryLogicCondition,
-    ICompareCondition, INumberBinaryStatement,
+    ICompareCondition,
+    INumberBinaryStatement,
     IRuntimeContext,
     isCompareCondition,
     IStatement,
+    ITileAccessibleCondition,
     ITileCondition
 } from "../models/programTypes";
 import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
 import {TileColor} from "../enums/tileColor";
 import {List} from "immutable";
-import {unifyShips, WorldObject} from "../enums/worldObject";
+import {shipBlockingObjects, unifyShips, WorldObject} from "../enums/worldObject";
 import {ConditionType} from "../enums/conditionType";
 import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
@@ -141,7 +143,12 @@ const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObje
 const isPositionOnMap = (x: number, y: number, world: World): boolean =>
     x >= 0 && x < world.size.x && y >= 0 && y < world.size.y;
 
-const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext, world: World, ship: Ship): Position | UserProgramError => {
+const getPositionArgument = (
+    condition: ITileCondition | ITileAccessibleCondition,
+    context: IRuntimeContext,
+    world: World,
+    ship: Ship,
+): Position | UserProgramError => {
     const x = getObjectFromStatement(condition.position.x, context);
     if (isUserProgramError(x))
         return x;
@@ -154,14 +161,14 @@ const getPositionArgument = (condition: ITileCondition, context: IRuntimeContext
     if (typeof y !== 'number')
         throw invalidProgramError('position can only have number arguments');
 
-    if (condition.position.head === 'position_value_relative' && isPositionOnMap(x + ship.position.x, y + ship.position.y, world)) {
-        return new Position({x: ship.position.x + x, y: ship.position.y + y});
-    }
+    const isRelative = condition.position.head === 'position_value_relative';
+    const newX = isRelative ? ship.position.x + x : x;
+    const newY = isRelative ? ship.position.y + y : y;
 
-    if (!isPositionOnMap(x, y, world))
+    if (!isPositionOnMap(newX, newY, world))
         return UserProgramError.ReferencedPositionIsNotOnMap;
 
-    return new Position({x, y});
+    return new Position({x: newX, y: newY});
 };
 
 const handleObjectComparison = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
@@ -229,6 +236,22 @@ const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: W
     }
 };
 
+const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: string): boolean | UserProgramError => {
+    const ship = world.ships.find(s => s.id === shipId);
+    if (!ship)
+        throw invalidProgramError(`ShipId ${shipId} does not exist on the map`, 'evaluateCondition');
+
+    const position = getPositionArgument(condition, context, world, ship);
+
+    if (isUserProgramError(position))
+        return position === UserProgramError.ReferencedPositionIsNotOnMap ? false : position;
+
+    console.log('x: ', position.x, ' y: ', position.y);
+    const objectsOnTile = getObjectsOnPositionWithShips(world, position.x, position.y);
+
+    return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj));
+};
+
 export const evaluateCondition = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
     if (condition.head === ConditionType.Not) {
         return !evaluateCondition(condition.value, world, shipId, context);
@@ -240,6 +263,10 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: st
 
     if (condition.head === ConditionType.ConstantBoolean) {
         return Boolean(condition.value);
+    }
+
+    if (condition.head === ConditionType.IsTileAccessible) {
+        return handleAccessibleTileCondition(condition, world, context, shipId);
     }
 
     if (isCompareCondition(condition)) {

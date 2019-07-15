@@ -28,7 +28,8 @@ import {basicScanStrategy} from "../../core/strategyCore/predefinedStrategies/ba
 import {BattleType} from "../../core/strategyCore/battleRunner/BattleType";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
 import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
-import {ResultMessage} from "../uiComponents/ResultMessage";
+import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
+import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -36,6 +37,37 @@ const getEmptyXml = () => generateBlocklyXml({body: []});
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
     !!result && result.type === BattleResultType.Decisive && result.winner === 'playerShip';
+
+const getBattleResultMessage = (result?: BattleResult): string | undefined => {
+    if (!result)
+        return undefined;
+    if (isSuccess(result))
+        return 'You won!!! Yay';
+    if (result.type === BattleResultType.Draw)
+        return 'Ups seems we have a draw.';
+    if (result.type === BattleResultType.ProgramError)
+        return 'Please, learn to write the code first...';
+    if (result.type === BattleResultType.Decisive)
+        return 'Damn son, you lost. Try it again.';
+    throw invalidProgramError(`This should not happen. type: ${result.type}.`, 'getBattleResultMessage');
+};
+
+const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
+    if (!result)
+        return ResultMessageType.Success;
+    if (isSuccess(result))
+        return ResultMessageType.Success;
+
+    switch (result.type) {
+        case BattleResultType.Decisive:
+        case BattleResultType.ProgramError:
+            return ResultMessageType.Bad;
+        case BattleResultType.Draw:
+            return ResultMessageType.Draw;
+        default:
+            throw invalidProgramError('This should not happen.');
+    }
+};
 
 interface IProps {
 }
@@ -124,7 +156,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             shipsOrder: ids,
             world: this.state.world,
             battleType: BattleType.KillAll,
-            battleParams: {maxTurns: 20, turnsRan: 0},
+            battleParams: {maxTurns: 25, turnsRan: 0},
         });
         this.setState(() => ({battleResult: result}));
 
@@ -178,9 +210,8 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                             undefined
                     }
                 </ErrorMessage>
-                <ResultMessage isSuccess={isSuccess(this.state.battleResult)}>
-                    {isSuccess(this.state.battleResult) ? 'You won!!! Yay' :
-                        (this.state.battleResult ? 'Damn son, you lost. Try it again.' : undefined)}
+                <ResultMessage type={getMessageTypeForResult(this.state.battleResult)}>
+                    {getBattleResultMessage(this.state.battleResult)}
                 </ResultMessage>
             </span>
             <ReactBlocklyComponent.BlocklyEditor

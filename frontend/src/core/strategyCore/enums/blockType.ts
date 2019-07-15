@@ -24,4 +24,5 @@ export enum BlockType {
     ConstantNumber = 'constant_number',
     ConstantString = 'constant_string',
     NumberBinary = 'number_binary',
+    IsTileAccessible = 'tile_accessible',
 }

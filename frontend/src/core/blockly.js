@@ -92,6 +92,8 @@ function blockToAst(block) {
       return constantStringToAst(block);
     case 'number_binary':
       return numberBinaryToAst(block);
+    case 'tile_accessible':
+      return isTileAccessibleToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -235,6 +237,12 @@ function numberBinaryToAst(block) {
   const operator = getFieldValue(block, 'operator');
 
   return {head: 'number_binary', leftValue, rightValue, operator};
+}
+
+function isTileAccessibleToAst(block) {
+  const position = blockToAst(getValueBlock(block, 'position'))
+
+  return {head: 'tile_accessible', position};
 }
 
 //helpers

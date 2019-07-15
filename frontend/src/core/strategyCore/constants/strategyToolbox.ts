@@ -76,6 +76,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.Position},
             {type: BlockType.StringCompare},
             {type: BlockType.NumericCompare},
+            {type: BlockType.IsTileAccessible},
         ]
     },
     {

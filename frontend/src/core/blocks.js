@@ -211,6 +211,21 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'tile_accessible',
+    message0: `${translate('blockly.tile')} %1 is accessible`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'position',
+        check: 'Position',
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.test,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'position',
     message0: `${translate('blockly.position')} %1 %2`,
     args0: [

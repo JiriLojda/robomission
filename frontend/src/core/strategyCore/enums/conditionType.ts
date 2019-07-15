@@ -2,6 +2,7 @@ export enum ConditionType {
     Color = 'color',
     Position = 'position',
     Tile = 'tile',
+    IsTileAccessible = 'tile_accessible',
     Not = 'logic_not',
     LogicBinaryOperation = 'logic_binary',
     NumericCompare = 'numericCompare',

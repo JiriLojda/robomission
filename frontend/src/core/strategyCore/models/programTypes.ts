@@ -43,6 +43,13 @@ export interface ITileCondition extends ICondition {
     position: IPositionValue;
 }
 
+export interface ITileAccessibleCondition extends ICondition {
+    head: ConditionType.IsTileAccessible;
+    position: IPositionValue;
+    comparator: undefined;
+    value: undefined;
+}
+
 export interface IColorCondition extends ICondition {
     head: ConditionType.Color;
     comparator: Comparator.Equal | Comparator.NonEqual;
@@ -93,6 +100,7 @@ export type Condition =
     INotCondition |
     IBinaryLogicCondition |
     ICompareCondition |
+    ITileAccessibleCondition |
     IConstantBoolean;
 
 export interface IBlock {
