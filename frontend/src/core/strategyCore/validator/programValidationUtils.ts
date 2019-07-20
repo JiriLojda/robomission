@@ -19,7 +19,7 @@ export const checkParameterExistence = <T, K extends keyof T>(statement: T, para
     return getValidatorResult(true, InvalidProgramReason.None);
 };
 
-const areOnlyAllowedPropertiesSet = <T, K extends keyof T>(statement: T, allowed: K[]): IValidatorResult => {
+export const areOnlyAllowedPropertiesSet = <T, K extends keyof T>(statement: T, allowed: K[]): IValidatorResult => {
     const stringAllowed = allowed.map(e => e.toString());
     for (const prop in statement) {
         if (statement.hasOwnProperty(prop) && stringAllowed.indexOf(prop) < 0 && !!(statement as any)[prop]) {
@@ -39,6 +39,9 @@ export const useValidators = <T>(validators: GenericValidator<T>[], statement: T
     }
     return getValidatorResult(true, InvalidProgramReason.None);
 };
+
+export const composeValidators = <T = IStatement>(validators: GenericValidator<T>[]): (statement: T) => IValidatorResult =>
+    (statement) => useValidators(validators, statement);
 
 export const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[]): IValidatorResult =>
     useValidators(

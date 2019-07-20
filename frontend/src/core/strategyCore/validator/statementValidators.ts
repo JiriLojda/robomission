@@ -1,4 +1,6 @@
 import {
+    areOnlyAllowedPropertiesSet,
+    composeValidators,
     getValidatorResult,
     hasExactProperties,
     StatementValidator,
@@ -9,6 +11,7 @@ import {ISetVariableNumericStatement, IStatement} from "../models/programTypes";
 import {isValueStatementValid} from "./isValueStatementValid";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {getStatementValidator} from "./getStatementValidator";
+import {isValidConditionStatement} from "./isTestStatementValid";
 
 export const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],
@@ -38,13 +41,13 @@ export const isSetVariableNumericStatementValid = (statement: IStatement) => use
 );
 
 const isElseStatementValid = getStatementValidator(['head', 'body']);
-export const isIfStatementValid = getStatementValidator(
-    ['head', 'body', 'test', 'orelse'],
+export const isIfStatementValid = composeValidators([
+    isValidConditionStatement,
+    s => areOnlyAllowedPropertiesSet(s, ['head', 'body', 'test', 'orelse']),
     statement => {
         if (!!statement.orelse) {
             return isElseStatementValid(statement.orelse.statement);
         }
         return getValidatorResult(true, InvalidProgramReason.None);
     },
-    true
-);
+]);
