@@ -1,16 +1,16 @@
 import {MovingDirection} from "../enums/movingDirection";
 import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
-import {Ship} from "../models/ship";
+import {Ship, ShipId} from "../models/ship";
 import {arePositionsEqual, Position} from "../models/position";
 import {destructableObjects, laserBlockingObjects, WorldObject} from "../enums/worldObject";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
 import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
 
-export const getShip = (world: World, shipId: string): Ship | undefined =>
+export const getShip = (world: World, shipId: ShipId): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
 
-export const getShipPosition = (world: World, shipId: string): Position | undefined => {
+export const getShipPosition = (world: World, shipId: ShipId): Position | undefined => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -63,7 +63,7 @@ export const canMove = (world: World, ship: Ship, direction: MovingDirection): b
 };
 
 
-export const makeShipShoot = (world: World, shipId: string): World => {
+export const makeShipShoot = (world: World, shipId: ShipId): World => {
     const ship = getShip(world, shipId);
 
     if (!ship) {

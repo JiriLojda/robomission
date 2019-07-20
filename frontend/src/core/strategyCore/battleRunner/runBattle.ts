@@ -9,10 +9,11 @@ import {invalidProgramError} from "../utils/invalidProgramError";
 import {BattleType} from "./BattleType";
 import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
 import {getBattleResult} from "./getBattleResult";
+import {ShipId} from "../models/ship";
 
 export interface IRunBattleParams {
     readonly world: World,
-    readonly shipsOrder: List<string>,
+    readonly shipsOrder: List<ShipId>,
     readonly roboAsts: List<IRoboAst>,
     readonly battleType: BattleType;
     readonly battleParams: IBattleEndParams;

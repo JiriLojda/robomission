@@ -9,6 +9,7 @@ import {List} from "immutable";
 import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
 import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
 import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
+import {ShipId} from "./models/ship";
 
 const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
@@ -112,7 +113,7 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPosition
 
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
-const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: string): UserProgramError | null => {
+const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: ShipId): UserProgramError | null => {
     switch (statement.head) {
         case StatementType.If:
         case StatementType.While: {
@@ -150,7 +151,7 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, world: World, shipId: string, context: IRuntimeContext): World | UserProgramError => {
+const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, world: World, shipId: ShipId, context: IRuntimeContext): World | UserProgramError => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -200,7 +201,7 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
     }
 };
 
-export const doNextStep = (roboAst: IRoboAst, world: World, shipId: string, context: IRuntimeContext): [IRuntimeContext, World] | UserProgramError => {
+export const doNextStep = (roboAst: IRoboAst, world: World, shipId: ShipId, context: IRuntimeContext): [IRuntimeContext, World] | UserProgramError => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
         context.hasEnded = true;

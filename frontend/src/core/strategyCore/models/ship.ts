@@ -2,8 +2,10 @@ import {Position} from "./position";
 import {Record} from "immutable";
 import {Direction} from "../enums/direction";
 
+export type ShipId = string;
+
 interface IShipParameters {
-    id: string;
+    id: ShipId;
     position: Position;
     direction: Direction;
     isDestroyed: boolean;

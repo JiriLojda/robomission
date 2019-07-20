@@ -22,7 +22,7 @@ import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
 import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserVariableNumber} from "./variableUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
-import {Ship} from "../models/ship";
+import {Ship, ShipId} from "../models/ship";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -171,7 +171,7 @@ const getPositionArgument = (
     return new Position({x: newX, y: newY});
 };
 
-const handleObjectComparison = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
+const handleObjectComparison = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
     const ship = getShip(world, shipId);
     const shipPosition = getShipPosition(world, shipId);
 
@@ -213,7 +213,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: stri
     throw new Error(`Unknown comparator ${condition.comparator}.`);
 };
 
-const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
+const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
     const leftValue = evaluateCondition(condition.leftValue, world, shipId, context);
     const rightValue = evaluateCondition(condition.rightValue, world, shipId, context);
 
@@ -236,7 +236,7 @@ const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: W
     }
 };
 
-const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: string): boolean | UserProgramError => {
+const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: ShipId): boolean | UserProgramError => {
     const ship = world.ships.find(s => s.id === shipId);
     if (!ship)
         throw invalidProgramError(`ShipId ${shipId} does not exist on the map`, 'evaluateCondition');
@@ -252,7 +252,7 @@ const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, worl
     return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj));
 };
 
-export const evaluateCondition = (condition: Condition, world: World, shipId: string, context: IRuntimeContext): boolean | UserProgramError => {
+export const evaluateCondition = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
     if (condition.head === ConditionType.Not) {
         return !evaluateCondition(condition.value, world, shipId, context);
     }
