@@ -3,6 +3,7 @@ export enum BlockType {
     Fly = 'fly',
     Turn = 'turn',
     Shoot = 'shoot',
+    PickUpDiamond = 'pick_up_diamond',
     Color = 'color',
     PositionValue = 'position_value',
     PositionValueRelative = 'position_value_relative',

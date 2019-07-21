@@ -1,6 +1,6 @@
 import {StatementType} from "./enums/statementType";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {canMove, getShip, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
+import {canMove, getShip, makeShipPickupDiamond, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
@@ -176,6 +176,8 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         case StatementType.Shoot:
             return makeShipShoot(world, shipId);
+        case StatementType.PickUpDiamond:
+            return makeShipPickupDiamond(world, shipId);
         case StatementType.TurnLeft:
             return updateShipInWorld(world, ship, turnShip(ship, 'left'));
         case StatementType.TurnRight:

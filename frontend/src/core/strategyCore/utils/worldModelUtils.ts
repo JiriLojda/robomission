@@ -6,6 +6,7 @@ import {destructableObjects, laserBlockingObjects, WorldObject} from "../enums/w
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
 import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
+import {invalidProgramError} from "./invalidProgramError";
 
 export const getShip = (world: World, shipId: ShipId): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
@@ -19,6 +20,9 @@ export const getShipPosition = (world: World, shipId: ShipId): Position | undefi
 
     return ship.position;
 };
+
+export const modifyShipInWorld = (world: World, newShip: Ship): World =>
+    world.merge({ships: world.ships.map(s => s.id === newShip.id ? newShip : s)});
 
 export const moveShip = (world: World, ship: Ship, direction: MovingDirection): Ship => {
     if (!canMove(world, ship, direction)) {
@@ -91,6 +95,24 @@ export const makeShipShoot = (world: World, shipId: ShipId): World => {
     }, false);
 
     return newWorld;
+};
+
+export const makeShipPickupDiamond = (world: World, shipId: ShipId): World => {
+    const ship = getShip(world, shipId);
+
+    if (!ship)
+        throw invalidProgramError(`Cannot find ship with id ${shipId}.`);
+
+    const objects = getObjectsOnPosition(world, ship.position.x, ship.position.y);
+
+    if (!objects.contains(WorldObject.Diamond))
+        return world;
+
+    const newObjects = objects.filter(o => o != WorldObject.Diamond);
+    const newWorld = setObjectsOnPosition(world, ship.position.x, ship.position.y, newObjects);
+    const newShip = ship.merge({carriedObjects: ship.carriedObjects.push(WorldObject.Diamond)})
+
+    return modifyShipInWorld(newWorld, newShip);
 };
 
 const killShipsOnPosition = (world: World, position: Position): World => {

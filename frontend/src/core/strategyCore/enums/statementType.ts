@@ -6,6 +6,7 @@ export enum StatementType {
     Start = 'start',
     Fly = 'fly',
     Shoot = 'shoot',
+    PickUpDiamond = 'pick_up_diamond',
     Left = 'left',
     Right = 'right',
     TurnRight = 'turn-right',

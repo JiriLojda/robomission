@@ -56,6 +56,8 @@ function blockToAst(block) {
       return flyBlockToAst(block);
     case 'shoot':
       return shootBlockToAst(block);
+    case 'pick_up_diamond':
+      return pickupBlockToAst(block);
     case 'color':
       return colorBlockToAst(block);
     case 'position':
@@ -155,6 +157,9 @@ function shootBlockToAst() {
   return {head: 'shoot'};
 }
 
+function pickupBlockToAst() {
+  return {head: 'pick_up_diamond'};
+}
 
 function colorBlockToAst(block) {
   const comparator = getFieldValue(block, 'comparator');

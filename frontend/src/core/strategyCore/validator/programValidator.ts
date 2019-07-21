@@ -5,7 +5,7 @@ import {getValidatorResult, useValidators} from "./programValidationUtils";
 import {
     isFlyStatementValid,
     isIfStatementValid,
-    isLeftStatementValid,
+    isLeftStatementValid, isPickUpDiamondStatementValid,
     isRepeatStatementValid,
     isRightStatementValid,
     isSetVariableNumericStatementValid,
@@ -43,6 +43,8 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             return isFlyStatementValid(statement);
         case StatementType.Shoot:
             return isShootStatementValid(statement);
+        case StatementType.PickUpDiamond:
+            return isPickUpDiamondStatementValid(statement);
         case StatementType.Start:
             return useValidators(
                 [isStartStatementValid, validateBody],

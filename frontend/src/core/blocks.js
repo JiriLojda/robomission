@@ -76,6 +76,16 @@ const blocks = [
     helpUrl: '',
   },
   {
+    id: 'pick_up_diamond',
+    message0: 'pick up diamond',
+    args0: [],
+    previousStatement: null,
+    nextStatement: null,
+    colour: colors.command,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
     id: 'color',
     message0: `${translate('blockly.color')} %1 %2`,
     args0: [

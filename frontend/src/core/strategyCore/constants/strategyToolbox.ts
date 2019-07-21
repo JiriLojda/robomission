@@ -26,6 +26,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
                 fields: {direction: 'right'},
             },
             {type: BlockType.Shoot},
+            {type: BlockType.PickUpDiamond},
             {
                 type: BlockType.Turn,
                 fields: {direction: 'left'},

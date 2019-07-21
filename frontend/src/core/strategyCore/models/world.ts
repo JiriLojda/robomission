@@ -153,6 +153,15 @@ export const strategyDemoWorld: World = new World({
         new Ship({id: 'playerShip', position: new Position({x: 0, y: 0}), direction: Direction.Down}),
     ]),
     objects: convertArraysToLists(range(5).map((_, lineIndex) =>
-        range(5).map(() => lineIndex === 1 ? [WorldObject.Asteroid] : []))),
+        range(5).map((_, columnIndex) => getTestObjects(columnIndex, lineIndex)))),
     size: new Position({ x: 5, y: 5 }),
 });
+
+function getTestObjects(x: number, y: number): WorldObject[] {
+    if (y === 1)
+        return [WorldObject.Asteroid];
+    if (y === 0 && (x === 2 || x === 1))
+        return [WorldObject.Diamond];
+
+    return [];
+}
