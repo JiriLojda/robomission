@@ -16,19 +16,23 @@ import {
     isTurnRightStatementValid,
     isWhileStatementValid
 } from "./statementValidators";
+import {memoizeOne} from "../../../utils/memoizeOne";
 
 export interface IValidatorResult {
     isValid: boolean;
     reason: InvalidProgramReason;
 }
 
-export const isRoboAstValid = (roboAst: IRoboAst): IValidatorResult => {
-    if (!roboAst.head || roboAst.head !== StatementType.Start || !roboAst.body) {
-        return {isValid: false, reason: InvalidProgramReason.NoOrBadStartStatement};
-    }
+export const isRoboAstValid = memoizeOne(
+    (roboAst: IRoboAst): IValidatorResult => {
+        if (!roboAst.head || roboAst.head !== StatementType.Start || !roboAst.body) {
+            return {isValid: false, reason: InvalidProgramReason.NoOrBadStartStatement};
+        }
 
-    return isStatementValid(roboAst);
-};
+        return isStatementValid(roboAst);
+    },
+    args => JSON.stringify(args[0]),
+);
 
 const isStatementValid = (statement: IStatement): IValidatorResult => {
     if (!statement.head) {
