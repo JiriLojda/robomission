@@ -150,7 +150,7 @@ export const strategyDemoWorld: World = new World({
         range(5).map(_ => TileColor.Black))),
     ships: List([
         new Ship({id: 'aiShip', position: new Position({x: 0, y: 4}), direction: Direction.Up, shipColor: ShipColor.Yellow}),
-        new Ship({id: 'playerShip', position: new Position({x: 0, y: 0}), direction: Direction.Down, shipColor: ShipColor.Green}),
+        new Ship({id: 'playerShip', position: new Position({x: 4, y: 0}), direction: Direction.Down, shipColor: ShipColor.Green}),
     ]),
     objects: convertArraysToLists(range(5).map((_, lineIndex) =>
         range(5).map((_, columnIndex) => getTestObjects(columnIndex, lineIndex)))),

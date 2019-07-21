@@ -1,17 +1,19 @@
 import {UserProgramError} from "../enums/userProgramError";
 import {IRuntimeContext} from "../models/programTypes";
-import {List} from "immutable";
+import {List, Set} from "immutable";
 import {World} from "../models/world";
+import {ShipId} from "../models/ship";
 
 type BattleResultInfo = {
     type: BattleResultType.Draw,
+    between: Set<ShipId>
 } | {
     type: BattleResultType.Decisive,
-    winner: string,
+    winner: ShipId,
 } | {
     type: BattleResultType.ProgramError,
     error: UserProgramError,
-    blame: string,
+    blame: ShipId,
 } | {
     type: BattleResultType.InProgress,
     context: List<IRuntimeContext>,

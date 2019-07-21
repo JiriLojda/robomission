@@ -6,6 +6,7 @@ import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {arePositionsEqual} from "../models/position";
 import {List} from "immutable";
+import {WorldObject} from "../enums/worldObject";
 
 export interface IGetBattleResultParams {
     world: World,
@@ -39,11 +40,37 @@ const getKillAllResult: BattleResultGetter = params => {
             {type: BattleResultType.Decisive, winner: params.world.ships.find(s => !s.isDestroyed)!.id},
             params,
             );
-    return addHistory({type: BattleResultType.Draw}, params);
+    const between = params.world.ships
+        .filter(s => !s.isDestroyed)
+        .map(s => s.id)
+        .toSet();
+    return addHistory({type: BattleResultType.Draw, between }, params);
 };
 
-//TODO: implement correctly later
-const getCollectOrKillResult: BattleResultGetter = getKillAllResult;
+const getCollectOrKillResult: BattleResultGetter = params => {
+    const killAllResult = getKillAllResult(params);
+    if (killAllResult.type === BattleResultType.Decisive)
+        return killAllResult;
+
+    const diamondCounts = params.world.ships
+        .map(s => ({
+            count: s.carriedObjects.filter(o => o === WorldObject.Diamond).count(),
+            id: s.id
+        }))
+        .sort((o1, o2) => o2.count - o1.count)
+        .takeWhile((o, i, iter) => i === 0 || iter.get(0)!.count === o.count);
+
+    if (diamondCounts.count() !== 1)
+        return addHistory(
+            {type: BattleResultType.Draw, between: diamondCounts.map(c => c.id).toSet()},
+            params
+        );
+
+    return addHistory(
+        {type: BattleResultType.Decisive, winner: diamondCounts.get(0)!.id},
+        params
+    );
+};
 
 const getGeThereFirst: BattleResultGetter = params => {
     const presentShips = params.world.ships
@@ -55,7 +82,7 @@ const getGeThereFirst: BattleResultGetter = params => {
     if (presentShips.size === 1)
         return addHistory({type: BattleResultType.Decisive, winner: presentShips.get(0)!.id}, params);
 
-    return addHistory({type: BattleResultType.Draw}, params);
+    return addHistory({type: BattleResultType.Draw, between: params.world.ships.map(s => s.id).toSet()}, params);
 };
 
 const addHistory = <T>(input: T, params: IGetBattleResultParams): T & {history: List<World>} =>

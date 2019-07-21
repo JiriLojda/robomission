@@ -36,11 +36,11 @@ const isTimeUp = (realTurns: number, maxTurns: number): boolean => realTurns >= 
 const assertInput = (battleType: BattleType, params?: IBattleEndParams): void => {
     switch (battleType) {
         case BattleType.KillAll:
+        case BattleType.CollectOrKill:
             if (battleType === BattleType.KillAll && !hasExactlyThis(["maxTurns", "turnsRan"], params)) {
                 throw invalidProgramError('Kill all battle type does not expect params.');
             }
             return;
-        case BattleType.CollectOrKill:
         case BattleType.GetThereFirst:
             if (!hasExactlyThis(['finishPosition', "turnsRan", "maxTurns"], params)) {
                 throw invalidProgramError(`Battle type ${battleType} needs everything set up.`);

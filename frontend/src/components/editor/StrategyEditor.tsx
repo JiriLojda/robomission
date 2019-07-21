@@ -32,6 +32,7 @@ import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import {Position} from "../../core/strategyCore/models/position";
 import {getThereFirstTestStrategy} from "../../core/strategyCore/predefinedStrategies/getThereFirstTestStrategy";
+import {centralDiamondsBasicStrategy} from "../../core/strategyCore/predefinedStrategies/centralDiamondsBasicStrategy";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -46,7 +47,7 @@ const getBattleResultMessage = (result?: BattleResult): string | undefined => {
     if (isSuccess(result))
         return 'You won!!! Yay';
     if (result.type === BattleResultType.Draw)
-        return 'Ups seems we have a draw.';
+        return `Ups seems we have a draw between ${result.between.join(', ')}.`;
     if (result.type === BattleResultType.ProgramError)
         return `Please, learn to write the code first... you ${result.blame}, ${getUserProgramErrorDisplayName(result.error)}`;
     if (result.type === BattleResultType.Decisive)
@@ -187,6 +188,24 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
         });
     };
 
+    _runCollectDiamondsBattle = () => {
+        const asts = List([
+            centralDiamondsBasicStrategy,
+            this.state.roboAst,
+        ]);
+        const ids = List([
+            'aiShip',
+            'playerShip',
+        ]);
+        this._runBattle({
+            roboAsts: asts,
+            shipsOrder: ids,
+            world: this.state.world,
+            battleType: BattleType.CollectOrKill,
+            battleParams: {maxTurns: 50, turnsRan: 0},
+        });
+    };
+
     render() {
         return <SplitPane
             split="vertical"
@@ -229,6 +248,12 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     primary
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._runGetThereBattle}
+                />
+                <RaisedButton
+                    label={'run collection battle'}
+                    primary
+                    style={{ margin: 2, minWidth: 50 }}
+                    onClick={this._runCollectDiamondsBattle}
                 />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
