@@ -22,7 +22,7 @@ import {
 } from "../../core/strategyCore/enums/invalidProgramReason";
 import {allStrategyCategories} from "../../core/strategyCore/constants/strategyToolbox";
 import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
-import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
+import {IRunBattleParams, runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {List} from "immutable";
 import {basicScanStrategy} from "../../core/strategyCore/predefinedStrategies/basicScanStrategy";
 import {BattleType} from "../../core/strategyCore/battleRunner/BattleType";
@@ -30,6 +30,8 @@ import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPri
 import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
+import {Position} from "../../core/strategyCore/models/position";
+import {getThereFirstTestStrategy} from "../../core/strategyCore/predefinedStrategies/getThereFirstTestStrategy";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -46,7 +48,7 @@ const getBattleResultMessage = (result?: BattleResult): string | undefined => {
     if (result.type === BattleResultType.Draw)
         return 'Ups seems we have a draw.';
     if (result.type === BattleResultType.ProgramError)
-        return 'Please, learn to write the code first...';
+        return `Please, learn to write the code first... you ${result.blame}, ${getUserProgramErrorDisplayName(result.error)}`;
     if (result.type === BattleResultType.Decisive)
         return 'Damn son, you lost. Try it again.';
     throw invalidProgramError(`This should not happen. type: ${result.type}.`, 'getBattleResultMessage');
@@ -142,7 +144,14 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             .then(h => !h || this._drawHistory(h));
     };
 
-    _runFirstBattle = () => {
+    _runBattle = (params: IRunBattleParams): void => {
+        const result = runBattle(params);
+        this.setState(() => ({battleResult: result}));
+
+        this._drawHistory(result.history.reverse());
+    };
+
+    _runKillAllBattle = () => {
         const asts = List([
             basicScanStrategy,
             this.state.roboAst,
@@ -151,16 +160,31 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             'aiShip',
             'playerShip',
         ]);
-        const result = runBattle({
+        this._runBattle({
             roboAsts: asts,
             shipsOrder: ids,
             world: this.state.world,
             battleType: BattleType.KillAll,
-            battleParams: {maxTurns: 25, turnsRan: 0},
+            battleParams: {maxTurns: 50, turnsRan: 0},
         });
-        this.setState(() => ({battleResult: result}));
+    };
 
-        this._drawHistory(result.history.reverse());
+    _runGetThereBattle = () => {
+        const asts = List([
+            getThereFirstTestStrategy,
+            this.state.roboAst,
+        ]);
+        const ids = List([
+            'aiShip',
+            'playerShip',
+        ]);
+        this._runBattle({
+            roboAsts: asts,
+            shipsOrder: ids,
+            world: this.state.world,
+            battleType: BattleType.GetThereFirst,
+            battleParams: {maxTurns: 50, turnsRan: 0, finishPosition: new Position({x: 4, y: 2})},
+        });
     };
 
     render() {
@@ -195,10 +219,16 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     onClick={this._resetRuntimeContext}
                 />
                 <RaisedButton
-                    label={'try first strategy'}
+                    label={'run kill all battle'}
                     primary
                     style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runFirstBattle}
+                    onClick={this._runKillAllBattle}
+                />
+                <RaisedButton
+                    label={'run get there battle'}
+                    primary
+                    style={{ margin: 2, minWidth: 50 }}
+                    onClick={this._runGetThereBattle}
                 />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
