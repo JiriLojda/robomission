@@ -185,6 +185,9 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
 
     if (condition.comparator === Comparator.Contains) {
         const position = getPositionArgument(condition, context, world, ship);
+
+        if (position === UserProgramError.ReferencedPositionIsNotOnMap)
+            return false;
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
@@ -193,6 +196,9 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
 
     if (condition.comparator === Comparator.NotContains) {
         const position = getPositionArgument(condition, context, world, ship);
+
+        if (position === UserProgramError.ReferencedPositionIsNotOnMap)
+            return true;
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
