@@ -1,6 +1,6 @@
 import {TileColor} from "../enums/tileColor";
 import {shipBlockingObjects, WorldObject} from "../enums/worldObject";
-import {Ship} from "./ship";
+import {Ship, ShipColor} from "./ship";
 import {isOnPosition, Position} from "./position";
 import {List, Record} from "immutable";
 import {EditorWorldModel} from "./editorWorldModel";
@@ -89,7 +89,7 @@ export const convertWorldToEditorModel = (worldModel: World): EditorWorldModel =
         const foundShip = worldModel.ships.find(ship => ship.position.x === x && ship.position.y === y);
 
         if (foundShip) {
-            tileObjects.push(getShipIdentifier(foundShip));
+            tileObjects.push(getShipIdentifier(foundShip) + `__${foundShip.shipColor}`);
         }
 
         return [tileColor, tileObjects];
@@ -149,8 +149,8 @@ export const strategyDemoWorld: World = new World({
     surface: convertArraysToLists(range(5).map(_ =>
         range(5).map(_ => TileColor.Black))),
     ships: List([
-        new Ship({id: 'aiShip', position: new Position({x: 0, y: 4}), direction: Direction.Up}),
-        new Ship({id: 'playerShip', position: new Position({x: 0, y: 0}), direction: Direction.Down}),
+        new Ship({id: 'aiShip', position: new Position({x: 0, y: 4}), direction: Direction.Up, shipColor: ShipColor.Yellow}),
+        new Ship({id: 'playerShip', position: new Position({x: 0, y: 0}), direction: Direction.Down, shipColor: ShipColor.Green}),
     ]),
     objects: convertArraysToLists(range(5).map((_, lineIndex) =>
         range(5).map((_, columnIndex) => getTestObjects(columnIndex, lineIndex)))),
@@ -158,9 +158,11 @@ export const strategyDemoWorld: World = new World({
 });
 
 function getTestObjects(x: number, y: number): WorldObject[] {
-    if (y === 1)
-        return [WorldObject.Asteroid];
-    if (y === 0 && (x === 2 || x === 1))
+    const center = 2;
+    const vector = Math.sqrt(((center - x) ** 2) + ((center - y) ** 2));
+    const distance = Math.abs(vector);
+
+    if (distance <= 1)
         return [WorldObject.Diamond];
 
     return [];

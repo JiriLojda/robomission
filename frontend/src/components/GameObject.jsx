@@ -11,20 +11,20 @@ export default function GameObject({ imageId, width, height, position, bottom, l
     bottom,
     left,
   };
-  if (imageId === 'spaceship_down') {
+  if (imageId && imageId.includes('spaceship_down')) {
     imageStyle.transform = 'rotate(180deg)';
-    imageId = 'spaceship';
+    imageId = `spaceship__${imageId.split('__')[1] || ''}`;
   }
-  if (imageId === 'spaceship_right') {
+  if (imageId && imageId.includes('spaceship_right')) {
     imageStyle.transform = 'rotate(90deg)';
-    imageId = 'spaceship';
+    imageId = `spaceship__${imageId.split('__')[1] || ''}`;
   }
-  if (imageId === 'spaceship_left') {
+  if (imageId && imageId.includes('spaceship_left')) {
     imageStyle.transform = 'rotate(-90deg)';
-    imageId = 'spaceship';
+    imageId = `spaceship__${imageId.split('__')[1] || ''}`;
   }
-  if (imageId === 'spaceship_up') {
-    imageId = 'spaceship';
+  if (imageId && imageId.includes('spaceship_up')) {
+    imageId = `spaceship__${imageId.split('__')[1] || ''}`;
   }
   if (imageId === 'laser_horizontal') {
     imageStyle.transform = 'rotate(90deg)';

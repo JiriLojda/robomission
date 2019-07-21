@@ -5,8 +5,16 @@ import {WorldObject} from "../enums/worldObject";
 
 export type ShipId = string;
 
+export enum ShipColor {
+    Red = 'red',
+    Green = 'green',
+    Blue = 'blue',
+    Yellow = 'yellow',
+}
+
 interface IShipParameters {
     id: ShipId;
+    shipColor: ShipColor;
     position: Position;
     direction: Direction;
     isDestroyed: boolean;
@@ -15,6 +23,7 @@ interface IShipParameters {
 
 const defaultParameters: IShipParameters = {
     id: 'S',
+    shipColor: ShipColor.Red,
     position: new Position(),
     direction: Direction.Up,
     isDestroyed: false,
