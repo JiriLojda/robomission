@@ -35,6 +35,7 @@ import {getThereFirstTestStrategy} from "../../core/strategyCore/predefinedStrat
 import {centralDiamondsBasicStrategy} from "../../core/strategyCore/predefinedStrategies/centralDiamondsBasicStrategy";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
+import {ICancelablePromise} from "../../utils/cancelablePromise";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -86,6 +87,7 @@ interface IState {
     validationResult: InvalidProgramReason;
     battleResult?: BattleResult;
     selectedBattleType: BattleType;
+    drawingPromise?: ICancelablePromise<List<World> | undefined>;
 }
 
 export class StrategyEditor extends React.PureComponent<IProps, IState> {
@@ -129,12 +131,16 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
         this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: false}, world, runtimeContext }));
     };
 
-    _resetRuntimeContext = () => {
+    _reset = () => {
+        if (this.state.drawingPromise) {
+            this.state.drawingPromise.cancel();
+        }
         this.setState(() => ({
             runtimeContext: getEmptyRuntimeContext(),
             world: strategyDemoWorld,
             userProgramError: undefined,
             battleResult: undefined,
+            drawingPromise: undefined,
         }));
     };
 
@@ -145,8 +151,12 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
     _drawHistory = (history: List<World>) => {
         const callback = createDrawHistory(this._drawNewWorld);
 
-        callback(history)
-            .then(h => !h || this._drawHistory(h));
+        const promise = callback(history);
+
+        this.setState(() => ({drawingPromise: promise}));
+
+        promise
+            .then(h => !h || this._drawHistory(h))
     };
 
     _runBattle = (params: IRunBattleParams): void => {
@@ -264,7 +274,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     label={'reset'}
                     secondary
                     style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._resetRuntimeContext}
+                    onClick={this._reset}
                 />
                 <RaisedButton
                     label={'run battle'}

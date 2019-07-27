@@ -1,11 +1,11 @@
 import {World} from "../models/world";
 import {List} from "immutable";
-import {delay} from "redux-saga";
+import {delay, ICancelablePromise} from "../../../utils/cancelablePromise";
 
 export const createDrawHistory = (drawCallback: (world: World) => void, stepDelay: number = 250) =>
-    (history: List<World>): Promise<List<World> | undefined> => {
+    (history: List<World>): ICancelablePromise<List<World> | undefined> => {
         if (history.isEmpty())
-            return Promise.resolve(undefined);
+            return delay(0).then(() => undefined);
 
         drawCallback(history.last());
         return delay(stepDelay)
