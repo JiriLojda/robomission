@@ -23,6 +23,7 @@ import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserV
 import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
 import {Ship, ShipId} from "../models/ship";
+import {endOfMapConstant} from "../constants/astConstants";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -186,6 +187,8 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
     if (condition.comparator === Comparator.Contains) {
         const position = getPositionArgument(condition, context, world, ship);
 
+        if (condition.value === endOfMapConstant)
+            return position === UserProgramError.ReferencedPositionIsNotOnMap;
         if (position === UserProgramError.ReferencedPositionIsNotOnMap)
             return false;
         if (isUserProgramError(position))
@@ -197,6 +200,8 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
     if (condition.comparator === Comparator.NotContains) {
         const position = getPositionArgument(condition, context, world, ship);
 
+        if (condition.value === endOfMapConstant)
+            return position !== UserProgramError.ReferencedPositionIsNotOnMap;
         if (position === UserProgramError.ReferencedPositionIsNotOnMap)
             return true;
         if (isUserProgramError(position))

@@ -212,6 +212,7 @@ const blocks = [
           [translate('object.meteoroid'), 'M'],
           [translate('object.asteroid'), 'A'],
           [translate('object.wormhole'), 'W'],
+          ['The end of map', 'TheEndOfMap'],
         ],
       },
     ],

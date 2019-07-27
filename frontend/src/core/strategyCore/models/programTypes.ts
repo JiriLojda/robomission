@@ -5,6 +5,7 @@ import {TileColor} from "../enums/tileColor";
 import {StatementType} from "../enums/statementType";
 import {WorldObject} from "../enums/worldObject";
 import {NumberOperation} from "../enums/numberOperation";
+import {endOfMapType} from "../constants/astConstants";
 
 export interface IPositionItem {
     index: number;
@@ -38,7 +39,7 @@ export interface IPositionValue {
 
 export interface ITileCondition extends ICondition {
     head: ConditionType.Tile;
-    value: WorldObject;
+    value: WorldObject | endOfMapType;
     comparator: Comparator.Contains | Comparator.NotContains;
     position: IPositionValue;
 }
