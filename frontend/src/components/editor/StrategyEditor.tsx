@@ -33,6 +33,8 @@ import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramE
 import {Position} from "../../core/strategyCore/models/position";
 import {getThereFirstTestStrategy} from "../../core/strategyCore/predefinedStrategies/getThereFirstTestStrategy";
 import {centralDiamondsBasicStrategy} from "../../core/strategyCore/predefinedStrategies/centralDiamondsBasicStrategy";
+import SelectField from "material-ui/SelectField";
+import MenuItem from "material-ui/MenuItem";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -83,6 +85,7 @@ interface IState {
     userProgramError?: UserProgramError;
     validationResult: InvalidProgramReason;
     battleResult?: BattleResult;
+    selectedBattleType: BattleType;
 }
 
 export class StrategyEditor extends React.PureComponent<IProps, IState> {
@@ -96,6 +99,7 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
             world: strategyDemoWorld,
             userProgramError: undefined,
             validationResult: InvalidProgramReason.None,
+            selectedBattleType: BattleType.KillAll,
         };
     }
 
@@ -206,6 +210,21 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
         });
     };
 
+    _runSelectedBattle = () => {
+        switch (this.state.selectedBattleType) {
+            case BattleType.CollectOrKill:
+                return this._runCollectDiamondsBattle();
+            case BattleType.GetThereFirst:
+                return this._runGetThereBattle();
+            case BattleType.KillAll:
+                return this._runKillAllBattle();
+            default:
+                throw new Error('Selected unknown battle type...');
+        }
+    };
+
+    _onSelectChange = (_: any, __: any, value: BattleType) => this.setState(() => ({selectedBattleType: value}));
+
     render() {
         return <SplitPane
             split="vertical"
@@ -224,6 +243,16 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     fields={convertWorldToEditorModel(this.state.world)}
                     width={200}
                 />
+                <SelectField
+                    onChange={this._onSelectChange}
+                    value={this.state.selectedBattleType}
+                    floatingLabelText="battle type"
+                    style={{backgroundColor: 'black'}}
+                >
+                    <MenuItem key="kill" value={BattleType.KillAll} primaryText="Kill 'em all" />
+                    <MenuItem key="go" value={BattleType.GetThereFirst} primaryText="Get there first"/>
+                    <MenuItem key="collect" value={BattleType.CollectOrKill} primaryText="Collect most diamonds"/>
+                </SelectField>
                 <RaisedButton
                     label={'do a step'}
                     primary
@@ -238,22 +267,10 @@ export class StrategyEditor extends React.PureComponent<IProps, IState> {
                     onClick={this._resetRuntimeContext}
                 />
                 <RaisedButton
-                    label={'run kill all battle'}
+                    label={'run battle'}
                     primary
                     style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runKillAllBattle}
-                />
-                <RaisedButton
-                    label={'run get there battle'}
-                    primary
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runGetThereBattle}
-                />
-                <RaisedButton
-                    label={'run collection battle'}
-                    primary
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runCollectDiamondsBattle}
+                    onClick={this._runSelectedBattle}
                 />
                 <RaisedButton
                     label={'ast to console'}
