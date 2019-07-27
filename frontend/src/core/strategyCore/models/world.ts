@@ -5,11 +5,12 @@ import {isOnPosition, Position} from "./position";
 import {List, Record} from "immutable";
 import {EditorWorldModel} from "./editorWorldModel";
 import {Direction} from "../enums/direction";
+import {WorldObject} from "./worldObject";
 
 interface IWorldModelParameters {
     surface: List<List<TileColor>>;
     ships: List<Ship>;
-    objects: List<List<List<WorldObjectType>>>;
+    objects: List<List<List<WorldObject>>>;
     size: Position;
 }
 
@@ -49,24 +50,24 @@ const assertPositionInWorld = (world: World, x: number, y: number): void => {
 export const addObjectOnPosition = (world: World, x: number, y: number, obj: WorldObjectType): World => {
     assertPositionInWorld(world, x, y);
 
-    return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, world.objects.get(y)!.get(x)!.push(obj))));
+    return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, world.objects.get(y)!.get(x)!.push(new WorldObject({type: obj})))));
 };
 
-export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObjectType> => {
+export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObject> => {
     assertPositionInWorld(world, x, y);
 
     return world.objects.get(y)!.get(x)!;
 };
 
-export const getObjectsOnPositionWithShips = (world: World, x: number, y: number): List<WorldObjectType> => {
+export const getObjectsOnPositionWithShips = (world: World, x: number, y: number): List<WorldObject> => {
     const otherObjects = getObjectsOnPosition(world, x, y);
     if (world.ships.some(ship => isOnPosition(ship.position, x, y))) {
-        return otherObjects.push(WorldObjectType.Ship);
+        return otherObjects.push(new WorldObject({type: WorldObjectType.Ship}));
     }
     return otherObjects;
 };
 
-export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObjectType>): World => {
+export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObject>): World => {
     assertPositionInWorld(world, x, y);
 
     return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, newObjects)));
@@ -74,7 +75,10 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
 
 export const removeLaserAndExplosionObjects = (world: World): World =>
     world.set('objects', world.objects.map(line => line.map(tile => tile
-        .filter(item => item !== WorldObjectType.Laser && item !== WorldObjectType.Explosion && item !== WorldObjectType.LaserHorizontal))));
+        .filter(item => item.type !== WorldObjectType.Laser &&
+            item.type !== WorldObjectType.Explosion &&
+            item.type !== WorldObjectType.LaserHorizontal
+        ))));
 
 export const convertEditorWorldModelToWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),
@@ -85,7 +89,7 @@ export const convertEditorWorldModelToWorld = (editorModel: EditorWorldModel, sh
 
 export const convertWorldToEditorModel = (worldModel: World): EditorWorldModel =>
     worldModel.surface.map((line, y) => line.map((tileColor, x): [TileColor, string[]] => {
-        const tileObjects: string[] = worldModel.objects.get(y)!.get(x)!.toArray();
+        const tileObjects: string[] = worldModel.objects.get(y)!.get(x)!.map(o => o.type).toArray();
         const foundShip = worldModel.ships.find(ship => ship.position.x === x && ship.position.y === y);
 
         if (foundShip) {
@@ -132,7 +136,7 @@ export const isEnterablePosition = (position: Position, world: World): boolean =
 
     const objects = getObjectsOnPosition(world, position.x, position.y);
 
-    return objects.every(o => !shipBlockingObjects.contains(o));
+    return objects.every(o => !shipBlockingObjects.contains(o.type));
 };
 
 const range = (size: number) => [...Array(size).keys()];
@@ -157,13 +161,13 @@ export const strategyDemoWorld: World = new World({
     size: new Position({ x: 5, y: 5 }),
 });
 
-function getTestObjects(x: number, y: number): WorldObjectType[] {
+function getTestObjects(x: number, y: number): WorldObject[] {
     const center = 2;
     const vector = Math.sqrt(((center - x) ** 2) + ((center - y) ** 2));
     const distance = Math.abs(vector);
 
     if (distance <= 1)
-        return [WorldObjectType.Diamond];
+        return [new WorldObject({type: WorldObjectType.Diamond})];
 
     return [];
 }

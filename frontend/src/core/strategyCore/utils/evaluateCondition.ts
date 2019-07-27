@@ -24,6 +24,7 @@ import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
 import {Ship, ShipId} from "../models/ship";
 import {endOfMapConstant} from "../constants/astConstants";
+import {WorldObject} from "../models/worldObject";
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -138,7 +139,7 @@ const getComparedObject = (condition: Condition, world: World, shipPosition: Pos
     }
 };
 
-const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObjectType> =>
+const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObject> =>
     getObjectsOnPositionWithShips(world, position.x, position.y);
 
 const isPositionOnMap = (x: number, y: number, world: World): boolean =>
@@ -194,7 +195,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
-        return unifyShips(objects).contains(condition.value);
+        return unifyShips(objects.map(o => o.type)).contains(condition.value);
     }
 
     if (condition.comparator === Comparator.NotContains) {
@@ -207,7 +208,7 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
         if (isUserProgramError(position))
             return position;
         const objects = getWorldObjectsOnTile(position, world);
-        return !unifyShips(objects).contains(condition.value);
+        return !unifyShips(objects.map(o => o.type)).contains(condition.value);
     }
 
     if (basicComparators.contains(condition.comparator)) {
@@ -260,7 +261,7 @@ const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, worl
     console.log('x: ', position.x, ' y: ', position.y);
     const objectsOnTile = getObjectsOnPositionWithShips(world, position.x, position.y);
 
-    return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj));
+    return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj.type));
 };
 
 export const evaluateCondition = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
