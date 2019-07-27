@@ -161,17 +161,17 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
     switch (statement.head) {
         case StatementType.Fly:
             if (!canMove(world, ship, MovingDirection.Forward)) {
-                return UserProgramError.ShipCannotMove;
+                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Forward));
         case StatementType.Left:
             if (!canMove(world, ship, MovingDirection.Left)) {
-                return UserProgramError.ShipCannotMove;
+                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
         case StatementType.Right:
             if (!canMove(world, ship, MovingDirection.Right)) {
-                return UserProgramError.ShipCannotMove;
+                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
             }
             return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
         case StatementType.Shoot:
