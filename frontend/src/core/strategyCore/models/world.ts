@@ -1,5 +1,5 @@
 import {TileColor} from "../enums/tileColor";
-import {shipBlockingObjects, WorldObject} from "../enums/worldObject";
+import {shipBlockingObjects, WorldObjectType} from "../enums/worldObjectType";
 import {Ship, ShipColor} from "./ship";
 import {isOnPosition, Position} from "./position";
 import {List, Record} from "immutable";
@@ -9,7 +9,7 @@ import {Direction} from "../enums/direction";
 interface IWorldModelParameters {
     surface: List<List<TileColor>>;
     ships: List<Ship>;
-    objects: List<List<List<WorldObject>>>;
+    objects: List<List<List<WorldObjectType>>>;
     size: Position;
 }
 
@@ -46,27 +46,27 @@ const assertPositionInWorld = (world: World, x: number, y: number): void => {
     }
 };
 
-export const addObjectOnPosition = (world: World, x: number, y: number, obj: WorldObject): World => {
+export const addObjectOnPosition = (world: World, x: number, y: number, obj: WorldObjectType): World => {
     assertPositionInWorld(world, x, y);
 
     return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, world.objects.get(y)!.get(x)!.push(obj))));
 };
 
-export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObject> => {
+export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObjectType> => {
     assertPositionInWorld(world, x, y);
 
     return world.objects.get(y)!.get(x)!;
 };
 
-export const getObjectsOnPositionWithShips = (world: World, x: number, y: number): List<WorldObject> => {
+export const getObjectsOnPositionWithShips = (world: World, x: number, y: number): List<WorldObjectType> => {
     const otherObjects = getObjectsOnPosition(world, x, y);
     if (world.ships.some(ship => isOnPosition(ship.position, x, y))) {
-        return otherObjects.push(WorldObject.Ship);
+        return otherObjects.push(WorldObjectType.Ship);
     }
     return otherObjects;
 };
 
-export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObject>): World => {
+export const setObjectsOnPosition = (world: World, x: number, y: number, newObjects: List<WorldObjectType>): World => {
     assertPositionInWorld(world, x, y);
 
     return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, newObjects)));
@@ -74,7 +74,7 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
 
 export const removeLaserAndExplosionObjects = (world: World): World =>
     world.set('objects', world.objects.map(line => line.map(tile => tile
-        .filter(item => item !== WorldObject.Laser && item !== WorldObject.Explosion && item !== WorldObject.LaserHorizontal))));
+        .filter(item => item !== WorldObjectType.Laser && item !== WorldObjectType.Explosion && item !== WorldObjectType.LaserHorizontal))));
 
 export const convertEditorWorldModelToWorld = (editorModel: EditorWorldModel, ships: List<Ship>): World => new World({
     surface: convertArraysToLists(editorModel.map(line => line.map(tile => tile[0]))),
@@ -95,31 +95,31 @@ export const convertWorldToEditorModel = (worldModel: World): EditorWorldModel =
         return [tileColor, tileObjects];
     }).toArray()).toArray();
 
-const getShipIdentifier = (ship: Ship): WorldObject => {
+const getShipIdentifier = (ship: Ship): WorldObjectType => {
     if (ship.isDestroyed)
-        return WorldObject.ShipBroken;
+        return WorldObjectType.ShipBroken;
 
     switch (ship.direction) {
         case Direction.Up:
-            return WorldObject.ShipUp;
+            return WorldObjectType.ShipUp;
         case Direction.Down:
-            return WorldObject.ShipDown;
+            return WorldObjectType.ShipDown;
         case Direction.Left:
-            return WorldObject.ShipLeft;
+            return WorldObjectType.ShipLeft;
         case Direction.Right:
-            return WorldObject.ShipRight;
+            return WorldObjectType.ShipRight;
         default:
             throw new Error(`Unknown ship.direction '${ship.direction}'.`);
     }
 };
 
-const convertTileTraitsToObjects = (tileTraits: string[]): WorldObject[] =>
+const convertTileTraitsToObjects = (tileTraits: string[]): WorldObjectType[] =>
     tileTraits.map(convertStringToWorldObject);
 
-const convertStringToWorldObject = (input: string): WorldObject => {
-    for (const key in Object.keys(WorldObject)) {
-        if (input === WorldObject[key]) {
-            return <WorldObject>key;
+const convertStringToWorldObject = (input: string): WorldObjectType => {
+    for (const key in Object.keys(WorldObjectType)) {
+        if (input === WorldObjectType[key]) {
+            return <WorldObjectType>key;
         }
     }
     throw new Error(`Unknown world object '${input}'`);
@@ -141,7 +141,7 @@ export const demoWorld: World = new World({
         range(5).map(_ => TileColor.Black))),
     ships: List([new Ship({id: 'S1', position: new Position({x: 2, y: 4})})]),
     objects: convertArraysToLists(range(5).map((_, lineIndex) =>
-        range(5).map(_ => lineIndex === 0 ? [WorldObject.Asteroid] : []))),
+        range(5).map(_ => lineIndex === 0 ? [WorldObjectType.Asteroid] : []))),
     size: new Position({ x: 5, y: 5 }),
 });
 
@@ -157,13 +157,13 @@ export const strategyDemoWorld: World = new World({
     size: new Position({ x: 5, y: 5 }),
 });
 
-function getTestObjects(x: number, y: number): WorldObject[] {
+function getTestObjects(x: number, y: number): WorldObjectType[] {
     const center = 2;
     const vector = Math.sqrt(((center - x) ** 2) + ((center - y) ** 2));
     const distance = Math.abs(vector);
 
     if (distance <= 1)
-        return [WorldObject.Diamond];
+        return [WorldObjectType.Diamond];
 
     return [];
 }

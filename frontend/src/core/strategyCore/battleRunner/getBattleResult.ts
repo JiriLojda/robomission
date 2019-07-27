@@ -6,7 +6,7 @@ import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {arePositionsEqual} from "../models/position";
 import {List} from "immutable";
-import {WorldObject} from "../enums/worldObject";
+import {WorldObjectType} from "../enums/worldObjectType";
 
 export interface IGetBattleResultParams {
     world: World,
@@ -54,7 +54,7 @@ const getCollectOrKillResult: BattleResultGetter = params => {
 
     const diamondCounts = params.world.ships
         .map(s => ({
-            count: s.carriedObjects.filter(o => o === WorldObject.Diamond).count(),
+            count: s.carriedObjects.filter(o => o === WorldObjectType.Diamond).count(),
             id: s.id
         }))
         .sort((o1, o2) => o2.count - o1.count)

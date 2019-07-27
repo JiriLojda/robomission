@@ -3,7 +3,7 @@ import {ConditionType} from "../enums/conditionType";
 import {Comparator} from "../enums/comparator";
 import {TileColor} from "../enums/tileColor";
 import {StatementType} from "../enums/statementType";
-import {WorldObject} from "../enums/worldObject";
+import {WorldObjectType} from "../enums/worldObjectType";
 import {NumberOperation} from "../enums/numberOperation";
 import {endOfMapType} from "../constants/astConstants";
 
@@ -28,7 +28,7 @@ export interface IRuntimeContext {
 export interface ICondition {
     head: ConditionType;
     comparator?: Comparator;
-    value?: TileColor | number | WorldObject | ICondition | string;
+    value?: TileColor | number | WorldObjectType | ICondition | string;
 }
 
 export interface IPositionValue {
@@ -39,7 +39,7 @@ export interface IPositionValue {
 
 export interface ITileCondition extends ICondition {
     head: ConditionType.Tile;
-    value: WorldObject | endOfMapType;
+    value: WorldObjectType | endOfMapType;
     comparator: Comparator.Contains | Comparator.NotContains;
     position: IPositionValue;
 }

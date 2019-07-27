@@ -1,7 +1,7 @@
 import {Position} from "./position";
 import {List, Record} from "immutable";
 import {Direction} from "../enums/direction";
-import {WorldObject} from "../enums/worldObject";
+import {WorldObjectType} from "../enums/worldObjectType";
 
 export type ShipId = string;
 
@@ -18,7 +18,7 @@ interface IShipParameters {
     position: Position;
     direction: Direction;
     isDestroyed: boolean;
-    carriedObjects: List<WorldObject>;
+    carriedObjects: List<WorldObjectType>;
 }
 
 const defaultParameters: IShipParameters = {

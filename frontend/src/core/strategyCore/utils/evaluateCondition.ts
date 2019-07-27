@@ -13,7 +13,7 @@ import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
 import {TileColor} from "../enums/tileColor";
 import {List} from "immutable";
-import {shipBlockingObjects, unifyShips, WorldObject} from "../enums/worldObject";
+import {shipBlockingObjects, unifyShips, WorldObjectType} from "../enums/worldObjectType";
 import {ConditionType} from "../enums/conditionType";
 import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
@@ -138,7 +138,7 @@ const getComparedObject = (condition: Condition, world: World, shipPosition: Pos
     }
 };
 
-const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObject> =>
+const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObjectType> =>
     getObjectsOnPositionWithShips(world, position.x, position.y);
 
 const isPositionOnMap = (x: number, y: number, world: World): boolean =>

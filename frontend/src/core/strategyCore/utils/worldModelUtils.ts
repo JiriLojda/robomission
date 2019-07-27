@@ -2,7 +2,7 @@ import {MovingDirection} from "../enums/movingDirection";
 import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
 import {Ship, ShipId} from "../models/ship";
 import {arePositionsEqual, Position} from "../models/position";
-import {destructableObjects, laserBlockingObjects, WorldObject} from "../enums/worldObject";
+import {destructableObjects, laserBlockingObjects, WorldObjectType} from "../enums/worldObjectType";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
 import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
@@ -81,12 +81,12 @@ export const makeShipShoot = (world: World, shipId: ShipId): World => {
         let objects = getObjectsOnPosition(world, shootPosition.x, shootPosition.y);
         laserStopped = objects.some(o => laserBlockingObjects.contains(o));
         if (objects.some(item => destructableObjects.contains(item))) {
-            objects = objects.push(WorldObject.Explosion);
+            objects = objects.push(WorldObjectType.Explosion);
         }
         if (ship.direction === Direction.Left || ship.direction === Direction.Right) {
-            objects = objects.push(WorldObject.LaserHorizontal);
+            objects = objects.push(WorldObjectType.LaserHorizontal);
         } else {
-            objects = objects.push(WorldObject.Laser);
+            objects = objects.push(WorldObjectType.Laser);
         }
         objects = objects.filter(item => !destructableObjects.contains(item));
         newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
@@ -105,12 +105,12 @@ export const makeShipPickupDiamond = (world: World, shipId: ShipId): World => {
 
     const objects = getObjectsOnPosition(world, ship.position.x, ship.position.y);
 
-    if (!objects.contains(WorldObject.Diamond))
+    if (!objects.contains(WorldObjectType.Diamond))
         return world;
 
-    const newObjects = objects.filter(o => o != WorldObject.Diamond);
+    const newObjects = objects.filter(o => o != WorldObjectType.Diamond);
     const newWorld = setObjectsOnPosition(world, ship.position.x, ship.position.y, newObjects);
-    const newShip = ship.merge({carriedObjects: ship.carriedObjects.push(WorldObject.Diamond)})
+    const newShip = ship.merge({carriedObjects: ship.carriedObjects.push(WorldObjectType.Diamond)})
 
     return modifyShipInWorld(newWorld, newShip);
 };
