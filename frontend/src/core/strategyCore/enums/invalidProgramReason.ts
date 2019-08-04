@@ -9,12 +9,14 @@ export enum InvalidProgramReason {
     UnknownStatementType = 'UnknownStatementType',
     UndefinedRequiredProp = 'UndefinedRequiredProp',
     InvalidValueType = 'InvalidValueType',
+    CodeNotParsed = 'CodeNotParsed',
     None = 'None',
 }
 
 export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.MissingTestCondition,
     InvalidProgramReason.MissingParameter,
+    InvalidProgramReason.CodeNotParsed,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -35,6 +37,8 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'One of the statements has some required props undefined.';
         case InvalidProgramReason.InvalidValueType:
             return 'One of your value statements has type not matching its usage.';
+        case InvalidProgramReason.CodeNotParsed:
+            return 'We failed to parse your code. Check the output, please.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

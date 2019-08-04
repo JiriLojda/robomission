@@ -258,7 +258,6 @@ const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, worl
     if (isUserProgramError(position))
         return position === UserProgramError.ReferencedPositionIsNotOnMap ? false : position;
 
-    console.log('x: ', position.x, ' y: ', position.y);
     const objectsOnTile = getObjectsOnPositionWithShips(world, position.x, position.y);
 
     return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj.type));

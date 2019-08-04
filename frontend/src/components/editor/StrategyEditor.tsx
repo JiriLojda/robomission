@@ -25,6 +25,10 @@ import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {parseStrategyRoboCode} from "../../core/strategyCore/codeEditor/parser/strategyParser";
+import CodeEditor from "./CodeEditor";
+import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
+import {Toggle} from "material-ui";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -77,6 +81,9 @@ interface IState {
     validationResult: InvalidProgramReason;
     battleResult?: BattleResult;
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
+    useCodeEditor: boolean;
+    codeError?: string;
+    code?: string;
 }
 
 export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IState> {
@@ -90,6 +97,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             world: props.level.world,
             userProgramError: undefined,
             validationResult: InvalidProgramReason.None,
+            useCodeEditor: false,
         };
     }
 
@@ -99,6 +107,26 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         const roboAst = blocklyXmlToRoboAst(e);
         const validationResult = isRoboAstValid(roboAst);
         this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: validationResult.reason}));
+    };
+
+    _onCodeChange = (code: string) => {
+        this.setState(() => ({code: code }));
+        const parseResult = parseStrategyRoboCode(code);
+        if (!parseResult.isSuccessful) {
+            this.setState(() => ({
+                codeError: parseResult.error,
+                validationResult: InvalidProgramReason.CodeNotParsed,
+            }));
+            return;
+        } else {
+            const validationResult = isRoboAstValid(parseResult.result);
+            this.setState(() => ({
+                roboAst: parseResult.result,
+                runtimeContext: getEmptyRuntimeContext(),
+                validationResult: validationResult.reason,
+                codeError: undefined,
+            }));
+        }
     };
 
     _reset = () => {
@@ -145,6 +173,22 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         this._drawHistory(result.history.reverse());
     };
 
+    _renderEditor = () => this.state.useCodeEditor ? (
+        <CodeEditor code={this.state.code || ''} onChange={this._onCodeChange} />
+        ) : (
+        <ReactBlocklyComponent.BlocklyEditor
+            ref={(ref: BlocklyEditor) => {
+                this.blocklyEditor = ref;
+            }}
+            workspaceConfiguration={{trashcan: true, collapse: true}}
+            toolboxCategories={allStrategyCategories}
+            initialXml={generateBlocklyXml(this.state.roboAst)}
+            xmlDidChange={this._onXmlChange}
+            wrapperDivClassName="flocs-blockly"
+        />
+    );
+
+
     render() {
         return <SplitPane
             split="vertical"
@@ -165,6 +209,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                 />
                 <RaisedButton
                     label={'run battle'}
+                    disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
                     primary
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._runBattle}
@@ -180,6 +225,14 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={() => console.log(JSON.stringify(this.state.roboAst))}
                 />
+                <Toggle
+                    toggled={this.state.useCodeEditor}
+                    label="Use code editor"
+                    labelStyle={{color: 'black'}}
+                    onToggle={() => this.setState(prev => ({
+                        useCodeEditor: !prev.useCodeEditor,
+                        code: generateStrategyRoboCode(prev.roboAst),
+                    }))} />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
                 </ErrorMessage>
@@ -190,20 +243,14 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                             undefined
                     }
                 </ErrorMessage>
+                <ErrorMessage>
+                    {this.state.codeError}
+                </ErrorMessage>
                 <ResultMessage type={getMessageTypeForResult(this.state.battleResult)}>
                     {getBattleResultMessage(this.state.battleResult)}
                 </ResultMessage>
             </span>
-            <ReactBlocklyComponent.BlocklyEditor
-                ref={(ref: BlocklyEditor) => {
-                    this.blocklyEditor = ref;
-                }}
-                workspaceConfiguration={{trashcan: true, collapse: true}}
-                toolboxCategories={allStrategyCategories}
-                initialXml={getEmptyXml()}
-                xmlDidChange={this._onXmlChange}
-                wrapperDivClassName="flocs-blockly"
-            />
+            {this._renderEditor()}
         </SplitPane>
     }
 }
