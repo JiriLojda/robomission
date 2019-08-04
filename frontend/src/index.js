@@ -14,6 +14,7 @@ import TasksTableContainer from './containers/TasksTableContainer';
 import MonitoringPage from './containers/MonitoringPage';
 import PrivateRoute from './containers/PrivateRoute';
 import {StrategyPage} from "./pages/StrategyPage";
+import {StrategyEditor} from "./containers/StrategyEditor";
 
 //TODO: setup service worker to work in production
 // (see create-react-app for details)
@@ -32,7 +33,8 @@ const app = (
             <Route exact path="/tasks" component={TasksTableContainer} />
             <Route exact path="/task-editor" component={TaskEditorPage} />
             <Route path="/task/:taskId" component={PracticePage} />
-            <Route path="/strategy" component={StrategyPage} />
+            <Route exact path="/strategy" component={StrategyPage} />
+            <Route exact path="/strategy/level/:urlSlug" render={props => <StrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
             <Route exact path="/login" component={LoginPage} />
             <PrivateRoute exact path="/monitoring" component={MonitoringPage} />
           </Switch>

@@ -9,7 +9,7 @@ import TaskName from './TaskName';
 import Rating from '../Rating';
 import { theme } from '../../theme';
 import { translate } from '../../localization';
-import { flatten } from '../../utils/arrays';
+import { flatten } from '../../utils/arrays.ts';
 import Instructable from '../../containers/Instructable';
 
 

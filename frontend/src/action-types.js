@@ -85,3 +85,6 @@ export const SET_EDITOR_TYPE = 'SET_EDITOR_TYPE';
 export const SWITCH_VIM_MODE = 'SWITCH_VIM_MODE';
 export const EXPORT_TASK = 'EXPORT_TASK';
 export const IMPORT_TASK = 'IMPORT_TASK';
+
+//strategy
+export const STRATEGY_PART_ENTERED = 'STRATEGY_PART_ENTERED';

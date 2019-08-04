@@ -6,8 +6,13 @@ import {generateBlocklyXml} from '../../core/blocklyXmlGenerator';
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
+import {doNextStep} from "../../core/strategyCore/astInterpreter";
 import {convertWorldToEditorModel, World} from '../../core/strategyCore/models/world'
-import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
+import {
+    getUserProgramErrorDisplayName,
+    isUserProgramError,
+    UserProgramError
+} from "../../core/strategyCore/enums/userProgramError";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
 import {isRoboAstValid} from "../../core/strategyCore/validator/programValidator";
@@ -17,14 +22,21 @@ import {
 } from "../../core/strategyCore/enums/invalidProgramReason";
 import {allStrategyCategories} from "../../core/strategyCore/constants/strategyToolbox";
 import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
-import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
+import {IRunBattleParams, runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {List} from "immutable";
+import {basicScanStrategy} from "../../core/strategyCore/predefinedStrategies/basicScanStrategy";
+import {BattleType} from "../../core/strategyCore/battleRunner/BattleType";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
 import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
+import {Position} from "../../core/strategyCore/models/position";
+import {getThereFirstTestStrategy} from "../../core/strategyCore/predefinedStrategies/getThereFirstTestStrategy";
+import {centralDiamondsBasicStrategy} from "../../core/strategyCore/predefinedStrategies/centralDiamondsBasicStrategy";
+import SelectField from "material-ui/SelectField";
+import MenuItem from "material-ui/MenuItem";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
-import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {basicKillAllWorld} from "../../core/strategyCore/levels/worlds/basicKillAllWorld";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []});
@@ -64,8 +76,7 @@ const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
     }
 };
 
-export interface IStrategyEditorProps {
-    readonly level: IGameLevel;
+interface IProps {
 }
 
 interface IState {
@@ -76,20 +87,22 @@ interface IState {
     userProgramError?: UserProgramError;
     validationResult: InvalidProgramReason;
     battleResult?: BattleResult;
+    selectedBattleType: BattleType;
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
 }
 
-export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IState> {
+export class StrategyEditorOld extends React.PureComponent<IProps, IState> {
 
-    constructor(props: IStrategyEditorProps) {
+    constructor(props: IProps) {
         super(props);
         this.state = {
             blocklySettings: { trashcan: true, disable: false },
             roboAst: blocklyXmlToRoboAst(getEmptyXml()),
             runtimeContext: getEmptyRuntimeContext(),
-            world: props.level.world,
+            world: basicKillAllWorld,
             userProgramError: undefined,
             validationResult: InvalidProgramReason.None,
+            selectedBattleType: BattleType.KillAll,
         };
     }
 
@@ -101,13 +114,31 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: validationResult.reason}));
     };
 
+    _makeStep = () => {
+        if (this.state.validationResult !== InvalidProgramReason.None) {
+            return;
+        }
+        this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: true}, userProgramError: undefined}));
+
+        const result = doNextStep(this.state.roboAst, this.state.world, 'S1', this.state.runtimeContext);
+
+        if (isUserProgramError(result)) {
+            this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: false}, userProgramError: result}));
+            return;
+        }
+
+        const [runtimeContext, world] = result;
+
+        this.setState((prevState) => ({blocklySettings: {...prevState.blocklySettings, disable: false}, world, runtimeContext }));
+    };
+
     _reset = () => {
         if (this.state.drawingPromise) {
             this.state.drawingPromise.cancel();
         }
         this.setState(() => ({
             runtimeContext: getEmptyRuntimeContext(),
-            world: this.props.level.world,
+            world: basicKillAllWorld,
             userProgramError: undefined,
             battleResult: undefined,
             drawingPromise: undefined,
@@ -129,21 +160,81 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             .then(h => !h || this._drawHistory(h))
     };
 
-    _runBattle = (): void => {
-        const level = this.props.level;
-        const userShipId = level.turnsOrder.find(id => !level.shipsAsts.has(id)) || 'userShip';
-        const allAsts = level.shipsAsts.set(userShipId, this.state.roboAst);
-        const result = runBattle({
-            world: this.state.world,
-            battleParams: level.battleParams,
-            battleType: level.battleType,
-            shipsOrder: level.turnsOrder,
-            roboAsts: level.turnsOrder.map(id => allAsts.get(id)!).toList(),
-        });
+    _runBattle = (params: IRunBattleParams): void => {
+        const result = runBattle(params);
         this.setState(() => ({battleResult: result}));
 
         this._drawHistory(result.history.reverse());
     };
+
+    _runKillAllBattle = () => {
+        const asts = List([
+            basicScanStrategy,
+            this.state.roboAst,
+        ]);
+        const ids = List([
+            'aiShip',
+            'playerShip',
+        ]);
+        this._runBattle({
+            roboAsts: asts,
+            shipsOrder: ids,
+            world: this.state.world,
+            battleType: BattleType.KillAll,
+            battleParams: {maxTurns: 50, turnsRan: 0},
+        });
+    };
+
+    _runGetThereBattle = () => {
+        const asts = List([
+            getThereFirstTestStrategy,
+            this.state.roboAst,
+        ]);
+        const ids = List([
+            'aiShip',
+            'playerShip',
+        ]);
+        this._runBattle({
+            roboAsts: asts,
+            shipsOrder: ids,
+            world: this.state.world,
+            battleType: BattleType.GetThereFirst,
+            battleParams: {maxTurns: 50, turnsRan: 0, finishPosition: new Position({x: 4, y: 2})},
+        });
+    };
+
+    _runCollectDiamondsBattle = () => {
+        const asts = List([
+            centralDiamondsBasicStrategy,
+            this.state.roboAst,
+        ]);
+        const ids = List([
+            'aiShip',
+            'playerShip',
+        ]);
+        this._runBattle({
+            roboAsts: asts,
+            shipsOrder: ids,
+            world: this.state.world,
+            battleType: BattleType.CollectOrKill,
+            battleParams: {maxTurns: 50, turnsRan: 0},
+        });
+    };
+
+    _runSelectedBattle = () => {
+        switch (this.state.selectedBattleType) {
+            case BattleType.CollectOrKill:
+                return this._runCollectDiamondsBattle();
+            case BattleType.GetThereFirst:
+                return this._runGetThereBattle();
+            case BattleType.KillAll:
+                return this._runKillAllBattle();
+            default:
+                throw new Error('Selected unknown battle type...');
+        }
+    };
+
+    _onSelectChange = (_: any, __: any, value: BattleType) => this.setState(() => ({selectedBattleType: value}));
 
     render() {
         return <SplitPane
@@ -163,17 +254,34 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                     fields={convertWorldToEditorModel(this.state.world)}
                     width={200}
                 />
+                <SelectField
+                    onChange={this._onSelectChange}
+                    value={this.state.selectedBattleType}
+                    floatingLabelText="battle type"
+                    style={{backgroundColor: 'black'}}
+                >
+                    <MenuItem key="kill" value={BattleType.KillAll} primaryText="Kill 'em all" />
+                    <MenuItem key="go" value={BattleType.GetThereFirst} primaryText="Get there first"/>
+                    <MenuItem key="collect" value={BattleType.CollectOrKill} primaryText="Collect most diamonds"/>
+                </SelectField>
                 <RaisedButton
-                    label={'run battle'}
+                    label={'do a step'}
                     primary
+                    disabled
                     style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runBattle}
+                    onClick={this._makeStep}
                 />
                 <RaisedButton
                     label={'reset'}
                     secondary
                     style={{ margin: 2, minWidth: 50 }}
                     onClick={this._reset}
+                />
+                <RaisedButton
+                    label={'run battle'}
+                    primary
+                    style={{ margin: 2, minWidth: 50 }}
+                    onClick={this._runSelectedBattle}
                 />
                 <RaisedButton
                     label={'ast to console'}

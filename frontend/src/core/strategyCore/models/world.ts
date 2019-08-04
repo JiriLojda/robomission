@@ -1,11 +1,12 @@
 import {TileColor} from "../enums/tileColor";
 import {shipBlockingObjects, WorldObjectType} from "../enums/worldObjectType";
-import {Ship, ShipColor} from "./ship";
+import {Ship} from "./ship";
 import {isOnPosition, Position} from "./position";
 import {List, Record} from "immutable";
 import {EditorWorldModel} from "./editorWorldModel";
 import {Direction} from "../enums/direction";
 import {WorldObject} from "./worldObject";
+import {convertArraysToLists} from "../../../utils/arrays";
 
 interface IWorldModelParameters {
     surface: List<List<TileColor>>;
@@ -32,10 +33,6 @@ export const updateShipInWorld = (world: World, oldShip: Ship, newShip: Ship): W
     }
 
     return world.set("ships", world.ships.update(index, () => newShip));
-};
-
-const convertArraysToLists = <T extends unknown[], U>(array: T): U => {
-    return List(array.map(e => Array.isArray(e) ? convertArraysToLists(e) : e)) as any;
 };
 
 const assertPositionInWorld = (world: World, x: number, y: number): void => {
@@ -139,35 +136,5 @@ export const isEnterablePosition = (position: Position, world: World): boolean =
     return objects.every(o => !shipBlockingObjects.contains(o.type));
 };
 
-const range = (size: number) => [...Array(size).keys()];
-export const demoWorld: World = new World({
-    surface: convertArraysToLists(range(5).map(_ =>
-        range(5).map(_ => TileColor.Black))),
-    ships: List([new Ship({id: 'S1', position: new Position({x: 2, y: 4})})]),
-    objects: convertArraysToLists(range(5).map((_, lineIndex) =>
-        range(5).map(_ => lineIndex === 0 ? [WorldObjectType.Asteroid] : []))),
-    size: new Position({ x: 5, y: 5 }),
-});
-
-export const strategyDemoWorld: World = new World({
-    surface: convertArraysToLists(range(5).map(_ =>
-        range(5).map(_ => TileColor.Black))),
-    ships: List([
-        new Ship({id: 'aiShip', position: new Position({x: 0, y: 4}), direction: Direction.Up, shipColor: ShipColor.Yellow}),
-        new Ship({id: 'playerShip', position: new Position({x: 4, y: 0}), direction: Direction.Down, shipColor: ShipColor.Green}),
-    ]),
-    objects: convertArraysToLists(range(5).map((_, lineIndex) =>
-        range(5).map((_, columnIndex) => getTestObjects(columnIndex, lineIndex)))),
-    size: new Position({ x: 5, y: 5 }),
-});
-
-function getTestObjects(x: number, y: number): WorldObject[] {
-    const center = 2;
-    const vector = Math.sqrt(((center - x) ** 2) + ((center - y) ** 2));
-    const distance = Math.abs(vector);
-
-    if (distance <= 1)
-        return [new WorldObject({type: WorldObjectType.Diamond})];
-
-    return [];
-}
+export const isPositionInWorld = (position: Position, world: World): boolean =>
+    position.x >= 0 && position.y >= 0 && position.x < world.size.x && position.y < world.size.y;

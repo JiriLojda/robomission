@@ -16,6 +16,7 @@ import reduceTaskEditor from './taskEditor';
 import reducePractice from './practice';
 import reduceFeedback from './feedback';
 import reduceMonitoring from './monitoring';
+import {strategyLevels} from "./strategyLevels";
 
 
 export const reducers = combineReducers({
@@ -28,6 +29,7 @@ export const reducers = combineReducers({
   toolboxes: reduceToolboxes,
   user: reduceUser,
   student: reduceStudent,
+  strategyLevels,
   recommendation: reduceRecommendation,
   menu: reduceMenu,
   taskEnvironments: reduceTaskEnvironments,
