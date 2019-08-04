@@ -1,13 +1,13 @@
 import {parse, SyntaxError} from './pegRoboCodeParser';
 
 export function parseRoboCode(code) {
-  const normalizedCode = preprocess(code);
+  const normalizedCode = preprocessRoboCodeForParser(code);
   try {
     return parse(normalizedCode);
   } catch (error) {
     if (error instanceof SyntaxError) {
       const { message, location, expected, found } = error;
-      const { line, column } = getOriginalLocation(location.start, normalizedCode);
+      const { line, column } = getOriginalRoboCodeLocation(location.start, normalizedCode);
       let problem = message;
       let position = `line ${line}, column ${column}`;
       if (expected.some(exp => exp.text === '>' || exp.text === '<')
@@ -30,7 +30,7 @@ export function RoboCodeSyntaxError(message) {
 }
 
 
-function preprocess(code) {
+export function preprocessRoboCodeForParser(code) {
   const lines = removeEmpty(toNumberedIndentedLines(code));
   const linesAndIndents = addIndentationTokens(lines);
   const normalizedLines = linesAndIndents.map(line => {
@@ -85,7 +85,7 @@ function removeEmpty(numberedIndentedLines) {
 }
 
 
-function getOriginalLocation({ line, column }, normalizedCode) {
+export function getOriginalRoboCodeLocation({ line, column }, normalizedCode) {
   const lines = normalizedCode.split('\n');
   const insertedLines = lines.slice(0, line).filter(l => l === '>' || l === '<');
   let insertedCount = insertedLines.length;
