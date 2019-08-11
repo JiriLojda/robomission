@@ -131,7 +131,7 @@ export const isEnterablePosition = (position: Position, world: World): boolean =
         return false;
     }
 
-    const objects = getObjectsOnPosition(world, position.x, position.y);
+    const objects = getObjectsOnPositionWithShips(world, position.x, position.y);
 
     return objects.every(o => !shipBlockingObjects.contains(o.type));
 };
