@@ -12,7 +12,7 @@ export const getValidatorResult = (isValid: boolean, reason: InvalidProgramReaso
 
 export const checkParameterExistence = <T, K extends keyof T>(statement: T, parameters: K[], customReason: InvalidProgramReason = InvalidProgramReason.MissingParameter): IValidatorResult => {
     for (const parameter of parameters) {
-        if (!statement.hasOwnProperty(parameter) || !statement[parameter]) {
+        if (!statement.hasOwnProperty(parameter) || (!statement[parameter] && typeof statement[parameter] !== "number")) {
             return getValidatorResult(false, customReason);
         }
     }

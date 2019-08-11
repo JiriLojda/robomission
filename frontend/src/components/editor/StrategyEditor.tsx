@@ -2,7 +2,7 @@ import React from 'react';
 import * as ReactBlocklyComponent from 'react-blockly-component';
 import {BlocklyEditor} from 'react-blockly-component';
 import {blocklyXmlToRoboAst} from '../../core/blockly';
-import {generateBlocklyXml} from '../../core/blocklyXmlGenerator';
+import {generateBlocklyXml} from '../../core/strategyCore/codeEditor/xmlGenerator/blocklyXmlGenerator';
 import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
@@ -31,7 +31,7 @@ import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeG
 import {Toggle} from "material-ui";
 
 
-const getEmptyXml = () => generateBlocklyXml({body: []});
+const getEmptyXml = () => generateBlocklyXml({body: []} as any);
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
@@ -104,6 +104,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     blocklyEditor: BlocklyEditor | null = null;
 
     _onXmlChange = (e: unknown) => {
+        console.log(e);
         const roboAst = blocklyXmlToRoboAst(e);
         const validationResult = isRoboAstValid(roboAst);
         this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: validationResult.reason}));

@@ -132,7 +132,7 @@ function generateIfElseBlock({ test, body, orelse }, nextNodes) {
 
 
 function generateNextBlocksIfPresent(nextNodes) {
-  if (nextNodes.length === 0) {
+  if (!nextNodes || nextNodes.length === 0) {
     return '';
   }
   return `

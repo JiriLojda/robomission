@@ -1,4 +1,4 @@
-import {parse, SyntaxError} from './strategyCodeParser';
+import {parse, SyntaxError} from './strategyCodeParserCached';
 import {getOriginalRoboCodeLocation, preprocessRoboCodeForParser} from "../../../roboCodeParser";
 import {IRoboAst} from "../../models/programTypes";
 

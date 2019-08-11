@@ -219,7 +219,7 @@ Value
   = Integer / StringValue
 
 Integer
-  = digits:[0-9]+
+  = digits:('-'?[0-9]+)
     { return parseInt(digits.join(""), 10); }
 
 StringValue

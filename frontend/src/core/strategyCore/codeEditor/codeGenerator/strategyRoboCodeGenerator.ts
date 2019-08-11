@@ -50,11 +50,12 @@ function generateStatement(statement: IStatement): string {
             const s = statement as INumberBinaryStatement;
             const left = generateStatement(s.leftValue);
             const right = generateStatement(s.rightValue);
-            const operation = getNumberOperation(s.operator);
+            const operation = s.operator;
 
             return `(${left} ${operation} ${right})`;
         }
         case StatementType.SetVariableNumeric:
+            return `${statement.name} = ${generateStatement(statement.value as IStatement)}`;
         case StatementType.SetVariable:
             return `${statement.name} = ${statement.value}`;
         default:
@@ -62,12 +63,7 @@ function generateStatement(statement: IStatement): string {
     }
 }
 
-function getNumberOperation(operation: NumberOperation): string {
-    return NumberOperation[operation as any];
-}
-
 function generateSimpleStatement({ head }: IStatement) {
-    // const argsList = args.map(encodeValue).join(',');
     return `${head}()`;
 }
 
@@ -180,7 +176,7 @@ function generateObjectOnMap(obj: WorldObjectType | "TheEndOfMap"): string {
 function generateTileArgument(position: IPositionValue) {
     const prefix = position.head === "position_value" ? 'Tile' : 'TileRelative';
 
-    return `${prefix}[${position.x}, ${position.y}]`;
+    return `${prefix}[${generateStatement(position.x)}, ${generateStatement(position.y)}]`;
 }
 
 function generateLogicBinaryOperation(node: IBinaryLogicCondition): string {
