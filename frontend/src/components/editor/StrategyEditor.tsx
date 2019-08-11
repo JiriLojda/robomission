@@ -29,6 +29,7 @@ import {parseStrategyRoboCode} from "../../core/strategyCore/codeEditor/parser/s
 import CodeEditor from "./CodeEditor";
 import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
 import {Toggle} from "material-ui";
+import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []} as any);
@@ -175,7 +176,11 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     };
 
     _renderEditor = () => this.state.useCodeEditor ? (
-        <CodeEditor code={this.state.code || ''} onChange={this._onCodeChange} />
+        <CodeEditor
+            code={this.state.code || ''}
+            onChange={this._onCodeChange}
+            highlighter={new StrategyRoboCodeHighlighter()}
+        />
         ) : (
         <ReactBlocklyComponent.BlocklyEditor
             ref={(ref: BlocklyEditor) => {

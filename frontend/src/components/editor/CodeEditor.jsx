@@ -1,15 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
-import RoboCodeHighlighter from '../../core/roboCodeHighlighter'
 
 import 'brace/theme/solarized_dark';
 
 
 export default class CodeEditor extends React.Component {
   componentDidMount() {
-    const roboCodeHighlighter = new RoboCodeHighlighter();
-    this.aceEditor.editor.getSession().setMode(roboCodeHighlighter);
+    this.aceEditor.editor.getSession().setMode(this.props.highlighter);
   }
 
   componentDidUpdate() {
@@ -40,6 +38,7 @@ export default class CodeEditor extends React.Component {
 CodeEditor.propTypes = {
   code: PropTypes.string,
   onChange: PropTypes.func,
+  highlighter: PropTypes.object.isRequired,
 };
 
 CodeEditor.defaultProps = {

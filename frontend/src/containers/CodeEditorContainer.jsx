@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import CodeEditor from '../components/editor/CodeEditor';
 import { editProgramCode } from '../actions';
+import RoboCodeHighlighter from '../core/roboCodeHighlighter'
 
 
 class CodeEditorWrapper extends React.Component {
@@ -16,6 +17,7 @@ class CodeEditorWrapper extends React.Component {
       <CodeEditor
         code={this.props.code}
         onChange={this.changeCode}
+        highlighter={new RoboCodeHighlighter()}
       />
     );
   }
