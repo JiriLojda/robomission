@@ -40,9 +40,8 @@ function generateStatement(statement: IStatement): string {
         case StatementType.If:
             return generateIfStatement(statement);
         case StatementType.GetStringVariable:
-            return `getStringVariable(${statement.name})`;
         case StatementType.GetNumericVariable:
-            return `getNumericVariable(${statement.name})`;
+            return `${statement.name}`;
         case StatementType.ConstantString:
         case StatementType.ConstantNumber:
             return `${statement.value}`;

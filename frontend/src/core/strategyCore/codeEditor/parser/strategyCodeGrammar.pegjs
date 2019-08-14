@@ -157,7 +157,7 @@ NumberBinary
     { return { head: 'number_binary', operator: op, leftValue: left, rightValue: right } }
 
 GetNumberVariable
-  = "getNumericVariable(" _ name:StringValue _ ")"
+  = name:Identifier
     { return { head: 'getNumericVariable', name: name } }
 
 Number
@@ -177,7 +177,7 @@ ConstantString
     { return { head: 'constant_string', value: value } }
 
 GetStringVariable
-  = "getStringVariable(" _ name:StringValue _ ")"
+  = name:Identifier
     { return { head: 'getStringVariable', name: name } }
 
 String
