@@ -171,8 +171,8 @@
                 peg$c30 = ")",
                 peg$c31 = peg$literalExpectation(")", false),
                 peg$c32 = function(left, op, right) { return { head: 'logic_binary', comparator: op, leftValue: left, rightValue: right } },
-                peg$c33 = "isTileAccessible(",
-                peg$c34 = peg$literalExpectation("isTileAccessible(", false),
+                peg$c33 = "isAccessible(",
+                peg$c34 = peg$literalExpectation("isAccessible(", false),
                 peg$c35 = function(position) { return { head: 'tile_accessible', position: position } },
                 peg$c36 = function(left, op, right) { return { head: 'numericCompare', leftValue: left, rightValue: right, comparator: op } },
                 peg$c37 = function(left, op, right) { return { head: 'stringCompare', leftValue: left, rightValue: right, comparator: op } },
@@ -1320,9 +1320,9 @@
                 }
 
                 s0 = peg$currPos;
-                if (input.substr(peg$currPos, 17) === peg$c33) {
+                if (input.substr(peg$currPos, 13) === peg$c33) {
                     s1 = peg$c33;
-                    peg$currPos += 17;
+                    peg$currPos += 13;
                 } else {
                     s1 = peg$FAILED;
                     if (peg$silentFails === 0) { peg$fail(peg$c34); }

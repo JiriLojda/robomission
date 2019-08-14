@@ -12,7 +12,6 @@ import {ConditionType} from "../../enums/conditionType";
 import {Comparator} from "../../enums/comparator";
 import {invalidProgramError} from "../../utils/invalidProgramError";
 import {WorldObjectType} from "../../enums/worldObjectType";
-import {NumberOperation} from "../../enums/numberOperation";
 
 export function generateStrategyRoboCode(roboAst: IRoboAst) {
     const { head, body } = roboAst;
@@ -129,7 +128,7 @@ function generateTest(node: Condition): string {
         }
         case ConditionType.IsTileAccessible: {
             const position = generateTileArgument(node.position);
-            return `isTileAccessible(${position})`;
+            return `isAccessible(${position})`;
         }
         case ConditionType.Position:
             throw invalidProgramError('Unsupported condition Position.');
