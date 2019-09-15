@@ -3,6 +3,13 @@ import {List, Map} from "immutable";
 import {basicScanStrategy} from "../../predefinedStrategies/basicScanStrategy";
 import {IGameLevel} from "../../battleRunner/IGameLevel";
 import {basicKillAllWorld} from "../worlds/basicKillAllWorld";
+import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
+import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
+
+const behaviours: IGameBehaviours = {
+    mapBorderCollisionResolver: explosionCollisionResolver,
+    shipCollisionResolver: explosionCollisionResolver,
+};
 
 export const basicScanKillAllLevel: IGameLevel = {
     name: `Kill 'em all basic`,
@@ -12,4 +19,5 @@ export const basicScanKillAllLevel: IGameLevel = {
     turnsOrder: List(['aiShip', 'playerShip']),
     shipsAsts: Map([['aiShip', basicScanStrategy]]),
     world: basicKillAllWorld,
+    gameBehaviours: behaviours,
 };

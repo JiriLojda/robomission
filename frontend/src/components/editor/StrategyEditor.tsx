@@ -169,6 +169,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             battleType: level.battleType,
             shipsOrder: level.turnsOrder,
             roboAsts: level.turnsOrder.map(id => allAsts.get(id)!).toList(),
+            behaviours: level.gameBehaviours,
         });
         this.setState(() => ({battleResult: result}));
 

@@ -1,13 +1,25 @@
 import {MovingDirection} from "../enums/movingDirection";
-import {getObjectsOnPosition, isEnterablePosition, setObjectsOnPosition, World} from "../models/world";
+import {
+    addObjectOnPosition,
+    getObjectsOnPosition, getObjectsOnPositionWithShips,
+    isEnterablePosition, isPositionInWorld,
+    setObjectsOnPosition,
+    World
+} from "../models/world";
 import {Ship, ShipId} from "../models/ship";
 import {arePositionsEqual, Position} from "../models/position";
-import {destructableObjects, laserBlockingObjects, WorldObjectType} from "../enums/worldObjectType";
+import {
+    destructableObjects,
+    laserBlockingObjects,
+    shipRepresentingObjects,
+    WorldObjectType
+} from "../enums/worldObjectType";
 import {Direction} from "../enums/direction";
 import {List} from "immutable";
-import {getNextDirection, getNthPositionInDirection} from "./directionUtils";
+import {getNextDirection, getNthPositionInDirection, getPositionToFlyOn} from "./directionUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {WorldObject} from "../models/worldObject";
+import {applyMutations} from "./MutationUtils";
 
 export const getShip = (world: World, shipId: ShipId): Ship | undefined =>
     world.ships.find(ship => ship.id === shipId);
@@ -26,7 +38,7 @@ export const modifyShipInWorld = (world: World, newShip: Ship): World =>
     world.merge({ships: world.ships.map(s => s.id === newShip.id ? newShip : s)});
 
 export const moveShip = (world: World, ship: Ship, direction: MovingDirection): Ship => {
-    if (!canMove(world, ship, direction)) {
+    if (getCannotMoveReason(world, ship, direction) !== "None") {
         throw new Error('Cannot move the ship.');
     }
 
@@ -44,28 +56,25 @@ export const moveShip = (world: World, ship: Ship, direction: MovingDirection): 
     return ship.set("position", newPosition);
 };
 
-export const canMove = (world: World, ship: Ship, direction: MovingDirection): boolean => {
-    const positionsInFrontOfShip = getPositionsInFrontOfShip(ship, world);
+const getReasonFromPosition = (world: World, position: Position): CannotMoveReason => {
+    if (!isPositionInWorld(position, world))
+        return "EndOfMap";
 
-    if (positionsInFrontOfShip.isEmpty()) {
-        return false;
-    }
+    const objects = getObjectsOnPositionWithShips(world, position.x, position.y);
 
-    const newPosition = positionsInFrontOfShip.get(0)!;
+    if (objects.some(o => shipRepresentingObjects.contains(o.type)))
+        return "AnotherShip";
 
-    if (direction === MovingDirection.Right) {
-        const nextDirection = getNextDirection(ship.direction, Direction.Right);
-        const finalPosition = getNthPositionInDirection(newPosition, nextDirection);
-        return isEnterablePosition(finalPosition, world);
-    }
-    if (direction === MovingDirection.Left) {
-        const nextDirection = getNextDirection(ship.direction, Direction.Left);
-        const finalPosition = getNthPositionInDirection(newPosition, nextDirection);
-        return isEnterablePosition(finalPosition, world);
-    }
+    if (!isEnterablePosition(position, world))
+        return "Object";
 
-    return isEnterablePosition(newPosition, world);
+    return "None"
 };
+
+export const getCannotMoveReason = (world: World, ship: Ship, direction: MovingDirection): CannotMoveReason =>
+    getReasonFromPosition(world, getPositionToFlyOn(ship.position, direction, ship.direction));
+
+type CannotMoveReason = 'None' | 'EndOfMap' | 'AnotherShip' | 'Object';
 
 
 export const makeShipShoot = (world: World, shipId: ShipId): World => {
@@ -111,7 +120,7 @@ export const makeShipPickupDiamond = (world: World, shipId: ShipId): World => {
 
     const newObjects = objects.filter(o => o.type != WorldObjectType.Diamond);
     const newWorld = setObjectsOnPosition(world, ship.position.x, ship.position.y, newObjects);
-    const newShip = ship.merge({carriedObjects: ship.carriedObjects.push(WorldObjectType.Diamond)})
+    const newShip = ship.merge({carriedObjects: ship.carriedObjects.push(WorldObjectType.Diamond)});
 
     return modifyShipInWorld(newWorld, newShip);
 };
@@ -121,6 +130,15 @@ const killShipsOnPosition = (world: World, position: Position): World => {
         .map(s => arePositionsEqual(s.position, position) ? s.merge({isDestroyed: true}) : s);
 
     return world.merge({ships: newShips});
+};
+
+export const destroyShip = (world: World, shipId: ShipId): World => {
+    const shipPosition = getShipPosition(world, shipId) || new Position();
+
+    return applyMutations(world, [
+        w => killShipsOnPosition(w, shipPosition),
+        w => addObjectOnPosition(w, shipPosition.x, shipPosition.y, new WorldObject({type: WorldObjectType.Explosion})),
+    ]);
 };
 
 const range = (from: number, to: number): List<number> =>

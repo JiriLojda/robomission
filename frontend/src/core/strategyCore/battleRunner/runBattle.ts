@@ -10,6 +10,7 @@ import {BattleType} from "./BattleType";
 import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
 import {getBattleResult} from "./getBattleResult";
 import {ShipId} from "../models/ship";
+import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 
 export interface IRunBattleParams {
     readonly world: World,
@@ -17,6 +18,7 @@ export interface IRunBattleParams {
     readonly roboAsts: List<IRoboAst>,
     readonly battleType: BattleType;
     readonly battleParams: IBattleEndParams;
+    readonly behaviours: IGameBehaviours;
 }
 
 export const runBattle = (params: IRunBattleParams): BattleResult => {
@@ -30,7 +32,12 @@ export const runBattle = (params: IRunBattleParams): BattleResult => {
 
     while (!hasBattleEnded(currentWorld, params.battleType, {...params.battleParams, turnsRan}) && hasSomethingToDo(runtimeContexts)) {
         const result = makeTurn(
-            {world: currentWorld, shipsOrder: params.shipsOrder, roboAsts: params.roboAsts},
+            {
+                world: currentWorld,
+                shipsOrder: params.shipsOrder,
+                roboAsts: params.roboAsts,
+                behaviours: params.behaviours
+            },
             runtimeContexts[currentIndex],
             currentIndex
         );
@@ -59,7 +66,7 @@ export const runBattle = (params: IRunBattleParams): BattleResult => {
     })
 };
 
-type MakeTurnParamNames = 'shipsOrder' | 'roboAsts' | 'world';
+type MakeTurnParamNames = 'shipsOrder' | 'roboAsts' | 'world' | 'behaviours';
 
 const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: IRuntimeContext, playerIndex: number): [IRuntimeContext, World] | UserProgramError => {
     context.wasActionExecuted = false;
@@ -81,7 +88,8 @@ const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: I
             roboAst,
             params.world,
             shipId,
-            currentContext
+            currentContext,
+            params.behaviours
             );
         if (isUserProgramError(result))
             return result;

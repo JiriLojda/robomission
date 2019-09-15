@@ -1,6 +1,6 @@
 import {StatementType} from "./enums/statementType";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {canMove, getShip, makeShipPickupDiamond, makeShipShoot, moveShip, turnShip} from "./utils/worldModelUtils";
+import {getShip, makeShipPickupDiamond, makeShipShoot, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
@@ -10,6 +10,8 @@ import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/var
 import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
 import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
 import {ShipId} from "./models/ship";
+import {IGameBehaviours} from "./gameBehaviours/IGameBehaviours";
+import {handleMoveStatement} from "./actionStatementHandlers/moveStatementHandler";
 
 const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
@@ -151,7 +153,13 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
-const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, world: World, shipId: ShipId, context: IRuntimeContext): World | UserProgramError => {
+const evaluateActionStatement = (
+    statement: IStatement | ISetVariableStatement,
+    world: World,
+    shipId: ShipId,
+    context: IRuntimeContext,
+    behaviours: IGameBehaviours,
+): World | UserProgramError => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -160,20 +168,11 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
 
     switch (statement.head) {
         case StatementType.Fly:
-            if (!canMove(world, ship, MovingDirection.Forward)) {
-                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
-            }
-            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Forward));
+            return handleMoveStatement(world, ship, MovingDirection.Forward, behaviours);
         case StatementType.Left:
-            if (!canMove(world, ship, MovingDirection.Left)) {
-                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
-            }
-            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Left));
+            return handleMoveStatement(world, ship, MovingDirection.Left, behaviours);
         case StatementType.Right:
-            if (!canMove(world, ship, MovingDirection.Right)) {
-                return updateShipInWorld(world, ship, ship.merge({isDestroyed: true}));
-            }
-            return updateShipInWorld(world, ship, moveShip(world, ship, MovingDirection.Right));
+            return handleMoveStatement(world, ship, MovingDirection.Right, behaviours);
         case StatementType.Shoot:
             return makeShipShoot(world, shipId);
         case StatementType.PickUpDiamond:
@@ -203,7 +202,13 @@ const evaluateActionStatement = (statement: IStatement | ISetVariableStatement, 
     }
 };
 
-export const doNextStep = (roboAst: IRoboAst, world: World, shipId: ShipId, context: IRuntimeContext): [IRuntimeContext, World] | UserProgramError => {
+export const doNextStep = (
+    roboAst: IRoboAst,
+    world: World,
+    shipId: ShipId,
+    context: IRuntimeContext,
+    behaviours: IGameBehaviours
+): [IRuntimeContext, World] | UserProgramError => {
     if (context.position.length === 0) {
         console.log('Empty runtime context, reset before another run.');
         context.hasEnded = true;
@@ -226,7 +231,7 @@ export const doNextStep = (roboAst: IRoboAst, world: World, shipId: ShipId, cont
     const statement = getStatement(roboAst, context);
 
     const withoutLasers = removeLaserAndExplosionObjects(world);
-    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId, context);
+    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId, context, behaviours);
 
     if (isUserProgramError(newWorld)) {
         return newWorld;

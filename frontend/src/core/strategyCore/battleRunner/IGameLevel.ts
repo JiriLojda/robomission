@@ -4,6 +4,7 @@ import {IBattleEndParams} from "./hasBattleEnded";
 import {List, Map} from "immutable";
 import {ShipId} from "../models/ship";
 import {IRoboAst} from "../models/programTypes";
+import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 
 export interface IGameLevel {
     readonly name: string;
@@ -13,6 +14,7 @@ export interface IGameLevel {
     readonly battleParams: IBattleEndParams;
     readonly turnsOrder: List<ShipId>;
     readonly shipsAsts: Map<ShipId, IRoboAst>;
+    readonly gameBehaviours: IGameBehaviours;
 }
 
 export const isGameLevelValid = (level: IGameLevel): boolean =>

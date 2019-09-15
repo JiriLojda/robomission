@@ -44,12 +44,6 @@ const assertPositionInWorld = (world: World, x: number, y: number): void => {
     }
 };
 
-export const addObjectOnPosition = (world: World, x: number, y: number, obj: WorldObjectType): World => {
-    assertPositionInWorld(world, x, y);
-
-    return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, world.objects.get(y)!.get(x)!.push(new WorldObject({type: obj})))));
-};
-
 export const getObjectsOnPosition = (world: World, x: number, y: number): List<WorldObject> => {
     assertPositionInWorld(world, x, y);
 
@@ -69,6 +63,9 @@ export const setObjectsOnPosition = (world: World, x: number, y: number, newObje
 
     return world.set('objects', world.objects.set(y, world.objects.get(y)!.set(x, newObjects)));
 };
+
+export const addObjectOnPosition = (world: World, x: number, y: number, object: WorldObject): World =>
+    setObjectsOnPosition(world, x, y, getObjectsOnPosition(world, x, y).push(object));
 
 export const removeLaserAndExplosionObjects = (world: World): World =>
     world.set('objects', world.objects.map(line => line.map(tile => tile
