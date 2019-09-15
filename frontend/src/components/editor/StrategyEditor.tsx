@@ -30,6 +30,7 @@ import CodeEditor from "./CodeEditor";
 import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
 import {Toggle} from "material-ui";
 import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
+import {MapOverlay} from "./MapOverlay";
 
 
 const getEmptyXml = () => generateBlocklyXml({body: []} as any);
@@ -85,7 +86,10 @@ interface IState {
     useCodeEditor: boolean;
     codeError?: string;
     code?: string;
+    isMapOverlayShown: boolean;
 }
+
+const shouldShowMinimap = (world: World) => world.size.x <= 5;
 
 export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IState> {
 
@@ -99,6 +103,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             userProgramError: undefined,
             validationResult: InvalidProgramReason.None,
             useCodeEditor: false,
+            isMapOverlayShown: props.level.world.size.x > 5,
         };
     }
 
@@ -160,6 +165,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     };
 
     _runBattle = (): void => {
+        this.setState(() => ({isMapOverlayShown: true}));
         const level = this.props.level;
         const userShipId = level.turnsOrder.find(id => !level.shipsAsts.has(id)) || 'userShip';
         const allAsts = level.shipsAsts.set(userShipId, this.state.roboAst);
@@ -195,13 +201,19 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         />
     );
 
-
     render() {
+        if (this.state.isMapOverlayShown)
+            return <MapOverlay
+                world={this.state.world}
+                onLeave={() => this.setState(() => ({isMapOverlayShown: false}))}
+                columnSize={40}
+            />;
+
         return <SplitPane
             split="vertical"
-            minSize={200}
-            maxSize={-400}
-            size={200}
+            minSize={shouldShowMinimap(this.state.world) ? 200 : 0}
+            maxSize={shouldShowMinimap(this.state.world) ? -400 : -100}
+            size={shouldShowMinimap(this.state.world) ? 200 : 0}
             resizerStyle={{
                 backgroundColor: '#aaa',
                 width: 4,
@@ -240,6 +252,13 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         useCodeEditor: !prev.useCodeEditor,
                         code: generateStrategyRoboCode(prev.roboAst),
                     }))} />
+                    <Toggle
+                        toggled={this.state.isMapOverlayShown}
+                        label="Show map"
+                        labelStyle={{color: 'black'}}
+                        onToggle={() => this.setState(prev => ({
+                            isMapOverlayShown: !prev.isMapOverlayShown
+                        }))} />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
                 </ErrorMessage>

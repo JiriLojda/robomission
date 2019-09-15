@@ -244,7 +244,7 @@ export const doNextStep = (
     setPositionAttributes(statement, getLast(context.position));
     const conditionEvaluation = evaluateBlockCondition(statement, context, world, shipId);
 
-    if (conditionEvaluation) {
+    if (isUserProgramError(conditionEvaluation)) {
         return conditionEvaluation;
     }
 
