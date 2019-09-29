@@ -13,7 +13,7 @@ import {getObjectsOnPositionWithShips, World} from "../models/world";
 import {Position} from "../models/position";
 import {TileColor} from "../enums/tileColor";
 import {List} from "immutable";
-import {shipBlockingObjects, unifyShips, WorldObjectType} from "../enums/worldObjectType";
+import {shipBlockingObjects, unifyShips} from "../enums/worldObjectType";
 import {ConditionType} from "../enums/conditionType";
 import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
@@ -225,12 +225,25 @@ const handleObjectComparison = (condition: Condition, world: World, shipId: Ship
     throw new Error(`Unknown comparator ${condition.comparator}.`);
 };
 
+const isResultKnown = (comparator: Comparator, leftResult: boolean): boolean => {
+    switch (comparator) {
+        case Comparator.And:
+            return !leftResult;
+        case Comparator.Or:
+            return leftResult;
+        default:
+            return false;
+    }
+};
+
 const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
     const leftValue = evaluateCondition(condition.leftValue, world, shipId, context);
-    const rightValue = evaluateCondition(condition.rightValue, world, shipId, context);
-
     if (isUserProgramError(leftValue))
         return leftValue;
+    if (isResultKnown(condition.comparator, leftValue))
+        return leftValue;
+
+    const rightValue = evaluateCondition(condition.rightValue, world, shipId, context);
     if (isUserProgramError(rightValue))
         return rightValue;
 
