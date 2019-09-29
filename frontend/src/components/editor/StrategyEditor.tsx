@@ -31,9 +31,10 @@ import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeG
 import {Toggle} from "material-ui";
 import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
 import {MapOverlay} from "./MapOverlay";
+import {StatementType} from "../../core/strategyCore/enums/statementType";
 
 
-const getEmptyXml = () => generateBlocklyXml({body: []} as any);
+const getEmptyXml = () => generateBlocklyXml([{head: StatementType.Start, body: []}]);
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>

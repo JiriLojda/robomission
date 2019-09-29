@@ -4,15 +4,16 @@
 import { translate } from '../localization';
 
 const colors = {
-  header: 45,
-  command: 180,
-  position: 200,
-  test: 65,
-  loop: 120,
-  conditional: 345,
-  variable: 278,
-  logic: 310,
-  constants: 239,
+    header: 45,
+    command: 180,
+    position: 200,
+    test: 65,
+    loop: 120,
+    conditional: 345,
+    variable: 278,
+    logic: 310,
+    constants: 239,
+    functions: 160,
 };
 
 
@@ -609,6 +610,147 @@ const blocks = [
     ],
     output: 'Number',
     colour: colors.constants,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_definition',
+    message0: 'function %1 %2',
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'parameter',
+        check: 'FunctionParameter'
+      },
+    ],
+    nextStatement: null,
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_parameter_definition',
+    message0: `arg %1 %2`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'nextParameter',
+        check: 'FunctionParameter'
+      },
+    ],
+    output: 'FunctionParameter',
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_parameter_call',
+    message0: `value %1 next:%2`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'value',
+        check: 'String'
+      },
+      {
+        type: 'input_value',
+        name: 'nextParameter',
+        check: 'FunctionParameterCall'
+      },
+    ],
+    output: 'FunctionParameterCall',
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_call_boolean',
+    message0: `call %1 parameters: %2 as boolean`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'parameter',
+        check: 'FunctionParameterCall'
+      },
+    ],
+    output: 'Boolean',
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_call_number',
+    message0: `call %1 parameters: %2 as number`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'parameter',
+        check: 'FunctionParameterCall'
+      },
+    ],
+    output: 'Number',
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_call_string',
+    message0: `call %1 parameters: %2 as string`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'parameter',
+        check: 'FunctionParameterCall'
+      },
+    ],
+    output: 'String',
+    colour: colors.functions,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_call_void',
+    message0: `call %1 parameters: %2 as action`,
+    args0: [
+      {
+        type: 'field_input',
+        name: 'name',
+        text: 'name',
+      },
+      {
+        type: 'input_value',
+        name: 'parameter',
+        check: 'FunctionParameterCall'
+      },
+    ],
+    colour: colors.functions,
+    previousStatement: null,
+    nextStatement: null,
     tooltip: '',
     helpUrl: '',
   },

@@ -94,4 +94,16 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.LogicNot},
         ]
     },
+    {
+        name: 'functions',
+        blocks: [
+            {type: BlockType.FunctionDefinition},
+            {type: BlockType.FunctionParameterDefinition},
+            {type: BlockType.FunctionCallVoid},
+            {type: BlockType.FunctionCallBoolean},
+            {type: BlockType.FunctionCallNumber},
+            {type: BlockType.FunctionCallString},
+            {type: BlockType.FunctionParameterCall},
+        ]
+    }
 ];

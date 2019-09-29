@@ -18,10 +18,11 @@ import {Comparator} from "../../enums/comparator";
 import {invalidProgramError} from "../../utils/invalidProgramError";
 
 export function generateBlocklyXml(roboAst: IRoboAst, x = 210, y = 10) {
+    //TODO Functions
     return `
     <xml xmlns="http://www.w3.org/1999/xhtml">
       <block type="start" deletable="false" x="${x}" y="${y}">
-      ${generateNextBlocksIfPresent(roboAst.body)}
+      ${generateNextBlocksIfPresent(roboAst[0].body!)}
       </block>
     </xml>
   `;

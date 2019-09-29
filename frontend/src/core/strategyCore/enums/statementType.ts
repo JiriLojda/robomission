@@ -18,4 +18,8 @@ export enum StatementType {
     ConstantNumber = 'constant_number',
     ConstantString = 'constant_string',
     NumberBinary = 'number_binary',
+    FunctionDefinition = 'function_definition',
+    FunctionCallVoid = 'function_call_void',
+    FunctionCallString = 'function_call_string',
+    FunctionCallNumber = 'function_call_number',
 }

@@ -7,10 +7,14 @@ import {WorldObjectType} from "../enums/worldObjectType";
 import {NumberOperation} from "../enums/numberOperation";
 import {endOfMapType} from "../constants/astConstants";
 
+export const defaultFunctionName = '(default_function)';
+
 export interface IPositionItem {
     index: number;
     elseBranchEntered: boolean;
     repeatCount?: number;
+    functionName: string;
+    isFncInConditionBeingEvaluated: boolean;
 }
 
 export type Variable = { name: string; value: string };
@@ -152,7 +156,4 @@ export interface ISetVariableNumericStatement extends IStatement {
     value: IStatement;
 }
 
-export interface IRoboAst extends IStatement {
-    head: StatementType.Start;
-    body: IBlock[];
-}
+export type IRoboAst = IStatement[];

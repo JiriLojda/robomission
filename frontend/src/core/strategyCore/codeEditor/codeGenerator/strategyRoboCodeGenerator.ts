@@ -14,7 +14,8 @@ import {invalidProgramError} from "../../utils/invalidProgramError";
 import {WorldObjectType} from "../../enums/worldObjectType";
 
 export function generateStrategyRoboCode(roboAst: IRoboAst) {
-    const { head, body } = roboAst;
+    //TODO Functions
+    const { head, body } = roboAst as any;
     if (head !== 'start') {
         throw new Error(`Unexpected root of roboAst: ${head}`);
     }

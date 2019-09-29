@@ -25,11 +25,13 @@ export interface IValidatorResult {
 
 export const isRoboAstValid = memoizeOne(
     (roboAst: IRoboAst): IValidatorResult => {
-        if (!roboAst.head || roboAst.head !== StatementType.Start || !roboAst.body) {
+        //TODO Functions
+        const roboAstMain = roboAst[0];
+        if (!roboAstMain.head || roboAstMain.head !== StatementType.Start || !roboAstMain.body) {
             return {isValid: false, reason: InvalidProgramReason.NoOrBadStartStatement};
         }
 
-        return isStatementValid(roboAst);
+        return isStatementValid(roboAstMain);
     },
     args => JSON.stringify(args[0]),
 );

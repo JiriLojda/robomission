@@ -4,7 +4,14 @@ import {getShip, makeShipPickupDiamond, makeShipShoot, turnShip} from "./utils/w
 import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
-import {IPositionItem, IRoboAst, IRuntimeContext, ISetVariableStatement, IStatement} from "./models/programTypes";
+import {
+    defaultFunctionName,
+    IPositionItem,
+    IRoboAst,
+    IRuntimeContext,
+    ISetVariableStatement,
+    IStatement
+} from "./models/programTypes";
 import {List} from "immutable";
 import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
 import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
@@ -39,7 +46,8 @@ const getStatement = (roboAst: any, context: IRuntimeContext) => {
     return statement;
 };
 
-const getPositionItem = (index: number, elseBranchEntered = false, repeatCount = undefined) => ({index, elseBranchEntered, repeatCount});
+const getPositionItem = (index: number, elseBranchEntered = false, repeatCount = undefined): IPositionItem =>
+    ({index, elseBranchEntered, repeatCount, functionName: defaultFunctionName, isFncInConditionBeingEvaluated: false});
 
 const incrementPositionItem = (item: IPositionItem) => ({...item, index: item.index + 1});
 
@@ -215,7 +223,8 @@ export const doNextStep = (
         return [context, world];
     }
 
-    if (roboAst.body.length === 0) {
+    //TODO Functions
+    if (roboAst[0].body!.length === 0) {
         context.hasEnded = true;
         console.log('Empty program, please create something before running it.');
         return [context, world];

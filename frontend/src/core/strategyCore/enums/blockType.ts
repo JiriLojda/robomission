@@ -26,4 +26,11 @@ export enum BlockType {
     ConstantString = 'constant_string',
     NumberBinary = 'number_binary',
     IsTileAccessible = 'tile_accessible',
+    FunctionCallVoid = 'function_call_void',
+    FunctionCallString = 'function_call_string',
+    FunctionCallNumber = 'function_call_number',
+    FunctionCallBoolean = 'function_call_boolean',
+    FunctionParameterCall = 'function_parameter_call',
+    FunctionParameterDefinition = 'function_parameter_definition',
+    FunctionDefinition = 'function_definition',
 }

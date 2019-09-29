@@ -32,7 +32,13 @@ export function blocklyXmlToRoboAst(blocklyXml) {
 
 function blocklyDomToRoboAst(dom) {
   const startBlock = dom.querySelector('block[type="start"]');
-  return blockToAst(startBlock);
+  const mainFunction = blockToAst(startBlock);
+
+  const otherFunctionDefinitions = dom.querySelectorAll('block[type="function_definition"]');
+  const otherFunctions = [...otherFunctionDefinitions]
+    .map(blockToAst);
+
+  return [mainFunction, ...otherFunctions];
 }
 
 
@@ -96,6 +102,16 @@ function blockToAst(block) {
       return numberBinaryToAst(block);
     case 'tile_accessible':
       return isTileAccessibleToAst(block);
+    case 'function_call_void':
+      return functionCallToAst(block, 'void');
+    case 'function_call_string':
+      return functionCallToAst(block, 'string');
+    case 'function_call_number':
+      return functionCallToAst(block, 'number');
+    case 'function_call_boolean':
+      return functionCallToAst(block, 'boolean');
+    case 'function_definition':
+      return functionDefinitionToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -244,10 +260,44 @@ function numberBinaryToAst(block) {
   return {head: 'number_binary', leftValue, rightValue, operator};
 }
 
+function functionDefinitionToAst(block) {
+  const parameters = getFunctionParameters(
+    getValueBlock(block, 'parameter'),
+    'function_parameter_definition',
+    'name'
+  );
+  const name = getFieldValue(block, 'name');
+
+  const nextBlock = getNextBlock(block);
+  const body = getSequence(nextBlock);
+
+  return {head: 'function_definition', body, name, parameters, location: getLocation(block)};
+}
+
+function functionCallToAst(block, type) {
+  const parameters = getFunctionParameters(
+    getValueBlock(block, 'parameter'),
+    'function_parameter_call',
+    'value'
+  );
+  const name = getFieldValue(block, 'name');
+
+  return {head: `function_call_${type}`, name, parameters};
+}
+
 function isTileAccessibleToAst(block) {
-  const position = blockToAst(getValueBlock(block, 'position'))
+  const position = blockToAst(getValueBlock(block, 'position'));
 
   return {head: 'tile_accessible', position};
+}
+
+function getFunctionParameters(block, blocksHead, fieldValue) {
+  if (!block || block.head !== blocksHead)
+    return [];
+
+  const restBlocks = getFunctionParameters(getValueBlock(block, 'nextParameter'), blocksHead);
+
+  return [getFieldValue(block, fieldValue), ...restBlocks];
 }
 
 //helpers
