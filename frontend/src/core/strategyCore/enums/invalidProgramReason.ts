@@ -10,6 +10,10 @@ export enum InvalidProgramReason {
     UndefinedRequiredProp = 'UndefinedRequiredProp',
     InvalidValueType = 'InvalidValueType',
     CodeNotParsed = 'CodeNotParsed',
+    DuplicateFunctionParameters = 'DuplicateFunctionParameters',
+    DuplicateFunctionName = 'DuplicateFunctionName',
+    EmptyFunctionName = 'EmptyFunctionName',
+    EmptyParameterName = 'EmptyParameterName',
     None = 'None',
 }
 
@@ -17,6 +21,10 @@ export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.MissingTestCondition,
     InvalidProgramReason.MissingParameter,
     InvalidProgramReason.CodeNotParsed,
+    InvalidProgramReason.DuplicateFunctionParameters,
+    InvalidProgramReason.DuplicateFunctionName,
+    InvalidProgramReason.EmptyFunctionName,
+    InvalidProgramReason.EmptyParameterName,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -39,6 +47,14 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'One of your value statements has type not matching its usage.';
         case InvalidProgramReason.CodeNotParsed:
             return 'We failed to parse your code. Check the output, please.';
+        case InvalidProgramReason.DuplicateFunctionName:
+            return 'Function names has to be unique. Check your functions, please.';
+        case InvalidProgramReason.DuplicateFunctionParameters:
+            return 'Function parameter names has to be unique in the function.';
+        case InvalidProgramReason.EmptyFunctionName:
+            return 'Function name cannot be empty.';
+        case InvalidProgramReason.EmptyParameterName:
+            return 'Parameter name cannot be empty.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

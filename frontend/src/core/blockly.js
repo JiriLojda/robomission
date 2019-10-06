@@ -112,6 +112,8 @@ function blockToAst(block) {
       return functionCallToAst(block, 'boolean');
     case 'function_definition':
       return functionDefinitionToAst(block);
+    case 'function_return':
+      return functionReturnToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -263,7 +265,6 @@ function numberBinaryToAst(block) {
 function functionDefinitionToAst(block) {
   const parameters = getFunctionParameters(
     getValueBlock(block, 'parameter'),
-    'function_parameter_definition',
     'name'
   );
   const name = getFieldValue(block, 'name');
@@ -271,13 +272,12 @@ function functionDefinitionToAst(block) {
   const nextBlock = getNextBlock(block);
   const body = getSequence(nextBlock);
 
-  return {head: 'function_definition', body, name, parameters, location: getLocation(block)};
+  return {head: 'function_definition', body, name, parameters};
 }
 
 function functionCallToAst(block, type) {
   const parameters = getFunctionParameters(
     getValueBlock(block, 'parameter'),
-    'function_parameter_call',
     'value'
   );
   const name = getFieldValue(block, 'name');
@@ -291,13 +291,21 @@ function isTileAccessibleToAst(block) {
   return {head: 'tile_accessible', position};
 }
 
-function getFunctionParameters(block, blocksHead, fieldValue) {
-  if (!block || block.head !== blocksHead)
+function getFunctionParameters(block, fieldValue) {
+  if (!block)
     return [];
 
-  const restBlocks = getFunctionParameters(getValueBlock(block, 'nextParameter'), blocksHead);
+  const restBlocks = getFunctionParameters(getValueBlock(block, 'parameter'), fieldValue);
 
-  return [getFieldValue(block, fieldValue), ...restBlocks];
+  const field = getFieldValue(block, fieldValue);
+
+  return [fieldValue === 'value' ? {field} : field, ...restBlocks];
+}
+
+function functionReturnToAst(block) {
+  const value = blockToAst(getValueBlock(block, 'value'));
+
+  return {head: 'function_return', value};
 }
 
 //helpers

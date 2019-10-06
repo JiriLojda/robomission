@@ -6,7 +6,7 @@
  */
 import {
     Condition,
-    IBlock,
+    IBlock, IFunctionCall, IFunctionCallParameter, IFunctionDefinition, IFunctionReturn,
     INumberBinaryStatement,
     IPositionValue,
     IRoboAst,
@@ -24,8 +24,22 @@ export function generateBlocklyXml(roboAst: IRoboAst, x = 210, y = 10) {
       <block type="start" deletable="false" x="${x}" y="${y}">
       ${generateNextBlocksIfPresent(roboAst[0].body!)}
       </block>
+      ${generateFunctionsXmls(roboAst).join('')}
     </xml>
   `;
+}
+
+function generateFunctionsXmls(roboAst: IRoboAst): string[] {
+    return roboAst.slice(1)
+        .map(s => generateFunctionXml(s as IFunctionDefinition));
+}
+
+function generateFunctionXml(func: IFunctionDefinition): string {
+    return `
+        <block type="${func.head}">
+            ${generateNextBlocksIfPresent(func.body)}
+        </block>
+    `;
 }
 
 
@@ -65,6 +79,12 @@ function generateStatementBlock(node: IBlock, nextNodes: IBlock[]) {
             return generateSetStringVariableBlock(statement, nextNodes);
         case StatementType.SetVariableNumeric:
             return generateSetNumericVariableBlock(statement, nextNodes);
+        case StatementType.FunctionDefinition:
+            return generateFunctionDefinition(statement as IFunctionDefinition, nextNodes);
+        case StatementType.FunctionCallVoid:
+            return generateFunctionCall(statement as IFunctionCall, nextNodes);
+        case StatementType.FunctionReturn:
+            return generateFunctionReturn(statement as IFunctionReturn);
         default:
             throw new Error(`Unknown node type: ${statement.head}`);
     }
@@ -309,6 +329,9 @@ const generateValueStatement = (statement?: IStatement): string => {
                 </block>
             `;
         }
+        case StatementType.FunctionCallNumber:
+        case StatementType.FunctionCallString:
+            return generateFunctionCall(statement as IFunctionCall, []);
         default:
             return '';
     }
@@ -344,3 +367,62 @@ function getComparator(comparator: Comparator) {
             throw invalidProgramError(`Unknown comparator ${comparator}.`, 'roboCodeGenerator');
     }
 }
+
+const generateFunctionDefinition = (statement: IFunctionDefinition, nextNodes: IBlock[]): string => {
+    const params = generateFunctionDefinitionParameters(statement.parameters);
+    return `<block type="${statement.head}">
+        ${params.length === 0 ? '' : `<value name="parameter">${params}</value>`}
+        ${generateNextBlocksIfPresent(nextNodes)}
+</block>`;
+};
+
+const generateFunctionDefinitionParameters = (parameters: string[]): string => {
+    if (parameters.length === 0)
+        return '';
+
+    const rest = generateFunctionDefinitionParameters(parameters.slice(1));
+
+    return `
+        <block type="function_parameter_definition">
+            <field name="name">${parameters[0]}</field>
+            ${rest.length === 0 ? '' : `<value name="parameter">${rest}</value>`}
+        </block>
+    `;
+};
+
+const generateFunctionCall = (statement: IFunctionCall, nextNodes: IBlock[]): string => {
+    const parameters = generateFunctionCallParameters(statement.parameters);
+
+    return `
+    <block type="${statement.head}">
+        <field name="name">${statement.name}</field>
+        ${parameters.length === 0 ? '' : `<value name="parameter">${parameters}</value>`}
+        ${generateNextBlocksIfPresent(nextNodes)}
+    </block>
+    `;
+};
+
+const generateFunctionCallParameters = (parameters: IFunctionCallParameter[]): string => {
+    if (parameters.length === 0)
+        return '';
+
+    const rest = generateFunctionCallParameters(parameters.slice(1));
+    const value = generateValueStatement(parameters[0].value);
+
+    return `
+        <block type="function_parameter_call">
+            <value name="value">${value}</value>
+            ${rest.length === 0 ? '' : `<value name="parameter">${rest}</value>`}
+        </block>
+    `;
+};
+
+const generateFunctionReturn = (statement: IFunctionReturn): string => {
+    const value = generateValueStatement(statement.value);
+
+    return `
+        <block type="${statement.head}">
+            <value name="value">${value}</value>
+        </block>
+    `;
+};

@@ -104,6 +104,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.FunctionCallNumber},
             {type: BlockType.FunctionCallString},
             {type: BlockType.FunctionParameterCall},
+            {type: BlockType.FunctionReturn},
         ]
     }
 ];

@@ -22,4 +22,5 @@ export enum StatementType {
     FunctionCallVoid = 'function_call_void',
     FunctionCallString = 'function_call_string',
     FunctionCallNumber = 'function_call_number',
+    FunctionReturn = 'function_return',
 }

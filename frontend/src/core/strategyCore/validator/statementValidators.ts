@@ -52,3 +52,43 @@ export const isIfStatementValid = composeValidators([
         return getValidatorResult(true, InvalidProgramReason.None);
     },
 ]);
+
+const hasUniqueParameterNames: StatementValidator = statement => {
+    if (!statement.parameters)
+        return getValidatorResult(false, InvalidProgramReason.UndefinedRequiredProp);
+
+    return getValidatorResult(
+        new Set(statement.parameters as string[]).size === statement.parameters.length,
+        InvalidProgramReason.DuplicateFunctionParameters,
+    );
+};
+
+const hasNonEmptyParameterNames: StatementValidator = statement => {
+    if (!statement.parameters)
+        return getValidatorResult(false, InvalidProgramReason.UndefinedRequiredProp);
+
+    return getValidatorResult(
+        statement.parameters.every((p: any) => !!p),
+        InvalidProgramReason.EmptyParameterName,
+    );
+};
+
+const hasNonEmptyName: StatementValidator = statement =>
+    getValidatorResult(!!statement.name, InvalidProgramReason.EmptyFunctionName);
+
+export const isFunctionDefinitionStatementValid = composeValidators([
+    s => hasExactProperties(s, ['head', 'parameters', 'body', 'name']),
+    hasNonEmptyName,
+    hasNonEmptyParameterNames,
+    hasUniqueParameterNames,
+]);
+
+export const isFunctionCallStatementValid = composeValidators([
+    s => hasExactProperties(s, ['head', 'name', 'parameters']),
+    hasNonEmptyName,
+]);
+
+export const isFunctionReturnValid = composeValidators([
+    s => hasExactProperties(s, ['head', 'value']),
+]);
+

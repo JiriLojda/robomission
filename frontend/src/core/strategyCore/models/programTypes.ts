@@ -113,6 +113,29 @@ export interface IBlock {
     statement: IStatement;
 }
 
+export interface IFunctionCallParameter {
+    readonly value: IStatement;
+    readonly parameter?: IFunctionCallParameter;
+}
+
+export interface IFunctionDefinition extends IStatement {
+    head: StatementType.FunctionDefinition;
+    name: string;
+    parameters: string[];
+    body: IBlock[]
+}
+
+export interface IFunctionCall extends IStatement {
+    head: StatementType.FunctionCallNumber | StatementType.FunctionCallString | StatementType.FunctionCallVoid;
+    name: string;
+    parameters: IFunctionCallParameter[];
+}
+
+export interface IFunctionReturn extends IStatement {
+    head: StatementType.FunctionReturn;
+    value: IStatement;
+}
+
 export interface IStatement {
     head: StatementType;
     body?: IBlock[];
@@ -121,6 +144,7 @@ export interface IStatement {
     count?: number;
     name?: string;
     value?: string | IStatement;
+    parameters?: string[] | IFunctionCallParameter[];
 }
 
 export interface INumberBinaryStatement extends IStatement {

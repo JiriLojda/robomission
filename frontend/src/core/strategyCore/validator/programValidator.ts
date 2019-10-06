@@ -3,9 +3,10 @@ import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {IRoboAst, IStatement} from "../models/programTypes";
 import {getValidatorResult, useValidators} from "./programValidationUtils";
 import {
-    isFlyStatementValid,
+    isFlyStatementValid, isFunctionCallStatementValid, isFunctionDefinitionStatementValid, isFunctionReturnValid,
     isIfStatementValid,
-    isLeftStatementValid, isPickUpDiamondStatementValid,
+    isLeftStatementValid,
+    isPickUpDiamondStatementValid,
     isRepeatStatementValid,
     isRightStatementValid,
     isSetVariableNumericStatementValid,
@@ -25,13 +26,14 @@ export interface IValidatorResult {
 
 export const isRoboAstValid = memoizeOne(
     (roboAst: IRoboAst): IValidatorResult => {
-        //TODO Functions
-        const roboAstMain = roboAst[0];
-        if (!roboAstMain.head || roboAstMain.head !== StatementType.Start || !roboAstMain.body) {
+        const mainFunction = roboAst[0];
+        if (!mainFunction.head || mainFunction.head !== StatementType.Start || !mainFunction.body) {
             return {isValid: false, reason: InvalidProgramReason.NoOrBadStartStatement};
         }
 
-        return isStatementValid(roboAstMain);
+        return roboAst
+            .map(isStatementValid)
+            .find(r => !r.isValid) || getValidatorResult(true, InvalidProgramReason.None);
     },
     args => JSON.stringify(args[0]),
 );
@@ -79,6 +81,17 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             return isSetVariableStatementValid(statement);
         case StatementType.SetVariableNumeric:
             return isSetVariableNumericStatementValid(statement);
+        case StatementType.FunctionDefinition:
+            return useValidators(
+                [isFunctionDefinitionStatementValid, validateBody],
+                statement
+            );
+        case StatementType.FunctionCallNumber:
+        case StatementType.FunctionCallString:
+        case StatementType.FunctionCallVoid:
+            return isFunctionCallStatementValid(statement);
+        case StatementType.FunctionReturn:
+            return isFunctionReturnValid(statement);
         case StatementType.Else:
             throw new Error('Else type should be handled inside If case.');
         default:

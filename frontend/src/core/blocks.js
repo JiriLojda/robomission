@@ -644,7 +644,7 @@ const blocks = [
       },
       {
         type: 'input_value',
-        name: 'nextParameter',
+        name: 'parameter',
         check: 'FunctionParameter'
       },
     ],
@@ -664,7 +664,7 @@ const blocks = [
       },
       {
         type: 'input_value',
-        name: 'nextParameter',
+        name: 'parameter',
         check: 'FunctionParameterCall'
       },
     ],
@@ -751,6 +751,21 @@ const blocks = [
     colour: colors.functions,
     previousStatement: null,
     nextStatement: null,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'function_return',
+    message0: `return %1`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'value',
+        check: ['String', 'Number', 'Boolean'],
+      },
+    ],
+    colour: colors.functions,
+    previousStatement: null,
     tooltip: '',
     helpUrl: '',
   },

@@ -33,4 +33,5 @@ export enum BlockType {
     FunctionParameterCall = 'function_parameter_call',
     FunctionParameterDefinition = 'function_parameter_definition',
     FunctionDefinition = 'function_definition',
+    FunctionReturn = 'function_return',
 }
