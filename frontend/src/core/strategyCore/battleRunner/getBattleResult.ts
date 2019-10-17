@@ -2,7 +2,7 @@ import {BattleResult, BattleResultType} from "./BattleResult";
 import {World} from "../models/world";
 import {IRuntimeContext} from "../models/programTypes";
 import {BattleType} from "./BattleType";
-import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
+import {IBattleEndParams} from "./hasBattleEnded";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {arePositionsEqual} from "../models/position";
 import {List} from "immutable";
@@ -17,9 +17,6 @@ export interface IGetBattleResultParams {
 }
 
 export const getBattleResult = (params: IGetBattleResultParams): BattleResult => {
-    if (!hasBattleEnded(params.world, params.battleType, params.battleEndParams))
-        throw invalidProgramError('Cannot get battle result when the battle has not ended yet.');
-
     switch (params.battleType) {
         case BattleType.KillAll:
             return getKillAllResult(params);

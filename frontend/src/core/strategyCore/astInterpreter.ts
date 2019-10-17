@@ -12,13 +12,22 @@ import {
     ISetVariableStatement,
     IStatement
 } from "./models/programTypes";
-import {List} from "immutable";
-import {getSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
-import {evaluateCondition, getObjectFromStatement} from "./utils/evaluateCondition";
+import {List, Map} from "immutable";
+import {getSystemVariable, removeSystemVariable, setSystemVariable, setUserVariable} from "./utils/variableUtils";
+import {
+    evaluateCondition,
+    evaluationInProgress,
+    EvaluationInProgress,
+    getObjectFromStatement
+} from "./utils/evaluateCondition";
 import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
 import {ShipId} from "./models/ship";
 import {IGameBehaviours} from "./gameBehaviours/IGameBehaviours";
 import {handleMoveStatement} from "./actionStatementHandlers/moveStatementHandler";
+import {invalidProgramError} from "./utils/invalidProgramError";
+import {getFunctionExecutionId} from "./utils/getFunctionExecutionId";
+import {getEmptyRuntimeContext} from "./utils/getEmptyRuntimeContext";
+import {memoizeOne} from "../../utils/memoizeOne";
 
 const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
@@ -30,37 +39,25 @@ const getLast = <T>(array: T[]): T => {
     return array[array.length - 1];
 };
 
-const getStatement = (roboAst: any, context: IRuntimeContext) => {
-    const position = context.position;
-    let statement = roboAst;
-    let index = 0;
-
-    while (statement.head === StatementType.Start || (scopeStatements.includes(statement.head) && index < position.length)) {
-        statement = statement.body[position[index].index].statement;
-        index++;
-        if (statement.head === StatementType.If && position.length > index && position[index].elseBranchEntered) {
-            statement = statement.orelse.statement;
-        }
-    }
-
-    return statement;
-};
-
 const getPositionItem = (index: number, elseBranchEntered = false, repeatCount = undefined): IPositionItem =>
-    ({index, elseBranchEntered, repeatCount, functionName: defaultFunctionName, isFncInConditionBeingEvaluated: false});
+    ({index, elseBranchEntered, repeatCount});
 
 const incrementPositionItem = (item: IPositionItem) => ({...item, index: item.index + 1});
 
-const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
-    const result = [roboAst];
-    let statement = roboAst;
+const getStatementsForPosition = (roboAst: IStatement, context: IRuntimeContext) => {
+    const result: IStatement[] = [roboAst];
+    let statement = result[0];
 
     for (const positionItem of context.position) {
         if (statement.head === StatementType.If && positionItem.elseBranchEntered) {
+            if (!statement.orelse)
+                throw invalidProgramError(`Statement ${statement.head} is should have an orelse.`);
             statement = statement.orelse.statement;
             result.pop();
             result.push(statement);
         }
+        if (!statement.body)
+            throw invalidProgramError(`Statement ${statement.head} is should have a body.`);
         statement = statement.body[positionItem.index].statement;
         result.push(statement);
     }
@@ -70,7 +67,7 @@ const getStatementsForPosition = (roboAst: any, context: IRuntimeContext) => {
 
 const isScopeStatement = (statement: IStatement) => scopeStatements.contains(statement.head);
 
-const shouldReevaluateScopeStatement = (statement: IStatement) => ['while', 'repeat'].indexOf(statement.head) > -1;
+const shouldReevaluateScopeStatement = (statement: IStatement) => [StatementType.While, StatementType.Repeat].indexOf(statement.head) > -1;
 
 const movePosition = (statements: List<IStatement>, position: List<IPositionItem>): List<IPositionItem> => {
     if (statements.isEmpty() || position.isEmpty()) {
@@ -96,7 +93,7 @@ const movePosition = (statements: List<IStatement>, position: List<IPositionItem
     return movePosition(statements.pop(), position.pop());
 };
 
-const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPositionItem[] => {
+const getNextPosition = (roboAst: IStatement, context: IRuntimeContext): IPositionItem[] => {
     const statements = getStatementsForPosition(roboAst, context);
     const result = context.position.slice(0);
 
@@ -107,12 +104,12 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPosition
             throw new Error(`Variable '${SystemVariableName.ShouldEnterNextBlock}' is not set when on block statement.`);
         }
 
-        if (shouldEnterNextBlockVar.value && getLast(statements).body.length > 0) {
+        if (shouldEnterNextBlockVar.value && getLast(statements).body!.length > 0) {
             result.push(getPositionItem(0));
             return result;
         }
 
-        if (!shouldEnterNextBlockVar.value && getLast(statements).orelse && getLast(statements).orelse.statement.body.length > 0) {
+        if (!shouldEnterNextBlockVar.value && getLast(statements).orelse && getLast(statements).orelse!.statement.body!.length > 0) {
             result.push(getPositionItem(0, true));
             return result;
         }
@@ -123,7 +120,7 @@ const getNextPosition = (roboAst: IRoboAst, context: IRuntimeContext): IPosition
 
 const deepCopy = (obj: unknown) => JSON.parse(JSON.stringify(obj));
 
-const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: ShipId): UserProgramError | null => {
+const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext, world: World, shipId: ShipId): UserProgramError | null | EvaluationInProgress => {
     switch (statement.head) {
         case StatementType.If:
         case StatementType.While: {
@@ -131,7 +128,7 @@ const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext,
                 throw new Error(`${statement.head} statement has to have condition.`);
             }
             const conditionResult = evaluateCondition(statement.test, world, shipId, context);
-            if (isUserProgramError(conditionResult)) {
+            if (isUserProgramError(conditionResult) || conditionResult === evaluationInProgress) {
                 return conditionResult;
             }
             setSystemVariable(
@@ -161,13 +158,15 @@ const setPositionAttributes = (statement: IStatement, position: IPositionItem) =
     }
 };
 
+const getUsedEvaluationResult = (result: World | UserProgramError | EvaluationInProgress) => ({result, actionUsed: true});
+const getUnusedEvaluationResult = (result: World | UserProgramError | EvaluationInProgress) => ({result, actionUsed: false});
 const evaluateActionStatement = (
     statement: IStatement | ISetVariableStatement,
     world: World,
     shipId: ShipId,
     context: IRuntimeContext,
     behaviours: IGameBehaviours,
-): World | UserProgramError => {
+): {result: World | UserProgramError | EvaluationInProgress, actionUsed: boolean} => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
@@ -176,39 +175,155 @@ const evaluateActionStatement = (
 
     switch (statement.head) {
         case StatementType.Fly:
-            return handleMoveStatement(world, ship, MovingDirection.Forward, behaviours);
+            return getUsedEvaluationResult(handleMoveStatement(world, ship, MovingDirection.Forward, behaviours));
         case StatementType.Left:
-            return handleMoveStatement(world, ship, MovingDirection.Left, behaviours);
+            return getUsedEvaluationResult(handleMoveStatement(world, ship, MovingDirection.Left, behaviours));
         case StatementType.Right:
-            return handleMoveStatement(world, ship, MovingDirection.Right, behaviours);
+            return getUsedEvaluationResult(handleMoveStatement(world, ship, MovingDirection.Right, behaviours));
         case StatementType.Shoot:
-            return makeShipShoot(world, shipId);
+            return getUsedEvaluationResult(makeShipShoot(world, shipId));
         case StatementType.PickUpDiamond:
-            return makeShipPickupDiamond(world, shipId);
+            return getUsedEvaluationResult(makeShipPickupDiamond(world, shipId));
         case StatementType.TurnLeft:
-            return updateShipInWorld(world, ship, turnShip(ship, 'left'));
+            return getUsedEvaluationResult(updateShipInWorld(world, ship, turnShip(ship, 'left')));
         case StatementType.TurnRight:
-            return updateShipInWorld(world, ship, turnShip(ship, 'right'));
+            return getUsedEvaluationResult(updateShipInWorld(world, ship, turnShip(ship, 'right')));
         case StatementType.SetVariable:
             if (!statement.name || !statement.value || typeof statement.value !== 'string') {
                 throw new Error('While setting variable statement has to have name and value.');
             }
             setUserVariable(context, statement.name, statement.value);
-            return world;
+            return getUsedEvaluationResult(world);
         case StatementType.SetVariableNumeric:
             if (!statement.name || !statement.value || typeof statement.value === 'string') {
                 throw new Error('While setting variable statement has to have name and value.');
             }
             const value = getObjectFromStatement(statement.value, context);
             if (isUserProgramError(value))
-                return value;
+                return getUnusedEvaluationResult(value);
 
             setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
-            return world;
+            return getUsedEvaluationResult(world);
+        case StatementType.FunctionCallVoid:
+            const executionId = getFunctionExecutionId(context, statement.name || '', statement.parameters);
+            const existingExecution = getSystemVariable(
+                context,
+                SystemVariableName.FunctionExecutionFinished,
+                v => v.value.requestId === executionId
+            );
+
+            if (!existingExecution) {
+                setSystemVariable(
+                    context,
+                    SystemVariableName.FunctionExecutionRequest,
+                    { functionName: statement.name || '', requestId: executionId });
+                return getUnusedEvaluationResult(evaluationInProgress);
+            }
+            return getUnusedEvaluationResult(world);
         default:
-            return world;
+            return getUnusedEvaluationResult(world);
     }
 };
+
+const executeStepInFunction = (
+    fncName: string,
+    fncAsts: Map<string, IStatement>,
+    world: World,
+    shipId: ShipId,
+    context: IRuntimeContext,
+    behaviours: IGameBehaviours
+): [IRuntimeContext, World] | UserProgramError => {
+    const fncAst = fncAsts.get(fncName);
+    context.wasActionExecuted = false;
+    if (!fncAst) {
+        throw invalidProgramError(`Function with name ${fncName} is not defined.`);
+    }
+
+    if ((context.position.length === 0 && !context.nestedFunctionExecution.isFunctionBeingExecuted) || fncAst.body!.length === 0) {
+        context.hasEnded = true;
+        return [context, world];
+    }
+
+    if (context.minorActionsLeft <= 0) {
+        console.log('No actions left, let other players play too.');
+        return [context, world];
+    }
+
+    if (context.nestedFunctionExecution.isFunctionBeingExecuted && context.nestedFunctionExecution.functionRuntimeContext) {
+        const { functionName, requestId, functionRuntimeContext } = context.nestedFunctionExecution;
+        console.log('\tinner call to ', functionName);
+        const stepResult = executeStepInFunction(functionName, fncAsts, world, shipId, functionRuntimeContext, behaviours);
+
+        if (isUserProgramError(stepResult)) {
+            return stepResult;
+        }
+
+        if (stepResult[0].hasEnded) {
+            context.nestedFunctionExecution.isFunctionBeingExecuted = false;
+            setSystemVariable(
+                context,
+                SystemVariableName.FunctionExecutionFinished,
+                { functionName, requestId, result: undefined },
+                v => v.value.requestId === requestId,
+            );
+        }
+        context.wasActionExecuted = stepResult[0].wasActionExecuted;
+        context.nestedFunctionExecution.functionRuntimeContext = stepResult[0];
+        console.log('\tcalled ', functionName, ', current wasActionUsed: ', context.wasActionExecuted);
+
+        return [context, stepResult[1]];
+    }
+
+    const statement = getLast(getStatementsForPosition(fncAst, context));
+    console.log('\texecuting ', statement);
+    console.log('\twasActionUsed before execution: ', context.wasActionExecuted);
+
+    const withoutLasers = removeLaserAndExplosionObjects(world);
+    const evaluationResult = evaluateActionStatement(statement, withoutLasers, shipId, context, behaviours);
+
+    if (isUserProgramError(evaluationResult.result)) {
+        return evaluationResult.result;
+    }
+    const newWorld = evaluationResult.result === evaluationInProgress ? world : evaluationResult.result;
+
+    console.log('\twasActionUsed before execution: ', context.wasActionExecuted);
+    context.wasActionExecuted = evaluationResult.actionUsed;
+    console.log('\twasActionUsed after execution: ', context.wasActionExecuted);
+
+    setPositionAttributes(statement, getLast(context.position));
+    const conditionEvaluation = evaluateBlockCondition(statement, context, world, shipId);
+
+    if (isUserProgramError(conditionEvaluation)) {
+        return conditionEvaluation;
+    }
+
+    if (conditionEvaluation !== evaluationInProgress && evaluationResult.result !== evaluationInProgress) {
+        context.position = getNextPosition(fncAst, context);
+    }
+
+    const executionRequestVar = getSystemVariable(context, SystemVariableName.FunctionExecutionRequest);
+    removeSystemVariable(context, SystemVariableName.FunctionExecutionRequest);
+    if (executionRequestVar) {
+        callFunctionOnContext(context, executionRequestVar.value.functionName, executionRequestVar.value.requestId);
+    }
+
+    if (context.position.length === 0 && !context.nestedFunctionExecution.isFunctionBeingExecuted) {
+        context.hasEnded = true;
+    }
+
+    return [context, newWorld];
+};
+
+//TODO: parameters initialization, variables transfer
+const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string): void => {
+    context.nestedFunctionExecution.isFunctionBeingExecuted = true;
+    context.nestedFunctionExecution.functionName = fncName;
+    context.nestedFunctionExecution.functionRuntimeContext = getEmptyRuntimeContext();
+    context.nestedFunctionExecution.requestId = requestId;
+};
+
+const createFunctionsMap = memoizeOne((roboAst: IRoboAst): Map<string, IStatement> =>
+    Map(roboAst.map(s => [s.name || defaultFunctionName, s])));
 
 export const doNextStep = (
     roboAst: IRoboAst,
@@ -217,47 +332,23 @@ export const doNextStep = (
     context: IRuntimeContext,
     behaviours: IGameBehaviours
 ): [IRuntimeContext, World] | UserProgramError => {
-    if (context.position.length === 0) {
-        console.log('Empty runtime context, reset before another run.');
-        context.hasEnded = true;
-        return [context, world];
-    }
-
-    //TODO Functions
-    if (roboAst[0].body!.length === 0) {
-        context.hasEnded = true;
-        console.log('Empty program, please create something before running it.');
-        return [context, world];
-    }
-
     if (context.minorActionsLeft <= 0) {
-        console.log('No actions left, let other players play too.');
+        console.log('No actions left, let others play too.');
         return [context, world];
     }
-    context = deepCopy(context);
+    const newContext = deepCopy(context);
+    console.log('----------start step for ', shipId, '----------');
 
-    context.minorActionsLeft--;
-    const statement = getStatement(roboAst, context);
+    const result = executeStepInFunction(defaultFunctionName, createFunctionsMap(roboAst), world, shipId, newContext, behaviours);
 
-    const withoutLasers = removeLaserAndExplosionObjects(world);
-    const newWorld = evaluateActionStatement(statement, withoutLasers, shipId, context, behaviours);
+    if (isUserProgramError(result))
+        return result;
 
-    if (isUserProgramError(newWorld)) {
-        return newWorld;
+    result[0].minorActionsLeft--;
+    if (result[0].wasActionExecuted) {
+        result[0].minorActionsLeft = defaultMinorActionsCount;
     }
+    console.log('----------end step for ', shipId, ', action used: ', result[0].wasActionExecuted, '----------');
 
-    context.wasActionExecuted = newWorld !== world;
-    if (context.wasActionExecuted) {
-         context.minorActionsLeft = defaultMinorActionsCount;
-    }
-    setPositionAttributes(statement, getLast(context.position));
-    const conditionEvaluation = evaluateBlockCondition(statement, context, world, shipId);
-
-    if (isUserProgramError(conditionEvaluation)) {
-        return conditionEvaluation;
-    }
-
-    context.position = getNextPosition(roboAst, context);
-
-    return [context, newWorld];
+    return result;
 };

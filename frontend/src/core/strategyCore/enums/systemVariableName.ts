@@ -1,3 +1,6 @@
 export enum SystemVariableName {
-    ShouldEnterNextBlock = 'shouldEnterNextBlock',
+    ShouldEnterNextBlock = 'ShouldEnterNextBlock',
+    FunctionExecutionRequest = 'FunctionExecutionRequest',
+    FunctionExecutionInProgress = 'FunctionExecutionInProgress',
+    FunctionExecutionFinished = 'FunctionExecutionFinished',
 }

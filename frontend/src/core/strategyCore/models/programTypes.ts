@@ -6,6 +6,7 @@ import {StatementType} from "../enums/statementType";
 import {WorldObjectType} from "../enums/worldObjectType";
 import {NumberOperation} from "../enums/numberOperation";
 import {endOfMapType} from "../constants/astConstants";
+import {SystemVariableForName} from "./systemVariablePayloads";
 
 export const defaultFunctionName = '(default_function)';
 
@@ -13,12 +14,13 @@ export interface IPositionItem {
     index: number;
     elseBranchEntered: boolean;
     repeatCount?: number;
-    functionName: string;
-    isFncInConditionBeingEvaluated: boolean;
 }
 
 export type Variable = { name: string; value: string };
-export type SystemVariable = { name: SystemVariableName, value: unknown };
+export type SystemVariable = SystemVariableForName<SystemVariableName.ShouldEnterNextBlock> |
+    SystemVariableForName<SystemVariableName.FunctionExecutionRequest> |
+    SystemVariableForName<SystemVariableName.FunctionExecutionFinished> |
+    SystemVariableForName<SystemVariableName.FunctionExecutionInProgress>;
 
 export interface IRuntimeContext {
     position: IPositionItem[]
@@ -27,6 +29,12 @@ export interface IRuntimeContext {
     wasActionExecuted: boolean;
     minorActionsLeft: number;
     hasEnded: boolean;
+    nestedFunctionExecution: {
+        isFunctionBeingExecuted: boolean;
+        functionName: string;
+        requestId: string;
+        functionRuntimeContext?: IRuntimeContext;
+    }
 }
 
 export interface ICondition {
@@ -98,6 +106,12 @@ export interface IConstantBoolean extends ICondition {
     comparator: undefined;
 }
 
+export interface IFunctionCallBoolean {
+    head: ConditionType.FunctionCallBoolean;
+    name: string;
+    parameters: IFunctionCallParameter[];
+}
+
 export type Condition =
     IColorCondition |
     IPositionCondition |
@@ -106,6 +120,7 @@ export type Condition =
     IBinaryLogicCondition |
     ICompareCondition |
     ITileAccessibleCondition |
+    IFunctionCallBoolean |
     IConstantBoolean;
 
 export interface IBlock {

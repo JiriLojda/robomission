@@ -16,10 +16,9 @@ import {ConditionType} from "../../enums/conditionType";
 import {StatementType} from "../../enums/statementType";
 import {Comparator} from "../../enums/comparator";
 import {invalidProgramError} from "../../utils/invalidProgramError";
+import {generateUuid} from "../../utils/generateUuid";
 
-export function generateBlocklyXml(roboAst: IRoboAst, x = 210, y = 10) {
-    //TODO Functions
-    return `
+export const generateBlocklyXml = (roboAst: IRoboAst, x = 210, y = 10) => `
     <xml xmlns="http://www.w3.org/1999/xhtml">
       <block type="start" deletable="false" x="${x}" y="${y}">
       ${generateNextBlocksIfPresent(roboAst[0].body!)}
@@ -27,21 +26,11 @@ export function generateBlocklyXml(roboAst: IRoboAst, x = 210, y = 10) {
       ${generateFunctionsXmls(roboAst).join('')}
     </xml>
   `;
-}
 
 function generateFunctionsXmls(roboAst: IRoboAst): string[] {
     return roboAst.slice(1)
-        .map(s => generateFunctionXml(s as IFunctionDefinition));
+        .map(s => generateFunctionDefinition(s as IFunctionDefinition, (s as IFunctionDefinition).body));
 }
-
-function generateFunctionXml(func: IFunctionDefinition): string {
-    return `
-        <block type="${func.head}">
-            ${generateNextBlocksIfPresent(func.body)}
-        </block>
-    `;
-}
-
 
 function generateSequence(nodes: IBlock[]) {
     if (nodes == null || nodes.length === 0) {
@@ -79,8 +68,6 @@ function generateStatementBlock(node: IBlock, nextNodes: IBlock[]) {
             return generateSetStringVariableBlock(statement, nextNodes);
         case StatementType.SetVariableNumeric:
             return generateSetNumericVariableBlock(statement, nextNodes);
-        case StatementType.FunctionDefinition:
-            return generateFunctionDefinition(statement as IFunctionDefinition, nextNodes);
         case StatementType.FunctionCallVoid:
             return generateFunctionCall(statement as IFunctionCall, nextNodes);
         case StatementType.FunctionReturn:
@@ -350,13 +337,13 @@ function getComparator(comparator: Comparator) {
         case Comparator.Equal:
             return '==';
         case Comparator.Equivalent:
-            return 'equivalent';
+            return 'eq';
         case Comparator.NonEqual:
             return '!=';
         case Comparator.NonEquivalent:
-            return 'not equivalent';
+            return 'nonEq';
         case Comparator.NotContains:
-            return 'not contains';
+            return 'notContains';
         case Comparator.Or:
             return 'or';
         case Comparator.Smaller:
@@ -370,10 +357,11 @@ function getComparator(comparator: Comparator) {
 
 const generateFunctionDefinition = (statement: IFunctionDefinition, nextNodes: IBlock[]): string => {
     const params = generateFunctionDefinitionParameters(statement.parameters);
-    return `<block type="${statement.head}">
-        ${params.length === 0 ? '' : `<value name="parameter">${params}</value>`}
-        ${generateNextBlocksIfPresent(nextNodes)}
-</block>`;
+    return `<block type="${statement.head}" id="${generateUuid()}">
+                <field name="name">${statement.name}</field>
+                ${params.length === 0 ? '' : `<value name="parameter">${params}</value>`}
+                ${generateNextBlocksIfPresent(nextNodes)}
+            </block>`;
 };
 
 const generateFunctionDefinitionParameters = (parameters: string[]): string => {

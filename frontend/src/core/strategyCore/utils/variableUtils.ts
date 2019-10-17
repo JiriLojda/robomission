@@ -1,17 +1,29 @@
 import {IRuntimeContext, Variable} from "../models/programTypes";
 import {SystemVariableName} from "../enums/systemVariableName";
+import {SystemVariableForName, SystemVariablePayloadForName} from "../models/systemVariablePayloads";
 
-export const getSystemVariable = (context: IRuntimeContext, variableName: string) => {
-    return context.systemVariables.find(variable => variable.name === variableName);
+type Predicate<T extends SystemVariableName> = (variable: SystemVariableForName<T>) => boolean;
+
+export const getSystemVariable = <T extends SystemVariableName>(context: IRuntimeContext, variableName: T, predicate?: Predicate<T>): SystemVariableForName<T> | undefined => {
+    return context.systemVariables.find(variable => variable.name === variableName && (!predicate || predicate(variable as any))) as SystemVariableForName<T>;
 };
 
-export const setSystemVariable = (context: IRuntimeContext, variableName: SystemVariableName, variableValue: unknown): void => {
-    const existing = getSystemVariable(context, variableName);
+export const setSystemVariable = <T extends SystemVariableName>(
+    context: IRuntimeContext,
+    variableName: T,
+    variableValue: SystemVariablePayloadForName<T>,
+    predicate?: Predicate<T>
+): void => {
+    const existing = getSystemVariable(context, variableName, predicate);
     if (!existing) {
-        context.systemVariables.push({name: variableName, value: variableValue});
+        context.systemVariables.push({name: variableName, value: variableValue} as any);
     } else {
         existing.value = variableValue;
     }
+};
+
+export const removeSystemVariable = (context: IRuntimeContext, variableName: SystemVariableName): void => {
+    context.systemVariables = context.systemVariables.filter(v => v.name !== variableName);
 };
 
 export const doesUserVariableExist = (context: IRuntimeContext, variableName: string): boolean =>

@@ -8,4 +8,5 @@ export enum ConditionType {
     NumericCompare = 'numericCompare',
     StringCompare = 'stringCompare',
     ConstantBoolean = 'constant_boolean',
+    FunctionCallBoolean = 'function_call_boolean',
 }

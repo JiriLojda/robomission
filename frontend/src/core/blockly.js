@@ -29,9 +29,12 @@ export function blocklyXmlToRoboAst(blocklyXml) {
   return blocklyDomToRoboAst(blocklyDom);
 }
 
+const emptyAst = JSON.parse('[{"head":"start","body":[],"location":{"blockId":"^5MM01Yg?^qbCK28(0^f"}}]');
 
 function blocklyDomToRoboAst(dom) {
   const startBlock = dom.querySelector('block[type="start"]');
+  if (getNextBlock(startBlock) === null)
+    return emptyAst;
   const mainFunction = blockToAst(startBlock);
 
   const otherFunctionDefinitions = dom.querySelectorAll('block[type="function_definition"]');

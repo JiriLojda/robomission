@@ -1,8 +1,11 @@
 import {
     Condition,
     IBinaryLogicCondition,
-    ICompareCondition,
+    IColorCondition,
+    ICompareCondition, IFunctionCall,
+    IFunctionCallBoolean,
     INumberBinaryStatement,
+    IPositionCondition,
     IRuntimeContext,
     isCompareCondition,
     IStatement,
@@ -19,12 +22,24 @@ import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
 import {StatementType} from "../enums/statementType";
 import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
-import {doesUserVariableExist, getUserVariable, getUserVariableAsNumber, isUserVariableNumber} from "./variableUtils";
+import {
+    doesUserVariableExist,
+    getSystemVariable,
+    getUserVariable,
+    getUserVariableAsNumber,
+    isUserVariableNumber,
+    setSystemVariable
+} from "./variableUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
 import {Ship, ShipId} from "../models/ship";
 import {endOfMapConstant} from "../constants/astConstants";
 import {WorldObject} from "../models/worldObject";
+import {getFunctionExecutionId} from "./getFunctionExecutionId";
+import {SystemVariableName} from "../enums/systemVariableName";
+
+export type EvaluationInProgress = 'EvaluationInProgress';
+export const evaluationInProgress: EvaluationInProgress = 'EvaluationInProgress';
 
 const basicComparators = List<Comparator>([
     Comparator.Equal,
@@ -71,7 +86,7 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
     }
 };
 
-export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError => {
+export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError | EvaluationInProgress => {
     switch (statement.head) {
         case StatementType.GetNumericVariable: {
             const variableName = statement.name || '';
@@ -95,7 +110,7 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
             return number;
         }
         case StatementType.ConstantString: {
-            if (statement.value !== 'string') {
+            if (typeof statement.value !== 'string') {
                 throw new Error('You have to define constant string value.');
             }
             return statement.value;
@@ -110,6 +125,10 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
 
             return evaluateNumberBinaryOperation(leftValue, rightValue, statementTyped.operator);
         }
+        case StatementType.FunctionCallNumber:
+            return executeFncIfNeeded<number>(context, statement as IFunctionCall, 'number');
+        case StatementType.FunctionCallString:
+            return executeFncIfNeeded<string>(context, statement as IFunctionCall, 'string');
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);
     }
@@ -173,7 +192,7 @@ const getPositionArgument = (
     return new Position({x: newX, y: newY});
 };
 
-const handleObjectComparison = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
+const handleObjectComparison = (condition: IColorCondition | IPositionCondition | ITileCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
     const ship = getShip(world, shipId);
     const shipPosition = getShipPosition(world, shipId);
 
@@ -236,15 +255,15 @@ const isResultKnown = (comparator: Comparator, leftResult: boolean): boolean => 
     }
 };
 
-const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
+const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
     const leftValue = evaluateCondition(condition.leftValue, world, shipId, context);
-    if (isUserProgramError(leftValue))
+    if (isUserProgramError(leftValue) || leftValue === evaluationInProgress)
         return leftValue;
     if (isResultKnown(condition.comparator, leftValue))
         return leftValue;
 
     const rightValue = evaluateCondition(condition.rightValue, world, shipId, context);
-    if (isUserProgramError(rightValue))
+    if (isUserProgramError(rightValue) || rightValue === evaluationInProgress)
         return rightValue;
 
     switch (condition.comparator) {
@@ -276,7 +295,34 @@ const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, worl
     return objectsOnTile.every(obj => !shipBlockingObjects.contains(obj.type));
 };
 
-export const evaluateCondition = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError => {
+const executeFncIfNeeded = <T extends number | boolean | string>(
+    context: IRuntimeContext,
+    fncCall: IFunctionCallBoolean | IFunctionCall,
+    expectedType: 'boolean' | 'number' | 'string',
+): T | EvaluationInProgress => {
+    const executionId = getFunctionExecutionId(context, fncCall.name, fncCall.parameters);
+    const existingExecution = getSystemVariable(
+        context,
+        SystemVariableName.FunctionExecutionFinished,
+        v => v.value.requestId === executionId
+    );
+
+    if (!existingExecution) {
+        setSystemVariable(
+            context,
+            SystemVariableName.FunctionExecutionRequest,
+            { functionName: fncCall.name, requestId: executionId });
+        return evaluationInProgress;
+    }
+
+    const result = existingExecution.value.result;
+    if (typeof result !== expectedType)
+        throw invalidProgramError(`${fncCall.head} function execution result is ${typeof result}, but expected ${expectedType}`);
+
+    return result as T;
+};
+
+export const evaluateCondition = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
     if (condition.head === ConditionType.Not) {
         return !evaluateCondition(condition.value, world, shipId, context);
     }
@@ -286,11 +332,15 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: Sh
     }
 
     if (condition.head === ConditionType.ConstantBoolean) {
-        return Boolean(condition.value);
+        return condition.value === 'true';
     }
 
     if (condition.head === ConditionType.IsTileAccessible) {
         return handleAccessibleTileCondition(condition, world, context, shipId);
+    }
+
+    if (condition.head === ConditionType.FunctionCallBoolean) {
+        return executeFncIfNeeded<boolean>(context, condition, 'boolean');
     }
 
     if (isCompareCondition(condition)) {
