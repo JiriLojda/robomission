@@ -14,6 +14,8 @@ export enum InvalidProgramReason {
     DuplicateFunctionName = 'DuplicateFunctionName',
     EmptyFunctionName = 'EmptyFunctionName',
     EmptyParameterName = 'EmptyParameterName',
+    FncCallWithInvalidNumberOfParameters = 'FncCallWithInvalidNumberOfParameters',
+    UnknownFunctionCalled = 'UnknownFunctionCalled',
     None = 'None',
 }
 
@@ -25,6 +27,8 @@ export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.DuplicateFunctionName,
     InvalidProgramReason.EmptyFunctionName,
     InvalidProgramReason.EmptyParameterName,
+    InvalidProgramReason.FncCallWithInvalidNumberOfParameters,
+    InvalidProgramReason.UnknownFunctionCalled,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -55,6 +59,10 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'Function name cannot be empty.';
         case InvalidProgramReason.EmptyParameterName:
             return 'Parameter name cannot be empty.';
+        case InvalidProgramReason.FncCallWithInvalidNumberOfParameters:
+            return 'Some of your function calls have incorrect number of arguments passed.';
+        case InvalidProgramReason.UnknownFunctionCalled:
+            return 'You tried to call an unknown function. Define the function first.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

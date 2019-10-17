@@ -3,7 +3,10 @@ import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {IRoboAst, IStatement} from "../models/programTypes";
 import {getValidatorResult, useValidators} from "./programValidationUtils";
 import {
-    isFlyStatementValid, isFunctionCallStatementValid, isFunctionDefinitionStatementValid, isFunctionReturnValid,
+    isFlyStatementValid,
+    isFunctionCallStatementValid,
+    isFunctionDefinitionStatementValid,
+    isFunctionReturnValid,
     isIfStatementValid,
     isLeftStatementValid,
     isPickUpDiamondStatementValid,
@@ -18,6 +21,7 @@ import {
     isWhileStatementValid
 } from "./statementValidators";
 import {memoizeOne} from "../../../utils/memoizeOne";
+import {allGlobalValidators} from "./globalValidators";
 
 export interface IValidatorResult {
     isValid: boolean;
@@ -33,10 +37,15 @@ export const isRoboAstValid = memoizeOne(
 
         return roboAst
             .map(isStatementValid)
+            .concat(useGlobalValidators(roboAst))
             .find(r => !r.isValid) || getValidatorResult(true, InvalidProgramReason.None);
     },
-    args => JSON.stringify(args[0]),
+    args => JSON.stringify(args),
 );
+
+const useGlobalValidators = (roboAst: IRoboAst): IValidatorResult[] =>
+    allGlobalValidators
+        .map(validator => validator(roboAst));
 
 const isStatementValid = (statement: IStatement): IValidatorResult => {
     if (!statement.head) {

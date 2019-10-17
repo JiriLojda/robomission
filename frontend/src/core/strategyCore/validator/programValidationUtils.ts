@@ -1,6 +1,6 @@
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {IValidatorResult} from "./programValidator";
-import {IStatement} from "../models/programTypes";
+import {IRoboAst, IStatement} from "../models/programTypes";
 
 export const getValidatorResult = (isValid: boolean, reason: InvalidProgramReason): IValidatorResult => {
     if (!isValid) {
@@ -53,3 +53,4 @@ export const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[
     );
 
 export type StatementValidator = (statement: IStatement) => IValidatorResult;
+export type GlobalValidator = (roboAst: IRoboAst) => IValidatorResult;

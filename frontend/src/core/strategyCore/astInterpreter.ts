@@ -314,7 +314,7 @@ const executeStepInFunction = (
     return [context, newWorld];
 };
 
-//TODO: parameters initialization, variables transfer
+//TODO: parameters initialization
 const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string): void => {
     context.nestedFunctionExecution.isFunctionBeingExecuted = true;
     context.nestedFunctionExecution.functionName = fncName;

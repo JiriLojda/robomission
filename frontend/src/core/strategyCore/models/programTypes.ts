@@ -130,7 +130,6 @@ export interface IBlock {
 
 export interface IFunctionCallParameter {
     readonly value: IStatement;
-    readonly parameter?: IFunctionCallParameter;
 }
 
 export interface IFunctionDefinition extends IStatement {
