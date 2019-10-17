@@ -318,7 +318,7 @@ const executeStepInFunction = (
 const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string): void => {
     context.nestedFunctionExecution.isFunctionBeingExecuted = true;
     context.nestedFunctionExecution.functionName = fncName;
-    context.nestedFunctionExecution.functionRuntimeContext = getEmptyRuntimeContext();
+    context.nestedFunctionExecution.functionRuntimeContext = getEmptyRuntimeContext(context.variables);
     context.nestedFunctionExecution.requestId = requestId;
 };
 
