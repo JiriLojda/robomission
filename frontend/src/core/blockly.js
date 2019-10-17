@@ -266,10 +266,7 @@ function numberBinaryToAst(block) {
 }
 
 function functionDefinitionToAst(block) {
-  const parameters = getFunctionParameters(
-    getValueBlock(block, 'parameter'),
-    'name'
-  );
+  const parameters = getFunctionDefinitionParameters(getValueBlock(block, 'parameter'));
   const name = getFieldValue(block, 'name');
 
   const nextBlock = getNextBlock(block);
@@ -279,10 +276,7 @@ function functionDefinitionToAst(block) {
 }
 
 function functionCallToAst(block, type) {
-  const parameters = getFunctionParameters(
-    getValueBlock(block, 'parameter'),
-    'value'
-  );
+  const parameters = getFunctionCallParameters(getValueBlock(block, 'parameter'));
   const name = getFieldValue(block, 'name');
 
   return {head: `function_call_${type}`, name, parameters};
@@ -294,15 +288,26 @@ function isTileAccessibleToAst(block) {
   return {head: 'tile_accessible', position};
 }
 
-function getFunctionParameters(block, fieldValue) {
+function getFunctionCallParameters(block) {
   if (!block)
     return [];
 
-  const restBlocks = getFunctionParameters(getValueBlock(block, 'parameter'), fieldValue);
+  const restBlocks = getFunctionCallParameters(getValueBlock(block, 'parameter'));
 
-  const field = getFieldValue(block, fieldValue);
+  const value = blockToAst(getValueBlock(block, 'value'));
 
-  return [fieldValue === 'value' ? {field} : field, ...restBlocks];
+  return [{value}, ...restBlocks];
+}
+
+function getFunctionDefinitionParameters(block) {
+  if (!block)
+    return [];
+
+  const restBlocks = getFunctionCallParameters(getValueBlock(block, 'parameter'));
+
+  const name = getFieldValue(block, 'name');
+
+  return [name, ...restBlocks];
 }
 
 function functionReturnToAst(block) {

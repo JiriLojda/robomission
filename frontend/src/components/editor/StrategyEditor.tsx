@@ -184,9 +184,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
 
      _importAst = () => {
          const ast = JSON.parse(prompt('Enter your ast here', 'ast') || '[]');
-         this.setState(({useCodeEditor: true}));
          this.setState(() => ({roboAst: ast, validationResult: isRoboAstValid(ast).reason}));
-         this.setState(({useCodeEditor: false}));
      };
 
     _renderEditor = () => this.state.useCodeEditor ? (

@@ -35,10 +35,14 @@ const getAllFncsNames = (roboAst: IRoboAst): string[] =>
 
 const validateProperFncParams: GlobalValidator = roboAst => {
     const fncsParamsMap = createFncsParamsMap(roboAst);
-    const fncCallTypes = [StatementType.FunctionCallVoid, StatementType.FunctionCallString, StatementType.FunctionCallNumber];
-    const allCalls = findAllStatementsOfTypes(roboAst, Set(fncCallTypes)) as (IFunctionCall | IFunctionCallBoolean)[];
+    const fncCallTypes = [
+        StatementType.FunctionCallVoid,
+        StatementType.FunctionCallString,
+        StatementType.FunctionCallNumber,
+    ];
+    const allStatementCalls = findAllStatementsOfTypes(roboAst, Set(fncCallTypes)) as IFunctionCall[];
 
-    const isValid = allCalls
+    const isValid = allStatementCalls
         .map(s => ({name: s.name as string,count:  s.parameters.length}))
         .every(c => fncsParamsMap.has(c.name) && fncsParamsMap.get(c.name) === c.count);
 

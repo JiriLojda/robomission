@@ -40,6 +40,8 @@ export const isTestStatementValid = (condition: Condition): IValidatorResult => 
             return isBinaryComparatorValid(condition, ValueStatementType.Number);
         case ConditionType.ConstantBoolean:
             return hasExactProperties(condition, ['head', 'value']);
+        case ConditionType.FunctionCallBoolean:
+            return hasExactProperties(condition, ['head', 'name', 'parameters']);
         default:
             throw new Error(`Unknown condition type ${condition!.head}`);
     }

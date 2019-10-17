@@ -50,6 +50,15 @@ export const isValueStatementValid = (statement: IStatement, type: ValueStatemen
                 ],
                 statement,
             );
+        case StatementType.FunctionCallNumber:
+        case StatementType.FunctionCallString:
+            return useValidators(
+                [
+                    s => hasExactProperties(s, ['head', 'name', 'parameters']),
+                    s => validateCorrectValueType(s, type),
+                ],
+              statement,
+            );
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }
@@ -73,10 +82,12 @@ const validateCorrectValueType = (statement: IStatement, type: ValueStatementTyp
     switch (statement.head) {
         case StatementType.GetStringVariable:
         case StatementType.ConstantString:
+        case StatementType.FunctionCallString:
             return getValidatorResult(type === ValueStatementType.String, InvalidProgramReason.InvalidValueType);
         case StatementType.GetNumericVariable:
         case StatementType.ConstantNumber:
         case StatementType.NumberBinary:
+        case StatementType.FunctionCallNumber:
             return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
     }
     throw new Error(`Tried to validate valueType of non-value type statement ${statement.head}.`);
