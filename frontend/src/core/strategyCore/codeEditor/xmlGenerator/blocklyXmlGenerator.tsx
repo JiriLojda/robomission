@@ -6,7 +6,7 @@
  */
 import {
     Condition,
-    IBlock, IFunctionCall, IFunctionCallParameter, IFunctionDefinition, IFunctionReturn,
+    IBlock, IFunctionCall, IFunctionCallBoolean, IFunctionCallParameter, IFunctionDefinition, IFunctionReturn,
     INumberBinaryStatement,
     IPositionValue,
     IRoboAst,
@@ -255,11 +255,28 @@ const getTestContent = (test: Condition): string => {
                     <value name="position">${generatePositionValue(test.position)}</value>
                 </block>
             `;
+        case ConditionType.FunctionCallBoolean:
+            return generateFncCall(test);
 
         default:
             throw new Error(`Unknown node type: ${test.head}`);
     }
 };
+
+const generateFncCallParameters = (parameters: IFunctionCallParameter[]): string =>
+    parameters[0] ? `
+        <block type="function_parameter_call">
+            <value name="value">${generateValueStatement(parameters[0].value)}</value>
+            <value name="parameter">${generateFncCallParameters(parameters.slice(1))}</value>
+        </block>` : '';
+
+const generateFncCall = (call: IFunctionCallBoolean | IFunctionCall): string =>
+    `
+    <block type="${call.head}">
+        <field name="name">${call.name || ''}</field>
+        <value name="parameter">${generateFncCallParameters(call.parameters)}</value>
+    </block>
+    `;
 
 const wrapWithTestTag = (input: string) => `
     <value name="test">
@@ -318,7 +335,7 @@ const generateValueStatement = (statement?: IStatement): string => {
         }
         case StatementType.FunctionCallNumber:
         case StatementType.FunctionCallString:
-            return generateFunctionCall(statement as IFunctionCall, []);
+            return generateFncCall(statement as IFunctionCall);
         default:
             return '';
     }

@@ -148,6 +148,12 @@ export interface IFunctionCall extends IStatement {
 export interface IFunctionReturn extends IStatement {
     head: StatementType.FunctionReturn;
     value: IStatement;
+    body: undefined;
+    orelse: undefined;
+    count: undefined;
+    test: undefined;
+    name: undefined;
+    parameters: undefined;
 }
 
 export interface IStatement {
