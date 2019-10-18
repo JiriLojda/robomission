@@ -163,7 +163,7 @@ const findFunctionsUsages = (roboAst: IRoboAst): Map<IFunctionDefinition, List<I
 
 const validateEndingReturnForNonVoidFunctions: GlobalValidator = roboAst => {
     const isValid = findFunctionsUsages(roboAst)
-        .filter(usages => usages.every(u => u.head !== StatementType.FunctionCallVoid))
+        .filter(usages => !usages.isEmpty() && usages.every(u => u.head !== StatementType.FunctionCallVoid))
         .keySeq()
         .every(fnc => fnc.body.length > 0 && fnc.body[fnc.body.length - 1].statement.head === StatementType.FunctionReturn);
 
