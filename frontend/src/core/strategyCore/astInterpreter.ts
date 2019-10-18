@@ -323,7 +323,7 @@ const executeStepInFunction = (
 };
 
 const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string, parameters: Map<string, string>): void => {
-    const childContext = getEmptyRuntimeContext(context.variables);
+    const childContext = getEmptyRuntimeContext();
     context.nestedFunctionExecution.isFunctionBeingExecuted = true;
     context.nestedFunctionExecution.functionName = fncName;
     context.nestedFunctionExecution.functionRuntimeContext = childContext;

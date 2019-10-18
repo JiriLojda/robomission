@@ -24,7 +24,7 @@ export interface IRunBattleParams {
 export const runBattle = (params: IRunBattleParams): BattleResult => {
     assertParamsCorrectness(params);
 
-    const runtimeContexts = params.shipsOrder.map(() => getEmptyRuntimeContext()).toArray();
+    const runtimeContexts = params.shipsOrder.map(getEmptyRuntimeContext).toArray();
     let currentIndex = 0;
     let currentWorld = params.world;
     let turnsRan = 0;

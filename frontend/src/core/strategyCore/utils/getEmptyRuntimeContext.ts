@@ -1,9 +1,9 @@
 import {defaultFunctionName, IRuntimeContext, Variable} from "../models/programTypes";
 import {defaultMinorActionsCount} from "../constants/interpreterConstants";
 
-export const getEmptyRuntimeContext = (variables: Variable[] = []): IRuntimeContext => ({
+export const getEmptyRuntimeContext = (): IRuntimeContext => ({
     position: [{index: 0, elseBranchEntered: false, repeatCount: undefined}],
-    variables: [...variables],
+    variables: [],
     systemVariables: [],
     wasActionExecuted: false,
     minorActionsLeft: defaultMinorActionsCount,
