@@ -86,6 +86,19 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
     }
 };
 
+//TODO refactor to getValueOfValueStatement or something like that
+export const getCallParametersValues = (statement: IFunctionCall | IFunctionCallBoolean, context: IRuntimeContext): string[] | UserProgramError | EvaluationInProgress => {
+    const result = [];
+    for (const parameter of statement.parameters) {
+        const parameterValue = getObjectFromStatement(parameter.value, context);
+        if (isUserProgramError(parameterValue) || parameterValue === evaluationInProgress)
+            return parameterValue;
+        result.push(parameterValue as string);
+    }
+
+    return result;
+};
+
 export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError | EvaluationInProgress => {
     switch (statement.head) {
         case StatementType.GetNumericVariable: {
@@ -299,7 +312,7 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
     context: IRuntimeContext,
     fncCall: IFunctionCallBoolean | IFunctionCall,
     expectedType: 'boolean' | 'number' | 'string',
-): T | EvaluationInProgress => {
+): T | EvaluationInProgress | UserProgramError => {
     const executionId = getFunctionExecutionId(context, fncCall.name, fncCall.parameters);
     const existingExecution = getSystemVariable(
         context,
@@ -308,10 +321,13 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
     );
 
     if (!existingExecution) {
+        const parameters = getCallParametersValues(fncCall, context);
+        if (isUserProgramError(parameters) || parameters === evaluationInProgress)
+            return parameters;
         setSystemVariable(
             context,
             SystemVariableName.FunctionExecutionRequest,
-            { functionName: fncCall.name, requestId: executionId });
+            { functionName: fncCall.name, requestId: executionId, parameters });
         return evaluationInProgress;
     }
 

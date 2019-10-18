@@ -1,8 +1,12 @@
 import {SystemVariableName} from "../enums/systemVariableName";
 
-export type functionExecutionPayload = {
+type functionExecutionPayload = {
     readonly functionName: string;
     readonly requestId: string;
+};
+
+export type functionExecutionRequestedPayload = functionExecutionPayload & {
+    readonly parameters: string[];
 };
 
 export type functionExecutionFinishedPayload = functionExecutionPayload & {
@@ -11,9 +15,8 @@ export type functionExecutionFinishedPayload = functionExecutionPayload & {
 
 type SystemVariableValuesRelations = {
     [SystemVariableName.ShouldEnterNextBlock]: boolean;
-    [SystemVariableName.FunctionExecutionRequest]: functionExecutionPayload;
+    [SystemVariableName.FunctionExecutionRequest]: functionExecutionRequestedPayload;
     [SystemVariableName.FunctionExecutionFinished]: functionExecutionFinishedPayload;
-    [SystemVariableName.FunctionExecutionInProgress]: functionExecutionPayload;
 };
 
 export type SystemVariableForName<TName extends SystemVariableMapped> = {

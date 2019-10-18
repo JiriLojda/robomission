@@ -19,8 +19,7 @@ export interface IPositionItem {
 export type Variable = { name: string; value: string };
 export type SystemVariable = SystemVariableForName<SystemVariableName.ShouldEnterNextBlock> |
     SystemVariableForName<SystemVariableName.FunctionExecutionRequest> |
-    SystemVariableForName<SystemVariableName.FunctionExecutionFinished> |
-    SystemVariableForName<SystemVariableName.FunctionExecutionInProgress>;
+    SystemVariableForName<SystemVariableName.FunctionExecutionFinished>;
 
 export interface IRuntimeContext {
     position: IPositionItem[]

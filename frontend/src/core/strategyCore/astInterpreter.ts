@@ -5,7 +5,7 @@ import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {
-    defaultFunctionName,
+    defaultFunctionName, IFunctionCall, IFunctionDefinition,
     IPositionItem,
     IRoboAst,
     IRuntimeContext,
@@ -17,7 +17,7 @@ import {getSystemVariable, removeSystemVariable, setSystemVariable, setUserVaria
 import {
     evaluateCondition,
     evaluationInProgress,
-    EvaluationInProgress,
+    EvaluationInProgress, getCallParametersValues,
     getObjectFromStatement
 } from "./utils/evaluateCondition";
 import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
@@ -206,7 +206,8 @@ const evaluateActionStatement = (
             setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
             return getUsedEvaluationResult(world);
         case StatementType.FunctionCallVoid:
-            const executionId = getFunctionExecutionId(context, statement.name || '', statement.parameters);
+            const statementTyped = statement as IFunctionCall;
+            const executionId = getFunctionExecutionId(context, statementTyped.name, statementTyped.parameters);
             const existingExecution = getSystemVariable(
                 context,
                 SystemVariableName.FunctionExecutionFinished,
@@ -214,10 +215,13 @@ const evaluateActionStatement = (
             );
 
             if (!existingExecution) {
+                const parameters = getCallParametersValues(statementTyped, context);
+                if (isUserProgramError(parameters) || parameters === evaluationInProgress)
+                    return getUnusedEvaluationResult(parameters);
                 setSystemVariable(
                     context,
                     SystemVariableName.FunctionExecutionRequest,
-                    { functionName: statement.name || '', requestId: executionId });
+                    { functionName: statementTyped.name || '', requestId: executionId, parameters });
                 return getUnusedEvaluationResult(evaluationInProgress);
             }
             return getUnusedEvaluationResult(world);
@@ -305,7 +309,10 @@ const executeStepInFunction = (
     const executionRequestVar = getSystemVariable(context, SystemVariableName.FunctionExecutionRequest);
     removeSystemVariable(context, SystemVariableName.FunctionExecutionRequest);
     if (executionRequestVar) {
-        callFunctionOnContext(context, executionRequestVar.value.functionName, executionRequestVar.value.requestId);
+        const fncDefinition = fncAsts.get(executionRequestVar.value.functionName);
+        const parameters = Map((fncDefinition as IFunctionDefinition).parameters
+            .map((name, i) => [name, executionRequestVar.value.parameters[i]]));
+        callFunctionOnContext(context, executionRequestVar.value.functionName, executionRequestVar.value.requestId, parameters);
     }
 
     if (context.position.length === 0 && !context.nestedFunctionExecution.isFunctionBeingExecuted) {
@@ -315,12 +322,13 @@ const executeStepInFunction = (
     return [context, newWorld];
 };
 
-//TODO: parameters initialization
-const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string): void => {
+const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string, parameters: Map<string, string>): void => {
+    const childContext = getEmptyRuntimeContext(context.variables);
     context.nestedFunctionExecution.isFunctionBeingExecuted = true;
     context.nestedFunctionExecution.functionName = fncName;
-    context.nestedFunctionExecution.functionRuntimeContext = getEmptyRuntimeContext(context.variables);
+    context.nestedFunctionExecution.functionRuntimeContext = childContext;
     context.nestedFunctionExecution.requestId = requestId;
+    parameters.forEach((value, name) => setUserVariable(childContext, name, value));
 };
 
 const createFunctionsMap = memoizeOne((roboAst: IRoboAst): Map<string, IStatement> =>
