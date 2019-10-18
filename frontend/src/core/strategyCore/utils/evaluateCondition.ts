@@ -147,13 +147,13 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
     }
 };
 
-const handleComparatorConditions = (condition: ICompareCondition, context: IRuntimeContext): boolean | UserProgramError => {
+const handleComparatorConditions = (condition: ICompareCondition, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
     const leftValue = getObjectFromStatement(condition.leftValue, context);
     const rightValue = getObjectFromStatement(condition.rightValue, context);
 
-    if (isUserProgramError(leftValue))
+    if (isUserProgramError(leftValue) || leftValue === evaluationInProgress)
         return leftValue;
-    if (isUserProgramError(rightValue))
+    if (isUserProgramError(rightValue) || rightValue === evaluationInProgress)
         return rightValue;
 
     return evaluateBasicComparator(leftValue, rightValue, condition.comparator);
@@ -182,15 +182,15 @@ const getPositionArgument = (
     context: IRuntimeContext,
     world: World,
     ship: Ship,
-): Position | UserProgramError => {
+): Position | UserProgramError | EvaluationInProgress => {
     const x = getObjectFromStatement(condition.position.x, context);
-    if (isUserProgramError(x))
+    if (isUserProgramError(x) || x === evaluationInProgress)
         return x;
     if (typeof x !== 'number')
         throw invalidProgramError('position can only have number arguments');
 
     const y = getObjectFromStatement(condition.position.y, context);
-    if (isUserProgramError(y))
+    if (isUserProgramError(y) || y === evaluationInProgress)
         return y;
     if (typeof y !== 'number')
         throw invalidProgramError('position can only have number arguments');
@@ -224,7 +224,7 @@ const handleObjectComparison = (condition: IColorCondition | IPositionCondition 
             return position === UserProgramError.ReferencedPositionIsNotOnMap;
         if (position === UserProgramError.ReferencedPositionIsNotOnMap)
             return false;
-        if (isUserProgramError(position))
+        if (isUserProgramError(position) || position === evaluationInProgress)
             return position;
         const objects = getWorldObjectsOnTile(position, world);
         return unifyShips(objects.map(o => o.type)).contains(condition.value);
@@ -237,7 +237,7 @@ const handleObjectComparison = (condition: IColorCondition | IPositionCondition 
             return position !== UserProgramError.ReferencedPositionIsNotOnMap;
         if (position === UserProgramError.ReferencedPositionIsNotOnMap)
             return true;
-        if (isUserProgramError(position))
+        if (isUserProgramError(position) || position === evaluationInProgress)
             return position;
         const objects = getWorldObjectsOnTile(position, world);
         return !unifyShips(objects.map(o => o.type)).contains(condition.value);
@@ -293,14 +293,14 @@ const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: W
     }
 };
 
-const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: ShipId): boolean | UserProgramError => {
+const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: ShipId): boolean | UserProgramError | EvaluationInProgress => {
     const ship = world.ships.find(s => s.id === shipId);
     if (!ship)
         throw invalidProgramError(`ShipId ${shipId} does not exist on the map`, 'evaluateCondition');
 
     const position = getPositionArgument(condition, context, world, ship);
 
-    if (isUserProgramError(position))
+    if (isUserProgramError(position) || position === evaluationInProgress)
         return position === UserProgramError.ReferencedPositionIsNotOnMap ? false : position;
 
     const objectsOnTile = getObjectsOnPositionWithShips(world, position.x, position.y);

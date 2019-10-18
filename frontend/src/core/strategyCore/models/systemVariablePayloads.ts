@@ -13,10 +13,15 @@ export type functionExecutionFinishedPayload = functionExecutionPayload & {
     readonly result: unknown;
 }
 
+export type functionReturnedPayload = {
+    readonly result: unknown;
+}
+
 type SystemVariableValuesRelations = {
     [SystemVariableName.ShouldEnterNextBlock]: boolean;
     [SystemVariableName.FunctionExecutionRequest]: functionExecutionRequestedPayload;
     [SystemVariableName.FunctionExecutionFinished]: functionExecutionFinishedPayload;
+    [SystemVariableName.FunctionReturned]: functionReturnedPayload;
 };
 
 export type SystemVariableForName<TName extends SystemVariableMapped> = {

@@ -429,8 +429,8 @@ const generateFunctionCallParameters = (parameters: IFunctionCallParameter[]): s
 };
 
 const generateFunctionReturn = (statement: IFunctionReturn): string => {
-    const value = !statement.value || isConditionStatement(statement.value)?
-        generateTestValueIfPresent(statement.value) :
+    const value = !!statement.value && isConditionStatement(statement.value) ?
+        getTestContent(statement.value) :
         generateValueStatement(statement.value);
 
     return `

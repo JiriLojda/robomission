@@ -5,7 +5,9 @@ import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {
-    defaultFunctionName, IFunctionCall, IFunctionDefinition,
+    defaultFunctionName,
+    IFunctionCall,
+    IFunctionDefinition,
     IPositionItem,
     IRoboAst,
     IRuntimeContext,
@@ -17,7 +19,8 @@ import {getSystemVariable, removeSystemVariable, setSystemVariable, setUserVaria
 import {
     evaluateCondition,
     evaluationInProgress,
-    EvaluationInProgress, getCallParametersValues,
+    EvaluationInProgress,
+    getCallParametersValues,
     getObjectFromStatement
 } from "./utils/evaluateCondition";
 import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
@@ -225,6 +228,15 @@ const evaluateActionStatement = (
                 return getUnusedEvaluationResult(evaluationInProgress);
             }
             return getUnusedEvaluationResult(world);
+        case StatementType.FunctionReturn:
+            if (statement.value && typeof statement.value !== 'string') {
+                const result = isConditionStatement(statement.value) ?
+                    evaluateCondition(statement.value, world, shipId, context) :
+                    getObjectFromStatement(statement.value, context);
+                setSystemVariable(context, SystemVariableName.FunctionReturned, { result });
+            }
+            context.hasEnded = true;
+            return getUnusedEvaluationResult(world);
         default:
             return getUnusedEvaluationResult(world);
     }
@@ -265,10 +277,12 @@ const executeStepInFunction = (
 
         if (stepResult[0].hasEnded) {
             context.nestedFunctionExecution.isFunctionBeingExecuted = false;
+            const returnedVar = getSystemVariable(context.nestedFunctionExecution.functionRuntimeContext, SystemVariableName.FunctionReturned);
+            const result = returnedVar ? returnedVar.value.result : undefined;
             setSystemVariable(
                 context,
                 SystemVariableName.FunctionExecutionFinished,
-                { functionName, requestId, result: undefined },
+                { functionName, requestId, result },
                 v => v.value.requestId === requestId,
             );
         }
