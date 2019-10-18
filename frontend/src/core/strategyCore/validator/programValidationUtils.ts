@@ -1,6 +1,8 @@
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {IValidatorResult} from "./programValidator";
-import {IRoboAst, IStatement} from "../models/programTypes";
+import {IFunctionCallParameter, IRoboAst, IStatement} from "../models/programTypes";
+import {isValueStatementValid} from "./isValueStatementValid";
+import {ValueStatementType} from "../enums/valueStatementType";
 
 export const getValidatorResult = (isValid: boolean, reason: InvalidProgramReason): IValidatorResult => {
     if (!isValid) {
@@ -51,6 +53,11 @@ export const hasExactProperties = <T, K extends keyof T>(statement: T, props: K[
         ],
         statement
     );
+
+export const areCallParametersValid = (parameters: IFunctionCallParameter[]): IValidatorResult =>
+    parameters
+        .map(p => !p.value ? getValidatorResult(false, InvalidProgramReason.MissingParameter) : isValueStatementValid(p.value, ValueStatementType.String))
+        .find(r => !r.isValid) || getValidatorResult(true, InvalidProgramReason.None);
 
 export type StatementValidator = (statement: IStatement) => IValidatorResult;
 export type GlobalValidator = (roboAst: IRoboAst) => IValidatorResult;

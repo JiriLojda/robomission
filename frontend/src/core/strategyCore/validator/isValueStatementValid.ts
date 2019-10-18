@@ -1,6 +1,7 @@
-import {INumberBinaryStatement, IStatement} from "../models/programTypes";
+import {IFunctionCallParameter, INumberBinaryStatement, IStatement} from "../models/programTypes";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {
+    areCallParametersValid,
     getValidatorResult,
     hasExactProperties,
     StatementValidator,
@@ -11,8 +12,8 @@ import {StatementType} from "../enums/statementType";
 import {IValidatorResult} from "./programValidator";
 import {getStatementValidator} from "./getStatementValidator";
 
-export const isValueStatementValid = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
-    if (!statement.head) {
+export const isValueStatementValid = (statement: IStatement, type?: ValueStatementType): IValidatorResult => {
+    if (!statement || !statement.head) {
         return getValidatorResult(false, InvalidProgramReason.InvalidStatement);
     }
 
@@ -56,6 +57,7 @@ export const isValueStatementValid = (statement: IStatement, type: ValueStatemen
                 [
                     s => hasExactProperties(s, ['head', 'name', 'parameters']),
                     s => validateCorrectValueType(s, type),
+                    s => areCallParametersValid(s.parameters as IFunctionCallParameter[]),
                 ],
               statement,
             );
@@ -78,7 +80,11 @@ const isNumberBinaryValid = (statement: IStatement) => useValidators(
     statement
 );
 
-const validateCorrectValueType = (statement: IStatement, type: ValueStatementType): IValidatorResult => {
+const validateCorrectValueType = (statement: IStatement, type?: ValueStatementType): IValidatorResult => {
+    if (!type) {
+        return getValidatorResult(true, InvalidProgramReason.None);
+    }
+
     switch (statement.head) {
         case StatementType.GetStringVariable:
         case StatementType.ConstantString:

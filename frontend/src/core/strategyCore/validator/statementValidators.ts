@@ -1,4 +1,5 @@
 import {
+    areCallParametersValid,
     areOnlyAllowedPropertiesSet,
     composeValidators,
     getValidatorResult,
@@ -7,11 +8,12 @@ import {
     useValidators
 } from "./programValidationUtils";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
-import {ISetVariableNumericStatement, IStatement} from "../models/programTypes";
+import {IFunctionCallParameter, ISetVariableNumericStatement, IStatement} from "../models/programTypes";
 import {isValueStatementValid} from "./isValueStatementValid";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {getStatementValidator} from "./getStatementValidator";
 import {isValidConditionStatement} from "./isTestStatementValid";
+import {IValidatorResult} from "./programValidator";
 
 export const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],
@@ -86,6 +88,7 @@ export const isFunctionDefinitionStatementValid = composeValidators([
 export const isFunctionCallStatementValid = composeValidators([
     s => hasExactProperties(s, ['head', 'name', 'parameters']),
     hasNonEmptyName,
+    s => areCallParametersValid(s.parameters as IFunctionCallParameter[]),
 ]);
 
 export const isFunctionReturnValid = composeValidators([

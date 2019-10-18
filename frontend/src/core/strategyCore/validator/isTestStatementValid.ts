@@ -1,9 +1,16 @@
-import {Condition, IBinaryLogicCondition, ICompareCondition, IStatement} from "../models/programTypes";
+import {
+    Condition,
+    IBinaryLogicCondition,
+    ICompareCondition,
+    IFunctionCallParameter,
+    IStatement
+} from "../models/programTypes";
 import {ConditionType} from "../enums/conditionType";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {IValidatorResult} from "./programValidator";
 import {
+    areCallParametersValid,
     checkParameterExistence,
     getValidatorResult,
     hasExactProperties,
@@ -41,7 +48,13 @@ export const isTestStatementValid = (condition: Condition): IValidatorResult => 
         case ConditionType.ConstantBoolean:
             return hasExactProperties(condition, ['head', 'value']);
         case ConditionType.FunctionCallBoolean:
-            return hasExactProperties(condition, ['head', 'name', 'parameters']);
+            return useValidators(
+                [
+                c => hasExactProperties(c, ['head', 'name', 'parameters']),
+                s => areCallParametersValid(s.parameters as IFunctionCallParameter[]),
+            ],
+                condition
+            );
         default:
             throw new Error(`Unknown condition type ${condition!.head}`);
     }
