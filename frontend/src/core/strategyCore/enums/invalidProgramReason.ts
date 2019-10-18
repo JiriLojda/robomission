@@ -16,6 +16,10 @@ export enum InvalidProgramReason {
     EmptyParameterName = 'EmptyParameterName',
     FncCallWithInvalidNumberOfParameters = 'FncCallWithInvalidNumberOfParameters',
     UnknownFunctionCalled = 'UnknownFunctionCalled',
+    FncShouldReturnAndNoEndingReturn = 'FncShouldReturnAndNoEndingReturn',
+    FncIsCalledWithDifferentReturnTypes = 'FncIsCalledWithDifferentReturnTypes',
+    FncReturnsDifferentTypes = 'FncReturnsDifferentTypes',
+    FncCallReturnTypeMismatch = 'FncCallReturnTypeMismatch',
     None = 'None',
 }
 
@@ -29,6 +33,10 @@ export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.EmptyParameterName,
     InvalidProgramReason.FncCallWithInvalidNumberOfParameters,
     InvalidProgramReason.UnknownFunctionCalled,
+    InvalidProgramReason.FncShouldReturnAndNoEndingReturn,
+    InvalidProgramReason.FncIsCalledWithDifferentReturnTypes,
+    InvalidProgramReason.FncReturnsDifferentTypes,
+    InvalidProgramReason.FncCallReturnTypeMismatch,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -63,6 +71,14 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'Some of your function calls have incorrect number of arguments passed.';
         case InvalidProgramReason.UnknownFunctionCalled:
             return 'You tried to call an unknown function. Define the function first.';
+        case InvalidProgramReason.FncShouldReturnAndNoEndingReturn:
+            return 'Some of your functions should return a value and does not have return at the end.';
+        case InvalidProgramReason.FncIsCalledWithDifferentReturnTypes:
+            return 'Some of your functions are called with different return types expected each time.';
+        case InvalidProgramReason.FncReturnsDifferentTypes:
+            return 'Some of your functions return different types with each return statement.';
+        case InvalidProgramReason.FncCallReturnTypeMismatch:
+            return 'Some of your functions return different type the expected by it\'s calls.';
         case InvalidProgramReason.None:
             return 'No problem here.';
         default:

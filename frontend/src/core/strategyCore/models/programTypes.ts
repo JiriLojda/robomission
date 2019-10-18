@@ -147,7 +147,7 @@ export interface IFunctionCall extends IStatement {
 
 export interface IFunctionReturn extends IStatement {
     head: StatementType.FunctionReturn;
-    value: IStatement;
+    value: IStatement | Condition;
     body: undefined;
     orelse: undefined;
     count: undefined;
@@ -163,7 +163,7 @@ export interface IStatement {
     test?: Condition;
     count?: number;
     name?: string;
-    value?: string | IStatement;
+    value?: string | IStatement | Condition;
     parameters?: string[] | IFunctionCallParameter[];
 }
 

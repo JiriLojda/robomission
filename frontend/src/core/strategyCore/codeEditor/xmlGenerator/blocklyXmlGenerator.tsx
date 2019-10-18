@@ -6,7 +6,12 @@
  */
 import {
     Condition,
-    IBlock, IFunctionCall, IFunctionCallBoolean, IFunctionCallParameter, IFunctionDefinition, IFunctionReturn,
+    IBlock,
+    IFunctionCall,
+    IFunctionCallBoolean,
+    IFunctionCallParameter,
+    IFunctionDefinition,
+    IFunctionReturn,
     INumberBinaryStatement,
     IPositionValue,
     IRoboAst,
@@ -17,6 +22,7 @@ import {StatementType} from "../../enums/statementType";
 import {Comparator} from "../../enums/comparator";
 import {invalidProgramError} from "../../utils/invalidProgramError";
 import {generateUuid} from "../../utils/generateUuid";
+import {isConditionStatement} from "../../utils/getValueStatementType";
 
 export const generateBlocklyXml = (roboAst: IRoboAst, x = 210, y = 10) => `
     <xml xmlns="http://www.w3.org/1999/xhtml">
@@ -423,7 +429,9 @@ const generateFunctionCallParameters = (parameters: IFunctionCallParameter[]): s
 };
 
 const generateFunctionReturn = (statement: IFunctionReturn): string => {
-    const value = generateValueStatement(statement.value);
+    const value = !statement.value || isConditionStatement(statement.value)?
+        generateTestValueIfPresent(statement.value) :
+        generateValueStatement(statement.value);
 
     return `
         <block type="${statement.head}">

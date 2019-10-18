@@ -28,6 +28,7 @@ import {invalidProgramError} from "./utils/invalidProgramError";
 import {getFunctionExecutionId} from "./utils/getFunctionExecutionId";
 import {getEmptyRuntimeContext} from "./utils/getEmptyRuntimeContext";
 import {memoizeOne} from "../../utils/memoizeOne";
+import {isConditionStatement} from "./utils/getValueStatementType";
 
 const getLastImmutable = <T>(list: List<T>): T => getLast(list.toArray());
 
@@ -195,8 +196,8 @@ const evaluateActionStatement = (
             setUserVariable(context, statement.name, statement.value);
             return getUsedEvaluationResult(world);
         case StatementType.SetVariableNumeric:
-            if (!statement.name || !statement.value || typeof statement.value === 'string') {
-                throw new Error('While setting variable statement has to have name and value.');
+            if (!statement.name || !statement.value || typeof statement.value === 'string' || isConditionStatement(statement.value)) {
+                throw invalidProgramError('The value for the variable has different type.');
             }
             const value = getObjectFromStatement(statement.value, context);
             if (isUserProgramError(value))

@@ -2,16 +2,21 @@ import {
     Condition,
     IFunctionCall,
     IFunctionCallBoolean,
-    IFunctionCallParameter, INumberBinaryStatement,
+    IFunctionCallParameter,
+    IFunctionDefinition,
+    IFunctionReturn,
+    INumberBinaryStatement,
     IRoboAst,
     IStatement
 } from "../models/programTypes";
 import {StatementType} from "../enums/statementType";
 import {invalidProgramError} from "../utils/invalidProgramError";
-import {Map, Set} from 'immutable';
+import {List, Map, Set} from 'immutable';
 import {getValidatorResult, GlobalValidator} from "./programValidationUtils";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {ConditionType} from "../enums/conditionType";
+import {getValueStatementType} from "../utils/getValueStatementType";
+import {ValueStatementType} from "../enums/valueStatementType";
 
 const isValueStatement = (statement?: IStatement | Condition): boolean =>
     !!statement && [
@@ -105,7 +110,7 @@ const getAllFncsNames = (roboAst: IRoboAst): string[] =>
         .filter(s => s.head === StatementType.FunctionDefinition)
         .map(s => s.name || '');
 
-const getAllFunctionCalls = (roboAst: IRoboAst): (IFunctionCallBoolean | IFunctionCall)[] => {
+const findAllFunctionCalls = (roboAst: IRoboAst): (IFunctionCallBoolean | IFunctionCall)[] => {
     const fncCallTypes = [
         StatementType.FunctionCallVoid,
         StatementType.FunctionCallString,
@@ -124,7 +129,7 @@ const getAllFunctionCalls = (roboAst: IRoboAst): (IFunctionCallBoolean | IFuncti
 const validateProperFncParams: GlobalValidator = roboAst => {
     const fncsParamsMap = createFncsParamsMap(roboAst);
 
-    const isValid = getAllFunctionCalls(roboAst)
+    const isValid = findAllFunctionCalls(roboAst)
         .map(s => ({name: s.name as string,count:  s.parameters.length}))
         .every(c => fncsParamsMap.has(c.name) && fncsParamsMap.get(c.name) === c.count);
 
@@ -134,7 +139,7 @@ const validateProperFncParams: GlobalValidator = roboAst => {
 const validateExistingFncsCalled: GlobalValidator = roboAst => {
     const allFncsNames = Set(getAllFncsNames(roboAst));
 
-    const isValid = getAllFunctionCalls(roboAst)
+    const isValid = findAllFunctionCalls(roboAst)
         .map(s => ({name: s.name as string,count:  s.parameters.length}))
         .every(c => allFncsNames.contains(c.name));
 
@@ -147,8 +152,74 @@ const validateFncsHaveUniqueName: GlobalValidator = roboAst => {
     return getValidatorResult(Set(allFncsNames).count() === allFncsNames.length, InvalidProgramReason.DuplicateFunctionName);
 };
 
+const findFunctionsUsages = (roboAst: IRoboAst): Map<IFunctionDefinition, List<IFunctionCall | IFunctionCallBoolean>> => {
+    const allDefinitions: IFunctionDefinition[] = roboAst
+        .filter(s => s.head === StatementType.FunctionDefinition) as IFunctionDefinition[];
+    const allCalls = findAllFunctionCalls(roboAst);
+
+    return Map(allDefinitions
+        .map(definition => [definition, List(allCalls.filter(call => call.name === definition.name))]));
+};
+
+const validateEndingReturnForNonVoidFunctions: GlobalValidator = roboAst => {
+    const isValid = findFunctionsUsages(roboAst)
+        .filter(usages => usages.every(u => u.head !== StatementType.FunctionCallVoid))
+        .keySeq()
+        .every(fnc => fnc.body.length > 0 && fnc.body[fnc.body.length - 1].statement.head === StatementType.FunctionReturn);
+
+    return getValidatorResult(isValid, InvalidProgramReason.FncShouldReturnAndNoEndingReturn);
+};
+
+const validateFncUsagesOfTheSameType: GlobalValidator = roboAst => {
+    const isValid = findFunctionsUsages(roboAst)
+        .every(usages => usages
+            .map(u => u.head)
+            .filter(u => u !== StatementType.FunctionCallVoid)
+            .toSet().size <= 1
+        );
+
+    return getValidatorResult(isValid, InvalidProgramReason.FncIsCalledWithDifferentReturnTypes);
+};
+
+const findAllReturns = (fnc: IFunctionDefinition): IFunctionReturn[] =>
+    findAllStatementsOfTypesInScope(fnc, Set([StatementType.FunctionReturn])) as IFunctionReturn[];
+
+const createMapOfFncReturnTypesAndUsages = (roboAst: IRoboAst): Map<ValueStatementType[], List<IFunctionCallBoolean | IFunctionCall>> =>
+    findFunctionsUsages(roboAst)
+        .mapKeys(definition => findAllReturns(definition))
+        .mapKeys(returns => Set(returns.filter(r => !!r.value).map(r => getValueStatementType(r.value))).toArray())
+        .map(calls => calls.filter(call => call.head !== StatementType.FunctionCallVoid));
+
+const validateFncReturnsOnlyOneType: GlobalValidator = roboAst => {
+    const isValid = createMapOfFncReturnTypesAndUsages(roboAst)
+        .every((_, returnTypes) => returnTypes.length <= 1);
+
+    return getValidatorResult(isValid, InvalidProgramReason.FncReturnsDifferentTypes);
+};
+
+const doesReturnTypeMatch = (
+    returnType: ValueStatementType,
+    callType: StatementType.FunctionCallString | StatementType.FunctionCallNumber | ConditionType.FunctionCallBoolean | StatementType.FunctionCallVoid
+): boolean =>
+    [
+        [ValueStatementType.String, StatementType.FunctionCallString],
+        [ValueStatementType.Number, StatementType.FunctionCallNumber],
+        [ValueStatementType.Boolean, ConditionType.FunctionCallBoolean],
+    ].find(v => v[0] === returnType && v[1] === callType) !== undefined;
+
+const validateFncReturnsExpectedType: GlobalValidator = roboAst => {
+    const isValid = createMapOfFncReturnTypesAndUsages(roboAst)
+        .every((calls, returnTypes) => calls.isEmpty() || returnTypes.length === 0 || doesReturnTypeMatch(returnTypes[0], calls.get(0)!.head));
+
+    return getValidatorResult(isValid, InvalidProgramReason.FncCallReturnTypeMismatch);
+};
+
 export const allGlobalValidators: GlobalValidator[] = [
     validateFncsHaveUniqueName,
     validateExistingFncsCalled,
     validateProperFncParams,
+    validateEndingReturnForNonVoidFunctions,
+    validateFncReturnsOnlyOneType,
+    validateFncUsagesOfTheSameType,
+    validateFncReturnsExpectedType,
 ];
