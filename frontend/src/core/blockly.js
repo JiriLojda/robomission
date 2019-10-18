@@ -303,7 +303,7 @@ function getFunctionDefinitionParameters(block) {
   if (!block)
     return [];
 
-  const restBlocks = getFunctionCallParameters(getValueBlock(block, 'parameter'));
+  const restBlocks = getFunctionDefinitionParameters(getValueBlock(block, 'parameter'));
 
   const name = getFieldValue(block, 'name');
 
