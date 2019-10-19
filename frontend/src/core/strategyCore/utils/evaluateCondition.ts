@@ -340,7 +340,10 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
 
 export const evaluateCondition = (condition: Condition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
     if (condition.head === ConditionType.Not) {
-        return !evaluateCondition(condition.value, world, shipId, context);
+        const innerResult = evaluateCondition(condition.value, world, shipId, context);
+        if (isUserProgramError(innerResult) || innerResult === evaluationInProgress)
+            return innerResult;
+        return !innerResult;
     }
 
     if (condition.head === ConditionType.LogicBinaryOperation) {
