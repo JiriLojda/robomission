@@ -15,11 +15,11 @@ import {WorldObjectType} from "../../enums/worldObjectType";
 
 export function generateStrategyRoboCode(roboAst: IRoboAst) {
     //TODO Functions
-    const { head, body } = roboAst as any;
+    const { head, body } = roboAst[0];
     if (head !== 'start') {
         throw new Error(`Unexpected root of roboAst: ${head}`);
     }
-    return (body.length > 0) ? generateBody(body, 0) : '';
+    return (body && body.length > 0) ? generateBody(body, 0) : '';
 }
 
 

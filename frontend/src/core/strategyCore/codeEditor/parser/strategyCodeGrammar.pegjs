@@ -1,4 +1,4 @@
-/* strategy RoboCode PEG Grammar
+/* RoboCode PEG Grammar
  * ====================
  * Assumes preprocessed program with marked line numbers and indentation to
  * avoid context-sensitiveness. For example:
@@ -13,8 +13,33 @@
  * ```
  */
 
+Functions
+  = start:Start EOL EmptyLine* tail:FunctionChained*
+  	{ return [start, ...tail]; }
+
+FunctionChained
+  = fnc:Function EOL EmptyLine*
+    { return fnc; }
+
+Function
+  = location:SOL "def" __ name:Identifier "(" parameters:FunctionDefParameters ")" ":" body:Body
+  	{ return { head: "function_definition", name: name, body, parameters, location } }
+
+FunctionDefParameters
+  = _ head:Identifier? _ tail:FunctionDefParameterChained* {
+      var result = head ? [head] : [];
+      for (var i = 0; i < tail.length; i++) {
+        result.push(tail[i]);
+      }
+      return result;
+    }
+
+FunctionDefParameterChained
+  = "," _ name:Identifier _
+    { return name }
+
 Start
-  = body:(Sequence / EmptyProgram)
+  = SOL "def Start():" body:Body
     { return { head: "start", body: body } }
 
 EmptyProgram
@@ -228,6 +253,9 @@ StringValue
 
 
 // ----- Lexical Grammar -----
+
+EmptyLine
+  = SOL EOL
 
 Identifier
   = $([a-zA-Z_][a-zA-Z0-9_\-]*)

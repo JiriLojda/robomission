@@ -13,7 +13,7 @@ type ParseResult = {
 export function parseStrategyRoboCode(code: string): ParseResult {
     const normalizedCode = preprocessRoboCodeForParser(code);
     try {
-        const result = parse(normalizedCode);
+        const result = parse(normalizedCode) as any;
 
         return {
             isSuccessful: true,
