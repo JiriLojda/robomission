@@ -2,7 +2,11 @@ import {stripIndentation} from '../../../../utils/text';
 import {
     Condition,
     IBinaryLogicCondition,
-    IBlock, INumberBinaryStatement,
+    IBlock,
+    IFunctionCallParameter,
+    IFunctionDefinition,
+    IFunctionReturn,
+    INumberBinaryStatement,
     IPositionValue,
     IRoboAst,
     IStatement
@@ -12,14 +16,35 @@ import {ConditionType} from "../../enums/conditionType";
 import {Comparator} from "../../enums/comparator";
 import {invalidProgramError} from "../../utils/invalidProgramError";
 import {WorldObjectType} from "../../enums/worldObjectType";
+import {getValueStatementType} from "../../utils/getValueStatementType";
+import {ValueStatementType} from "../../enums/valueStatementType";
 
-export function generateStrategyRoboCode(roboAst: IRoboAst) {
-    //TODO Functions
-    const { head, body } = roboAst[0];
-    if (head !== 'start') {
-        throw new Error(`Unexpected root of roboAst: ${head}`);
+export function generateStrategyRoboCode(roboAst: IRoboAst): string {
+    if (roboAst.length === 0 || roboAst[0].head !== StatementType.Start) {
+        throw invalidProgramError('RoboAst has to have a start statement as first element.');
     }
-    return (body && body.length > 0) ? generateBody(body, 0) : '';
+    const main = generateStartFnc(roboAst[0]);
+    const otherFncs = roboAst
+        .slice(1)
+        .map(s => generateFunctionDefinition(s as IFunctionDefinition));
+
+    return [main, ...otherFncs]
+        .join("\n\n");
+}
+
+function generateStartFnc(statement: IStatement): string {
+    if (statement.head !== StatementType.Start)
+        throw invalidProgramError(`This fnc is for start only. type: ${statement.head}`);
+
+    const body = generateBody(statement.body!);
+    return `def Start():\n${body}`;
+}
+
+function generateFunctionDefinition(fnc: IFunctionDefinition): string {
+    const parameters = fnc.parameters.join(', ');
+    const body = generateBody(fnc.body);
+
+    return `def ${fnc.name}(${parameters}):\n${body}`;
 }
 
 
@@ -57,13 +82,52 @@ function generateStatement(statement: IStatement): string {
             return `${statement.name} = ${generateStatement(statement.value as IStatement)}`;
         case StatementType.SetVariable:
             return `${statement.name} = ${statement.value}`;
+        case StatementType.FunctionCallString:
+        case StatementType.FunctionCallNumber:
+        case StatementType.FunctionCallVoid:
+            return `${statement.name}(${generateFunctionCallParameters(statement.parameters as IFunctionCallParameter[])})`;
+        case StatementType.FunctionReturn:
+            return generateFunctionReturn(statement as IFunctionReturn);
         default:
-            return generateSimpleStatement(statement);
+            return generateActionStatement(statement);
     }
 }
 
-function generateSimpleStatement({ head }: IStatement) {
-    return `${head}()`;
+function generateFunctionCallParameters(parameters: IFunctionCallParameter[]): string {
+    return parameters
+        .map(p => p.value)
+        .map(generateStatement)
+        .join(', ');
+}
+
+function generateFunctionReturn(statement: IFunctionReturn): string {
+    const returnType = getValueStatementType(statement.value);
+    switch (returnType) {
+        case ValueStatementType.Boolean:
+            return `return boolean ${generateTest(statement.value as Condition)}`;
+        case ValueStatementType.Number:
+            return `return number ${generateStatement(statement.value as IStatement)}`;
+        case ValueStatementType.String:
+            return `return string ${generateStatement(statement.value as IStatement)}`;
+        default:
+            throw invalidProgramError(`Unknown valueStatementType ${returnType}`);
+    }
+}
+
+const actionStatements = [
+    StatementType.Shoot,
+    StatementType.Right,
+    StatementType.Left,
+    StatementType.TurnLeft,
+    StatementType.TurnRight,
+    StatementType.PickUpDiamond,
+    StatementType.Fly,
+];
+function generateActionStatement({ head }: IStatement): string {
+    if (!actionStatements.includes(head))
+        throw invalidProgramError(`This is not an action statement: ${head}`);
+
+    return head;
 }
 
 
@@ -95,12 +159,11 @@ function generateIfStatement({ test, body, orelse }: IStatement) {
 
 
 function generateOrelseBlock({ statement }: IBlock) {
-    switch (statement.head) {
-        case StatementType.Else:
-            return generateElse(statement);
-        default:
-            throw new Error(`Unexpected orelse head: ${statement.head}`);
+    if (statement.head !== StatementType.Else) {
+        throw new Error(`Unexpected orelse head: ${statement.head}`);
     }
+
+    return generateElse(statement);
 }
 
 
@@ -148,6 +211,8 @@ function generateTest(node: Condition): string {
 
             return `(${left} ${comparator} ${right})`;
         }
+        case ConditionType.FunctionCallBoolean:
+            return `${node.name}(${generateFunctionCallParameters(node.parameters)})`;
         default:
             throw invalidProgramError(`Unknown condition type ${node!.head}`);
     }

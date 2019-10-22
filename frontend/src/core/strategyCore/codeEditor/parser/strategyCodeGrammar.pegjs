@@ -23,7 +23,7 @@ FunctionChained
 
 Function
   = location:SOL "def" __ name:Identifier "(" parameters:FunctionDefParameters ")" ":" body:Body
-  	{ return { head: "function_definition", name: name, body, parameters, location } }
+  	{ return { head: "function_definition", name: name, body, parameters } }
 
 FunctionDefParameters
   = _ head:Identifier? _ tail:FunctionDefParameterChained* {
@@ -50,7 +50,11 @@ EmptyProgram
 
 Sequence
   = EmptySequence
-  / StatementBlock+
+  / NonEmptySequence
+
+NonEmptySequence
+  = main:StatementBlock* fncReturn:FunctionReturnBlock?
+    { return [...main, ...(fncReturn ? [fncReturn] : [])]; }
 
 EmptySequence
   = SOL "pass" EOL
@@ -60,18 +64,42 @@ StatementBlock
   = lineNumber:SOL s:Statement EOL
     { return { statement: s, location: lineNumber } }
 
+FunctionReturnBlock
+  = lineNumber:SOL s:FunctionReturn EOL
+    { return { statement: s, location: lineNumber } }
+
+FunctionReturn
+  = FunctionReturnNumber
+  / FunctionReturnString
+  / FunctionReturnBoolean
+
+FunctionReturnNumber
+  = "return number " value:Number
+    { return { head: "function_return", value }; }
+
+FunctionReturnString
+  = "return string " value:String
+    { return { head: "function_return", value }; }
+
+FunctionReturnBoolean
+  = "return boolean " value:Condition
+    { return { head: "function_return", value }; }
+
 
 Statement
   = CompoundStatement
-  / SimpleStatement
+  / ActionStatement
   / SetStringVariableStatement
   / SetNumericVariableStatement
+  / FunctionCallVoid
 
 
-SimpleStatement
-  = action:FunctionCall
+ActionStatement
+  = action:ActionStatementType
     { return { head: action } }
 
+ActionStatementType
+  = "fly"/"shoot"/"left"/"right"/"pick_up_diamond"/"turn-right"/"turn-left"
 
 SetStringVariableStatement
   = name:Identifier __ "=" __ value:StringValue
@@ -80,6 +108,10 @@ SetStringVariableStatement
 SetNumericVariableStatement
   = name:Identifier __ "=" __ value:Number
     { return { head: 'setVariableNumeric', name: name, value: value } }
+
+FunctionCallVoid
+  = name:Identifier "("parameters:FunctionCallArgs")"
+    { return { head: "function_call_void", name, parameters }; }
 
 
 CompoundStatement
@@ -128,6 +160,7 @@ Test
   / LogicalNot
   / LogicalBinaryOp
   / ConstantBoolean
+  / FunctionCallBoolean
 
 Condition
   = TileAccessibleTest
@@ -155,6 +188,14 @@ StringCompare
   = left:String __ op:StringRelOp __ right:String
     { return { head: 'stringCompare', leftValue: left, rightValue: right, comparator: op } }
 
+ConstantBoolean
+  = value:("true" / "false")
+    { return { head: 'constant_boolean', value: value } }
+
+FunctionCallBoolean
+  = name:Identifier "("parameters:FunctionCallArgs")"
+    { return { head: "function_call_boolean", name, parameters }; }
+
 TileContains
   = "Tile on" __ tile:Tile __ op:ContainsOp __ obj:MapObject
     { return { head: 'tile', position: tile, comparator: op, value: obj } }
@@ -171,7 +212,23 @@ TileRelative
   = "TileRelative[" _ x:Number _ "," _ y:Number _ "]"
     { return { head: 'position_value_relative', x: x, y: y } }
 
-/* ----- Custom values ----- */
+MapObject
+  = Ship / Diamond / Meteoroid / Asteroid / Wormhole / TheEndOfMap
+
+Ship = "Ship" { return 'S' }
+Diamond = "Diamond" { return 'D' }
+Meteoroid = "Meteoroid" { return 'M' }
+Asteroid = "Asteroid" { return 'A' }
+Wormhole = "Wormhole" { return 'W' }
+TheEndOfMap = "TheEndOfMap" { return 'TheEndOfMap' }
+
+/* ----- Number ----- */
+
+Number
+  = ConstantNumber
+  / NumberBinary
+  / FunctionCallNumber
+  / GetNumberVariable
 
 ConstantNumber
   = value:Integer
@@ -185,45 +242,46 @@ GetNumberVariable
   = name:Identifier
     { return { head: 'getNumericVariable', name: name } }
 
-Number
-  = ConstantNumber
-  / NumberBinary
-  / GetNumberVariable
+FunctionCallNumber
+  = name:Identifier "("parameters:FunctionCallArgs")"
+    { return { head: "function_call_number", name, parameters }; }
 
-ConstantBoolean
-  = value:("true" / "false")
-    { return { head: 'constant_boolean', value: value } }
+/* ----- String ----- */
 
-Boolean
-  = ConstantBoolean
+String
+  = ConstantString
+  / FunctionCallString
+  / GetStringVariable
 
 ConstantString
   = value:StringValue
     { return { head: 'constant_string', value: value } }
 
+FunctionCallString
+  = name:Identifier "("parameters:FunctionCallArgs")"
+    { return { head: "function_call_string", name, parameters }; }
+
 GetStringVariable
   = name:Identifier
     { return { head: 'getStringVariable', name: name } }
 
-String
-  = ConstantString
-  / GetStringVariable
+/* ----- Function call arguments ----- */
 
-MapObject
-  = Ship / Diamond / Meteoroid / Asteroid / Wormhole / TheEndOfMap
+FunctionCallArgs
+  = _ value:String? _ tail:FunctionCallArgChained*
+    {
+      const result = value ? [{ value }] : [];
+      for (var i = 0; i < tail.length; i++) {
+          result.push(tail[i]);
+        }
+        return result;
+    }
 
-Ship = "Ship" { return 'S' }
-Diamond = "Diamond" { return 'D' }
-Meteoroid = "Meteoroid" { return 'M' }
-Asteroid = "Asteroid" { return 'A' }
-Wormhole = "Wormhole" { return 'W' }
-TheEndOfMap = "TheEndOfMap" { return 'TheEndOfMap' }
+FunctionCallArgChained
+  = "," _ value:String _
+    { return { value }; }
 
 /* ----- Expressions ----- */
-
-FunctionCall
-  = functionName:Identifier "()"
-    { return functionName; }
 
 BinLogicOp
   = "and" / "or" / "equal" { return "eq" } / "non-equal" { return "nonEq" }
