@@ -33,7 +33,7 @@ const emptyAst = JSON.parse('[{"head":"start","body":[],"location":{"blockId":"^
 
 function blocklyDomToRoboAst(dom) {
   const startBlock = dom.querySelector('block[type="start"]');
-  if (!getLocation(startBlock))
+  if (!getLocation(startBlock).blockId)
     return emptyAst;
   const mainFunction = blockToAst(startBlock);
 
