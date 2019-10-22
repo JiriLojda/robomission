@@ -24,7 +24,11 @@ import {invalidProgramError} from "../../utils/invalidProgramError";
 import {generateUuid} from "../../utils/generateUuid";
 import {isConditionStatement} from "../../utils/getValueStatementType";
 
-export const generateBlocklyXml = (roboAst: IRoboAst, x = 210, y = 10) => `
+const yOffset = 10;
+const xOffset = 10;
+const xDistanceBetween = 150;
+
+export const generateBlocklyXml = (roboAst: IRoboAst, x = xOffset, y = yOffset) => `
     <xml xmlns="http://www.w3.org/1999/xhtml">
       <block type="start" deletable="false" x="${x}" y="${y}">
       ${generateNextBlocksIfPresent(roboAst[0].body!)}
@@ -35,7 +39,7 @@ export const generateBlocklyXml = (roboAst: IRoboAst, x = 210, y = 10) => `
 
 function generateFunctionsXmls(roboAst: IRoboAst): string[] {
     return roboAst.slice(1)
-        .map(s => generateFunctionDefinition(s as IFunctionDefinition, (s as IFunctionDefinition).body));
+        .map((s, i) => generateFunctionDefinition(s as IFunctionDefinition, (s as IFunctionDefinition).body, xOffset + (i + 1) * xDistanceBetween));
 }
 
 function generateSequence(nodes: IBlock[]) {
@@ -378,9 +382,9 @@ function getComparator(comparator: Comparator) {
     }
 }
 
-const generateFunctionDefinition = (statement: IFunctionDefinition, nextNodes: IBlock[]): string => {
+const generateFunctionDefinition = (statement: IFunctionDefinition, nextNodes: IBlock[], x: number): string => {
     const params = generateFunctionDefinitionParameters(statement.parameters);
-    return `<block type="${statement.head}" id="${generateUuid()}">
+    return `<block type="${statement.head}" id="${generateUuid()}" y="${yOffset}" x="${x}">
                 <field name="name">${statement.name}</field>
                 ${params.length === 0 ? '' : `<value name="parameter">${params}</value>`}
                 ${generateNextBlocksIfPresent(nextNodes)}
