@@ -16,8 +16,6 @@ export const convertReadableMapToWorld = (map: ReadableMap, shipsMap: {[k: strin
     const ships = map
         .map((line, y) => line.map((tile, x) => tile[2] ? positionShip(shipsMap[tile[2]], x, y) : undefined ).filter(s => !!s))
         .flat();
-    console.log(colors);
-    console.log(objects);
 
     return new World({
        objects: convertArraysToLists(objects),

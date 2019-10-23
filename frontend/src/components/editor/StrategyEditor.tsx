@@ -154,7 +154,7 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     };
 
     _drawHistory = (history: List<World>) => {
-        const callback = createDrawHistory(this._drawNewWorld);
+        const callback = createDrawHistory(this._drawNewWorld, 400);
 
         const promise = callback(history);
 
@@ -216,9 +216,9 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
 
         return <SplitPane
             split="vertical"
-            minSize={shouldShowMinimap(this.state.world) ? 200 : 0}
-            maxSize={shouldShowMinimap(this.state.world) ? -400 : -100}
-            size={shouldShowMinimap(this.state.world) ? 200 : 0}
+            minSize={200}
+            maxSize={-400}
+            size={200}
             resizerStyle={{
                 backgroundColor: '#aaa',
                 width: 4,
@@ -227,10 +227,12 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             onChange={() => this.blocklyEditor && this.blocklyEditor.resize()}
         >
             <span>
-                <SpaceWorld
-                    fields={convertWorldToEditorModel(this.state.world)}
-                    width={200}
-                />
+                {shouldShowMinimap(this.state.world) &&
+                    <SpaceWorld
+                        fields={convertWorldToEditorModel(this.state.world)}
+                        width={200}
+                    />
+                }
                 <RaisedButton
                     label={'run battle'}
                     disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
@@ -262,13 +264,12 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         useCodeEditor: !prev.useCodeEditor,
                         code: generateStrategyRoboCode(prev.roboAst),
                     }))} />
-                    <Toggle
-                        toggled={this.state.isMapOverlayShown}
-                        label="Show map"
-                        labelStyle={{color: 'black'}}
-                        onToggle={() => this.setState(prev => ({
-                            isMapOverlayShown: !prev.isMapOverlayShown
-                        }))} />
+                    <RaisedButton
+                        label={'Show map'}
+                        secondary
+                        style={{ margin: 2, minWidth: 50 }}
+                        onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
+                    />
                 <ErrorMessage>
                     {getUserProgramErrorDisplayName(this.state.userProgramError)}
                 </ErrorMessage>

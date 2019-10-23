@@ -21,12 +21,14 @@ export const handleMoveStatement = (
                 movingShipId: ship.id,
                 world,
                 movingToTile: getPositionToFlyOn(ship.position, direction, ship.direction),
+                movingDirection: direction,
             });
         case "EndOfMap":
             return behaviour.mapBorderCollisionResolver({
                 movingShipId: ship.id,
                 world,
                 movingToTile: getPositionToFlyOn(ship.position, direction, ship.direction),
+                movingDirection: direction
             });
         case "None":
             return updateShipInWorld(world, ship, moveShip(world, ship, direction));

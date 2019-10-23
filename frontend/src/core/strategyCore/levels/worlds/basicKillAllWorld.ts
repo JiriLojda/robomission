@@ -12,8 +12,7 @@ const map = [
     ['k-A', 'k-', 'k-', 'k-', 'k-'],
 ];
 
-const playerShip =
-    new Ship({id: 'playerShip', position: new Position(), direction: Direction.Down, shipColor: ShipColor.Green});
+const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Down, shipColor: ShipColor.Green});
 const aiShip = new Ship({id: 'aiShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
 
 const ships = {

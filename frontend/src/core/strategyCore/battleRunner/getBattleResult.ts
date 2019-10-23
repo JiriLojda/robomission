@@ -70,8 +70,9 @@ const getCollectOrKillResult: BattleResultGetter = params => {
 };
 
 const getGeThereFirst: BattleResultGetter = params => {
+    const finalPositions = params.battleEndParams.finishPositions!;
     const presentShips = params.world.ships
-        .filter(s => arePositionsEqual(s.position, params.battleEndParams.finishPosition!));
+        .filter(s => finalPositions.some(p => arePositionsEqual(s.position, p)));
 
     if (presentShips.size > 1)
         throw invalidProgramError('There cannot be more than one ship in the final position.');

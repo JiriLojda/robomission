@@ -2,10 +2,11 @@ import {World} from "../models/world";
 import {BattleType} from "./BattleType";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {arePositionsEqual, Position} from "../models/position";
+import {List} from "immutable";
 
 export interface IBattleEndParams {
     readonly turnsRan: number;
-    readonly finishPosition?: Position;
+    readonly finishPositions?: List<Position>;
     readonly maxTurns: number;
 }
 
@@ -19,7 +20,7 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
         case BattleType.GetThereFirst:
             return areAllShipsDestroyed(world) ||
                 isTimeUp(params!.turnsRan!, params!.maxTurns!) ||
-                someShipReachedDestination(world, params!.finishPosition!);
+                someShipReachedDestination(world, params!.finishPositions!);
         default:
             throw invalidProgramError(`Unknown battle type ${battleType}`);
     }
@@ -28,8 +29,8 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
 const areAllShipsDestroyed = (world: World): boolean =>
     world.ships.count(ship => !ship.isDestroyed) <= 1;
 
-const someShipReachedDestination = (world: World, position: Position): boolean =>
-    world.ships.some(ship => arePositionsEqual(ship.position, position));
+const someShipReachedDestination = (world: World, positions: List<Position>): boolean =>
+    world.ships.some(ship => positions.some(position => arePositionsEqual(ship.position, position)));
 
 const isTimeUp = (realTurns: number, maxTurns: number): boolean => realTurns >= maxTurns;
 
@@ -42,7 +43,7 @@ const assertInput = (battleType: BattleType, params?: IBattleEndParams): void =>
             }
             return;
         case BattleType.GetThereFirst:
-            if (!hasExactlyThis(['finishPosition', "turnsRan", "maxTurns"], params)) {
+            if (!hasExactlyThis(['finishPositions', "turnsRan", "maxTurns"], params)) {
                 throw invalidProgramError(`Battle type ${battleType} needs everything set up.`);
             }
             return;

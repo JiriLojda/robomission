@@ -180,3 +180,6 @@ export const turnShip = (ship: Ship, direction: 'left' | 'right'): Ship => {
             throw new Error(`Unknown ship direction '${ship.direction}'.`);
     }
 };
+
+export const getShipOnPosition = (world: World, position: Position): Ship | undefined =>
+    world.ships.find(s => arePositionsEqual(s.position, position));
