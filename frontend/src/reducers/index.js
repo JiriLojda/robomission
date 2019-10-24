@@ -17,6 +17,7 @@ import reducePractice from './practice';
 import reduceFeedback from './feedback';
 import reduceMonitoring from './monitoring';
 import {strategyLevels} from "./strategyLevels";
+import {duelStrategyLevels} from "./duelStrategyLevels";
 
 
 export const reducers = combineReducers({
@@ -30,6 +31,7 @@ export const reducers = combineReducers({
   user: reduceUser,
   student: reduceStudent,
   strategyLevels,
+  duelStrategyLevels,
   recommendation: reduceRecommendation,
   menu: reduceMenu,
   taskEnvironments: reduceTaskEnvironments,

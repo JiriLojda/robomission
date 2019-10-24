@@ -11,6 +11,7 @@ import LongPage from "./LongPage";
 
 export interface IStrategyLevelsOverviewDataProps {
     readonly allLevels: List<IGameLevel>;
+    readonly gameType: string;
 }
 
 type Props = IStrategyLevelsOverviewDataProps;
@@ -58,7 +59,7 @@ export const StrategyLevelsOverview: React.ComponentType<Props> = props => (
                             width: '100%',
                         }}>
                         {props.allLevels.map(level => (
-                            <Link to={`/strategy/level/${level.urlSlug}`} key={level.urlSlug}>
+                            <Link to={`/${props.gameType}/level/${level.urlSlug}`} key={level.urlSlug}>
                                 <GridTile title={level.name} subtitle={level.battleType} titlePosition="bottom">
                                     <div style={{
                                         backgroundColor: '#888',

@@ -118,6 +118,13 @@ class Menu extends React.Component {
           >
             Strategy
           </MenuItem>
+          <MenuItem
+            value="duel-strategy"
+            leftIcon={<TasksOverviewIcon />}
+            containerElement={<Link to="/duel-strategy" />}
+          >
+            Duel Strategy
+          </MenuItem>
           <Divider />
           <MenuItem
             value="task-editor"

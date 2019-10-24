@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const mapStateToProps = (state: any): IProps => ({
-    allLevels: state.strategyLevels,
+    allLevels: state.duelStrategyLevels,
 });
 
 const StrategyPageComponent: React.ComponentType<IProps> = props => (
@@ -22,8 +22,8 @@ const StrategyPageComponent: React.ComponentType<IProps> = props => (
             right: 0,
         }}
     >
-        <StrategyLevelsOverview allLevels={props.allLevels} gameType="strategy"/>
+        <StrategyLevelsOverview allLevels={props.allLevels} gameType="duel-strategy"/>
     </div>
 );
 
-export const StrategyPage: React.ComponentType<{}> = connect(mapStateToProps)(StrategyPageComponent);
+export const DuelStrategyPage: React.ComponentType<{}> = connect(mapStateToProps)(StrategyPageComponent);
