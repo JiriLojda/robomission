@@ -140,6 +140,7 @@ const evaluateBlockCondition = (statement: IStatement, context: IRuntimeContext,
                 SystemVariableName.ShouldEnterNextBlock,
                 conditionResult
             );
+            removeSystemVariable(context, SystemVariableName.FunctionExecutionFinished);
             return null;
         }
         case StatementType.Repeat:
