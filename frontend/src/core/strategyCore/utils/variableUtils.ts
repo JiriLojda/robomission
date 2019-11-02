@@ -22,8 +22,13 @@ export const setSystemVariable = <T extends SystemVariableName>(
     }
 };
 
-export const removeSystemVariable = (context: IRuntimeContext, variableName: SystemVariableName): void => {
-    context.systemVariables = context.systemVariables.filter(v => v.name !== variableName);
+export const removeSystemVariable = <T extends SystemVariableName>(
+    context: IRuntimeContext,
+    variableName: T,
+    predicate?: Predicate<T>
+): void => {
+    context.systemVariables = context.systemVariables
+        .filter(v => v.name !== variableName && (!predicate || !predicate(v as any)));
 };
 
 export const doesUserVariableExist = (context: IRuntimeContext, variableName: string): boolean =>

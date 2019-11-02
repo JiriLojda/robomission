@@ -226,7 +226,10 @@ const evaluateActionStatement = (
                     SystemVariableName.FunctionExecutionRequest,
                     { functionName: statementTyped.name || '', requestId: executionId, parameters });
                 return getUnusedEvaluationResult(evaluationInProgress);
+            } else {
+                removeSystemVariable(context, SystemVariableName.FunctionExecutionFinished, v => v.value.requestId === executionId);
             }
+
             return getUnusedEvaluationResult(world);
         case StatementType.FunctionReturn:
             if (statement.value && typeof statement.value !== 'string') {
