@@ -91,27 +91,6 @@ class Menu extends React.Component {
         https://github.com/callemall/material-ui/issues/4387 */ }
           <Divider style={{ marginTop: 0 }} />
           <MenuItem
-            value="intro"
-            leftIcon={<HomeIcon />}
-            containerElement={<Link to="/" />}
-          >
-            <Text id="Intro" />
-          </MenuItem>
-          {practiceTaskUrl && <MenuItem
-            value="task"
-            leftIcon={<TaskIcon />}
-            containerElement={<Link to={practiceTaskUrl} />}
-          >
-            <Text id="Practice" />
-          </MenuItem>}
-          <MenuItem
-            value="tasks"
-            leftIcon={<TasksOverviewIcon />}
-            containerElement={<Link to="/tasks" />}
-          >
-            <Text id="Tasks" />
-          </MenuItem>
-          <MenuItem
               value="strategy"
               leftIcon={<TasksOverviewIcon />}
               containerElement={<Link to="/strategy" />}
@@ -126,13 +105,6 @@ class Menu extends React.Component {
             Duel Strategy
           </MenuItem>
           <Divider />
-          <MenuItem
-            value="task-editor"
-            leftIcon={<TaskEditorIcon />}
-            containerElement={<Link to="/task-editor" />}
-          >
-            <Text id="Task Editor" />
-          </MenuItem>
           <MenuItem
             value="feedback"
             leftIcon={<FeedbackIcon />}

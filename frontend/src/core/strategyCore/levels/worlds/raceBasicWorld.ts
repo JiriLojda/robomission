@@ -1,12 +1,7 @@
-import {TileColor} from "../../enums/tileColor";
-import {List} from "immutable";
 import {Ship, ShipColor} from "../../models/ship";
 import {Position} from "../../models/position";
 import {Direction} from "../../enums/direction";
-import {WorldObject} from "../../models/worldObject";
-import {WorldObjectType} from "../../enums/worldObjectType";
 import {World} from "../../models/world";
-import {convertArraysToLists, range} from "../../../../utils/arrays";
 import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
 
 const map = [

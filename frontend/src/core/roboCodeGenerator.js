@@ -1,7 +1,7 @@
 import { stripIndentation } from '../utils/text';
 
 export function generateRoboCode(roboAst) {
-  const { head, body } = roboAst;
+  const { head, body } = roboAst[0];
   if (head !== 'start') {
     throw new Error(`Unexpected root of roboAst: ${head}`);
   }

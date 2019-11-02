@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import AppContainer from './containers/AppContainer';
 import { Provider } from 'react-intl-redux';
 import { globalConfiguration } from './config';
@@ -17,6 +17,7 @@ import {StrategyPage} from "./pages/StrategyPage";
 import {StrategyEditor} from "./containers/StrategyEditor";
 import {DuelStrategyPage} from "./pages/DuelStrategyPage";
 import {DuelStrategyEditor} from "./containers/DuelStrategyEditor";
+import {initialStore} from "./initialStore";
 
 //TODO: setup service worker to work in production
 // (see create-react-app for details)
@@ -24,23 +25,18 @@ import {DuelStrategyEditor} from "./containers/DuelStrategyEditor";
 
 globalConfiguration();
 
-const store = createFlocsStore();
+const store = createFlocsStore(initialStore);
 const app = (
   <Provider store={store}>
     <FlocsThemeProvider>
       <BrowserRouter>
         <AppContainer>
           <Switch>
-            <Route exact path='/' component={HomePage}/>
-            <Route exact path="/tasks" component={TasksTableContainer} />
-            <Route exact path="/task-editor" component={TaskEditorPage} />
-            <Route path="/task/:taskId" component={PracticePage} />
+            <Redirect exact from="/" to="/strategy" />
             <Route exact path="/strategy" component={StrategyPage} />
             <Route exact path="/duel-strategy" component={DuelStrategyPage} />
             <Route exact path="/strategy/level/:urlSlug" render={props => <StrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
             <Route exact path="/duel-strategy/level/:urlSlug" render={props => <DuelStrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
-            <Route exact path="/login" component={LoginPage} />
-            <PrivateRoute exact path="/monitoring" component={MonitoringPage} />
           </Switch>
         </AppContainer>
       </BrowserRouter>

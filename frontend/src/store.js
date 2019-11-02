@@ -7,14 +7,15 @@ import rootReducer from './reducers';
 import rootSaga from './sagas';
 
 const getReduxDevtoolsCompose = () => window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
-
+const deepCopy = i => JSON.parse(JSON.stringify(i));
 export function createFlocsStore(initialState) {
-  const initialStateWithLocalization = {
-    ...initialState,
-    intl: getLocalizationSetting(),
-  };
-  const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [sagaMiddleware];
+  const initialStateWithLocalization = deepCopy(initialState);
+  // const initialStateWithLocalization = {
+  //   ...initialState,
+  //   intl: getLocalizationSetting(),
+  // };
+  // // const sagaMiddleware = createSagaMiddleware();
+  const middlewares = [];
   if (process.env.NODE_ENV === 'development' && !getReduxDevtoolsCompose()) {
     const logger = createLogger();
     middlewares.push(logger);
@@ -26,6 +27,6 @@ export function createFlocsStore(initialState) {
 
   const middleware = composeEnhancers(applyMiddleware(...middlewares));
   const store = createStore(rootReducer, initialStateWithLocalization, middleware);
-  sagaMiddleware.run(rootSaga);
+  // sagaMiddleware.run(rootSaga);
   return store;
 }
