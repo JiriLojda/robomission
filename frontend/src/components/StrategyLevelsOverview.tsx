@@ -1,7 +1,7 @@
 import React from "react";
 import {List} from "immutable";
 import {IGameLevel} from "../core/strategyCore/battleRunner/IGameLevel";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-relative-link";
 import {GridList, GridTile} from "material-ui";
 import Rating from "./Rating";
 import {Card, CardHeader, CardText} from "material-ui/Card";
@@ -11,7 +11,6 @@ import LongPage from "./LongPage";
 
 export interface IStrategyLevelsOverviewDataProps {
     readonly allLevels: List<IGameLevel>;
-    readonly gameType: string;
 }
 
 type Props = IStrategyLevelsOverviewDataProps;
@@ -59,7 +58,7 @@ export const StrategyLevelsOverview: React.ComponentType<Props> = props => (
                             width: '100%',
                         }}>
                         {props.allLevels.map(level => (
-                            <Link to={`/${props.gameType}/level/${level.urlSlug}`} key={level.urlSlug}>
+                            <Link to={`level/${level.urlSlug}`} key={level.urlSlug}>
                                 <GridTile title={level.name} subtitle={level.battleType} titlePosition="bottom">
                                     <div style={{
                                         backgroundColor: '#888',

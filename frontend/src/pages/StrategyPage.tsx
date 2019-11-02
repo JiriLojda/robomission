@@ -22,7 +22,7 @@ const StrategyPageComponent: React.ComponentType<IProps> = props => (
             right: 0,
         }}
     >
-        <StrategyLevelsOverview allLevels={props.allLevels} gameType="strategy"/>
+        <StrategyLevelsOverview allLevels={props.allLevels}/>
     </div>
 );
 

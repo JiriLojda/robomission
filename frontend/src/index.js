@@ -29,14 +29,19 @@ const store = createFlocsStore(initialStore);
 const app = (
   <Provider store={store}>
     <FlocsThemeProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={window.location.hostname === 'localhost' ? '' : 'robomission'}>
         <AppContainer>
           <Switch>
             <Redirect exact from="/" to="/strategy" />
+            <Redirect exact from="/robomission" to="/robomission/strategy" />
             <Route exact path="/strategy" component={StrategyPage} />
             <Route exact path="/duel-strategy" component={DuelStrategyPage} />
             <Route exact path="/strategy/level/:urlSlug" render={props => <StrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
             <Route exact path="/duel-strategy/level/:urlSlug" render={props => <DuelStrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
+            <Route exact path="robomission/strategy" component={StrategyPage} />
+            <Route exact path="robomission/duel-strategy" component={DuelStrategyPage} />
+            <Route exact path="robomission/strategy/level/:urlSlug" render={props => <StrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
+            <Route exact path="robomission/duel-strategy/level/:urlSlug" render={props => <DuelStrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
           </Switch>
         </AppContainer>
       </BrowserRouter>

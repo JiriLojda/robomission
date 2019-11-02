@@ -14,3 +14,5 @@ declare module 'react-blockly-component' {
         public resize: () => void;
     }
 }
+
+declare module "react-router-relative-link";
