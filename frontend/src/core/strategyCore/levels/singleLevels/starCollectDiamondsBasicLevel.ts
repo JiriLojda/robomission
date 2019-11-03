@@ -5,10 +5,12 @@ import {centralDiamondsBasicStrategy} from "../../predefinedStrategies/centralDi
 import {diamondStarWorld} from "../worlds/diamondStarWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
+import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: explosionCollisionResolver,
+    shotResolver: destroyFirstShotResolver,
 };
 export const starCollectDiamondsBasicLevel: IGameLevel = {
     name: `Star collect basic`,

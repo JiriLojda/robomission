@@ -68,6 +68,7 @@ function generateStatement(statement: IStatement): string {
         case StatementType.GetNumericVariable:
             return `${statement.name}`;
         case StatementType.ConstantString:
+            return `'${statement.value}'`;
         case StatementType.ConstantNumber:
             return `${statement.value}`;
         case StatementType.NumberBinary: {
@@ -209,7 +210,7 @@ function generateTest(node: Condition): string {
             const left = generateStatement(node.leftValue);
             const right = generateStatement(node.rightValue);
 
-            return `(${left} ${comparator} ${right})`;
+            return `${left} ${comparator} ${right}`;
         }
         case ConditionType.FunctionCallBoolean:
             return `${node.name}(${generateFunctionCallParameters(node.parameters)})`;

@@ -4,10 +4,12 @@ import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
 import {IGameLevel} from "../../../battleRunner/IGameLevel";
 import {BattleType} from "../../../battleRunner/BattleType";
 import {empty77World} from "../../worlds/empty77World";
+import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShotResolver";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: explosionCollisionResolver,
+    shotResolver: destroyFirstShotResolver,
 };
 
 export const emptyWorldDuel: IGameLevel = {

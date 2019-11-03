@@ -300,7 +300,10 @@ Value
 
 Integer
   = digits:('-'?[0-9]+)
-    { return parseInt(digits.join(""), 10); }
+    {
+    	digits[1] = digits[1].join("");
+    	return parseInt(digits.join(""), 10);
+    }
 
 StringValue
   = "'" value:$([^']*) "'"

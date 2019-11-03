@@ -11,6 +11,7 @@ import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
 import {getBattleResult} from "./getBattleResult";
 import {ShipId} from "../models/ship";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
+import {defaultMinorActionsCount} from "../constants/interpreterConstants";
 
 export interface IRunBattleParams {
     readonly world: World,
@@ -72,6 +73,7 @@ type MakeTurnParamNames = 'shipsOrder' | 'roboAsts' | 'world' | 'behaviours';
 
 const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: IRuntimeContext, playerIndex: number): [IRuntimeContext, World] | UserProgramError => {
     context.wasActionExecuted = false;
+    context.minorActionsLeft = defaultMinorActionsCount;
     const roboAst = params.roboAsts.get(playerIndex);
     const shipId = params.shipsOrder.get(playerIndex);
 

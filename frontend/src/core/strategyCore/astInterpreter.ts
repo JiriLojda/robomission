@@ -1,6 +1,6 @@
 import {StatementType} from "./enums/statementType";
 import {SystemVariableName} from "./enums/systemVariableName";
-import {getShip, makeShipPickupDiamond, makeShipShoot, turnShip} from "./utils/worldModelUtils";
+import {getShip, makeShipPickupDiamond, turnShip} from "./utils/worldModelUtils";
 import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
@@ -23,7 +23,7 @@ import {
     getCallParametersValues,
     getObjectFromStatement
 } from "./utils/evaluateCondition";
-import {defaultMinorActionsCount, scopeStatements} from "./constants/interpreterConstants";
+import {scopeStatements} from "./constants/interpreterConstants";
 import {ShipId} from "./models/ship";
 import {IGameBehaviours} from "./gameBehaviours/IGameBehaviours";
 import {handleMoveStatement} from "./actionStatementHandlers/moveStatementHandler";
@@ -186,7 +186,7 @@ const evaluateActionStatement = (
         case StatementType.Right:
             return getUsedEvaluationResult(handleMoveStatement(world, ship, MovingDirection.Right, behaviours));
         case StatementType.Shoot:
-            return getUsedEvaluationResult(makeShipShoot(world, shipId));
+            return getUsedEvaluationResult(behaviours.shotResolver({world, shootingShip: ship.id}));
         case StatementType.PickUpDiamond:
             return getUsedEvaluationResult(makeShipPickupDiamond(world, shipId));
         case StatementType.TurnLeft:
@@ -198,7 +198,7 @@ const evaluateActionStatement = (
                 throw new Error('While setting variable statement has to have name and value.');
             }
             setUserVariable(context, statement.name, statement.value);
-            return getUsedEvaluationResult(world);
+            return getUnusedEvaluationResult(world);
         case StatementType.SetVariableNumeric:
             if (!statement.name || !statement.value || typeof statement.value === 'string' || isConditionStatement(statement.value)) {
                 throw invalidProgramError('The value for the variable has different type.');
@@ -208,7 +208,7 @@ const evaluateActionStatement = (
                 return getUnusedEvaluationResult(value);
 
             setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
-            return getUsedEvaluationResult(world);
+            return getUnusedEvaluationResult(world);
         case StatementType.FunctionCallVoid:
             const statementTyped = statement as IFunctionCall;
             const executionId = getFunctionExecutionId(context, statementTyped.name, statementTyped.parameters);
@@ -299,7 +299,6 @@ const executeStepInFunction = (
 
     const statement = getLast(getStatementsForPosition(fncAst, context));
     console.log('\texecuting ', statement);
-    console.log('\twasActionUsed before execution: ', context.wasActionExecuted);
 
     const withoutLasers = removeLaserAndExplosionObjects(world);
     const evaluationResult = evaluateActionStatement(statement, withoutLasers, shipId, context, behaviours);
@@ -309,9 +308,7 @@ const executeStepInFunction = (
     }
     const newWorld = evaluationResult.result === evaluationInProgress ? world : evaluationResult.result;
 
-    console.log('\twasActionUsed before execution: ', context.wasActionExecuted);
     context.wasActionExecuted = evaluationResult.actionUsed;
-    console.log('\twasActionUsed after execution: ', context.wasActionExecuted);
 
     setPositionAttributes(statement, getLast(context.position));
     const conditionEvaluation = evaluateBlockCondition(statement, context, world, shipId);
@@ -372,10 +369,7 @@ export const doNextStep = (
         return result;
 
     result[0].minorActionsLeft--;
-    if (result[0].wasActionExecuted) {
-        result[0].minorActionsLeft = defaultMinorActionsCount;
-    }
-    console.log('----------end step for ', shipId, ', action used: ', result[0].wasActionExecuted, '----------');
+    console.log('----------end step for ', shipId, ', action used: ', result[0].wasActionExecuted, 'minors left: ', result[0].minorActionsLeft, '----------');
 
     return result;
 };

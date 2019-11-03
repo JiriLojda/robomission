@@ -309,7 +309,10 @@
             peg$c154 = function() {return "notContains"},
             peg$c155 = /^[0-9]/,
             peg$c156 = peg$classExpectation([["0", "9"]], false, false),
-            peg$c157 = function(digits) { return parseInt(digits.join(""), 10); },
+            peg$c157 = function(digits) {
+                digits[1] = digits[1].join("");
+                return parseInt(digits.join(""), 10);
+            },
             peg$c158 = "'",
             peg$c159 = peg$literalExpectation("'", false),
             peg$c160 = /^[^']/,
