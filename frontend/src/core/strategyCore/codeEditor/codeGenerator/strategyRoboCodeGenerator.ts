@@ -192,7 +192,7 @@ function generateTest(node: Condition): string {
         }
         case ConditionType.IsTileAccessible: {
             const position = generateTileArgument(node.position);
-            return `isAccessible(${position})`;
+            return `is ${position} accessible`;
         }
         case ConditionType.Position:
             throw invalidProgramError('Unsupported condition Position.');
@@ -201,7 +201,7 @@ function generateTest(node: Condition): string {
             const comparator = getComparator(node.comparator);
             const test = generateObjectOnMap(node.value);
 
-            return `Tile on ${position} ${comparator} ${test}`;
+            return `${position} ${comparator} ${test}`;
         }
         case ConditionType.StringCompare:
         case ConditionType.NumericCompare: {
@@ -238,9 +238,9 @@ function generateObjectOnMap(obj: WorldObjectType | "TheEndOfMap"): string {
 }
 
 function generateTileArgument(position: IPositionValue) {
-    const prefix = position.head === "position_value" ? 'Tile' : 'TileRelative';
+    const numberPrefix = position.head === "position_value" ? '' : '~';
 
-    return `${prefix}[${generateStatement(position.x)}, ${generateStatement(position.y)}]`;
+    return `Tile[${numberPrefix}${generateStatement(position.x)}, ${numberPrefix}${generateStatement(position.y)}]`;
 }
 
 function generateLogicBinaryOperation(node: IBinaryLogicCondition): string {

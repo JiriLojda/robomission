@@ -51,8 +51,10 @@ export const runBattle = (params: IRunBattleParams): BattleResult => {
             };
 
         runtimeContexts[currentIndex] = result[0];
-        currentWorld = result[1];
-        history.push(currentWorld);
+        if (currentWorld != result[1]) {
+            currentWorld = result[1];
+            history.push(currentWorld);
+        }
         currentIndex = (currentIndex + 1) % params.shipsOrder.size;
         turnsRan++;
     }

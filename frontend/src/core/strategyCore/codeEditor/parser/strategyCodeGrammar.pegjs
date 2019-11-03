@@ -82,7 +82,7 @@ FunctionReturnString
     { return { head: "function_return", value }; }
 
 FunctionReturnBoolean
-  = "return boolean " value:Condition
+  = "return boolean " value:Test
     { return { head: "function_return", value }; }
 
 
@@ -156,17 +156,14 @@ Body
 /* ----- Conditions ----- */
 
 Test
-  = Condition
-  / LogicalNot
-  / LogicalBinaryOp
-  / ConstantBoolean
-  / FunctionCallBoolean
-
-Condition
   = TileAccessibleTest
+  / ConstantBoolean
   / NumericCompare
   / StringCompare
   / TileContains
+  / LogicalNot
+  / LogicalBinaryOp
+  / FunctionCallBoolean
 
 LogicalNot
   = "not" __ value:Test
@@ -177,7 +174,7 @@ LogicalBinaryOp
     { return { head: 'logic_binary', comparator: op, leftValue: left, rightValue: right } }
 
 TileAccessibleTest
-  = "isTileAccessible(" _ position:Tile _ ")"
+  = "is" __ position:Tile __ "accessible"
     { return { head: 'tile_accessible', position: position } }
 
 NumericCompare
@@ -197,7 +194,7 @@ FunctionCallBoolean
     { return { head: "function_call_boolean", name, parameters }; }
 
 TileContains
-  = "Tile on" __ tile:Tile __ op:ContainsOp __ obj:MapObject
+  = tile:Tile __ op:ContainsOp __ obj:MapObject
     { return { head: 'tile', position: tile, comparator: op, value: obj } }
 
 Tile
@@ -209,7 +206,7 @@ TileAbsolute
     { return { head: 'position_value', x: x, y: y } }
 
 TileRelative
-  = "TileRelative[" _ x:Number _ "," _ y:Number _ "]"
+  = "Tile[" _ "~" x:Number _ "," _ "~" y:Number _ "]"
     { return { head: 'position_value_relative', x: x, y: y } }
 
 MapObject
