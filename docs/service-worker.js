@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/robomission/precache-manifest.46338d73bd575382ae22011f88370ff8.js"
+  "/robomission/precache-manifest.181e1cb4a468e83f185390fd94765ba4.js"
 );
 
 workbox.clientsClaim();
