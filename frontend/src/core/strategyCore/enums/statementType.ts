@@ -27,4 +27,5 @@ export enum StatementType {
     GetPositionCoordinate = 'get_position_coordinate',
     PositionValue = 'position_value',
     PositionValueRelative = 'position_value_relative',
+    GetDirectionOfShip = 'get_direction_of_ship',
 }

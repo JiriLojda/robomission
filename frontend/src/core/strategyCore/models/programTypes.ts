@@ -184,6 +184,11 @@ export interface IGetShipPositionStatement extends IStatement {
     shipId: IStatement;
 }
 
+export interface IGetShipDirectionStatement extends IStatement {
+    head: StatementType.GetDirectionOfShip;
+    shipId: IStatement;
+}
+
 export interface INumberBinaryStatement extends IStatement {
     head: StatementType.NumberBinary;
     body: undefined;

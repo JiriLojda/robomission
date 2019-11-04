@@ -61,6 +61,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.NumberBinary},
             {type: BlockType.GetShipPosition},
             {type: BlockType.GetPositionCoordinate},
+            {type: BlockType.GetDirectionOfShip},
         ]
     },
     {

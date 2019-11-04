@@ -269,12 +269,17 @@ FunctionCallNumber
 
 String
   = ConstantString
+  / GetShipDirection
   / FunctionCallString
   / GetStringVariable
 
 ConstantString
   = value:StringValue
     { return { head: 'constant_string', value: value } }
+
+GetShipDirection
+  = "direction of ship" __ shipId:String
+    { return { head: 'get_direction_of_ship', shipId }; }
 
 FunctionCallString
   = name:Identifier "("parameters:FunctionCallArgs")"

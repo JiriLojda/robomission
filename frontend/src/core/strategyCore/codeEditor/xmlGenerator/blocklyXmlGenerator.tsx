@@ -368,6 +368,14 @@ const generateValueStatement = (statement?: IStatement): string => {
                     </value>
                 </block>
             `;
+        case StatementType.GetDirectionOfShip:
+            return `
+                <block type="${statement.head}">
+                    <value name="shipId">
+                        ${generateValueStatement(statement.shipId)}
+                    </value>
+                </block>
+            `;
         default:
             return '';
     }

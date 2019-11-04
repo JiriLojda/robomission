@@ -26,6 +26,7 @@ export const getValueStatementType = (statement: IStatement | Condition): ValueS
         case StatementType.ConstantString:
         case StatementType.FunctionCallString:
         case StatementType.GetStringVariable:
+        case StatementType.GetDirectionOfShip:
             return ValueStatementType.String;
         case StatementType.GetShipPosition:
         case StatementType.PositionValue:

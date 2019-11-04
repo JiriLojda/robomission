@@ -121,6 +121,8 @@ function blockToAst(block) {
       return getShipPositionToAst(block);
     case 'get_position_coordinate':
       return getPositionCoordinateToAst(block);
+    case 'get_direction_of_ship':
+      return getDirectionOfShipToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -331,6 +333,12 @@ function getPositionCoordinateToAst(block) {
   const coordinate = blockToAst(getValueBlock(block, 'coordinate'));
 
   return {head: 'get_position_coordinate', position, coordinate};
+}
+
+function getDirectionOfShipToAst(block) {
+  const shipId = blockToAst(getValueBlock(block, 'shipId'));
+
+  return {head: 'get_direction_of_ship', shipId};
 }
 
 //helpers

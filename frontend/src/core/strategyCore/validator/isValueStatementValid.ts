@@ -89,6 +89,12 @@ export const isValueStatementValid = (statement: IStatement, type?: ValueStateme
             ],
                 statement
             );
+        case StatementType.GetDirectionOfShip:
+            return useValidators([
+                s => hasExactProperties(s, ['head', 'shipId']),
+                s => validateCorrectValueType(s, type),
+                s => isValueStatementValid(s.shipId as IStatement, ValueStatementType.String),
+            ], statement);
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }

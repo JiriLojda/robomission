@@ -6,7 +6,7 @@ import {
     IFunctionCallParameter,
     IFunctionDefinition,
     IFunctionReturn,
-    IGetPositionCoordinateStatement,
+    IGetPositionCoordinateStatement, IGetShipDirectionStatement,
     IGetShipPositionStatement,
     INumberBinaryStatement,
     IPositionValueStatement,
@@ -98,6 +98,8 @@ function generateStatement(statement: IStatement): string {
             return generateGetShipPosition(statement as IGetShipPositionStatement);
         case StatementType.GetPositionCoordinate:
             return generateGetCoordinateOfPosition(statement as IGetPositionCoordinateStatement);
+        case StatementType.GetDirectionOfShip:
+            return generateGetDirectionOfShip(statement as IGetShipDirectionStatement);
         default:
             return generateActionStatement(statement);
     }
@@ -266,6 +268,12 @@ function generateGetCoordinateOfPosition(statement: IGetPositionCoordinateStatem
         `(${generateStatement(statement.coordinate)})`;
 
     return `${position}.${coordinate}`;
+}
+
+function generateGetDirectionOfShip(statement: IGetShipDirectionStatement) {
+    const shipId = generateStatement(statement.shipId);
+
+    return `direction of ship ${shipId}`;
 }
 
 function generateLogicBinaryOperation(node: IBinaryLogicCondition): string {

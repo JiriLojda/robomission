@@ -6,6 +6,7 @@ import {
     IFunctionCall,
     IFunctionCallBoolean,
     IGetPositionCoordinateStatement,
+    IGetShipDirectionStatement,
     IGetShipPositionStatement,
     INumberBinaryStatement,
     IPositionCondition,
@@ -227,6 +228,20 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
                 return UserProgramError.ProvidedStringIsNotCoordinate;
 
             return coordinate.trim().toLocaleLowerCase() === 'x' ? position.x : position.y;
+        }
+        case StatementType.GetDirectionOfShip: {
+            const statementTyped = statement as IGetShipDirectionStatement;
+            const foundShipId = getObjectFromStatement(statementTyped.shipId, context, world, shipId);
+            if (isUserProgramError(foundShipId) || foundShipId == evaluationInProgress)
+                return foundShipId;
+            if (typeof foundShipId !== 'string')
+                throw invalidProgramError(`Expected type string but ${typeof foundShipId} of ${JSON.stringify(foundShipId)} found.`);
+
+            const ship = getShip(world, shipId);
+            if (!ship)
+                return UserProgramError.ProvidedShipIdDoesNotExist;
+
+            return ship.direction;
         }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);

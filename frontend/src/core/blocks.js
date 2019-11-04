@@ -804,6 +804,21 @@ const blocks = [
     tooltip: '',
     helpUrl: '',
   },
+  {
+    id: 'get_direction_of_ship',
+    message0: `direction of ship %1`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'shipId',
+        check: 'String'
+      },
+    ],
+    output: 'String',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
 ];
 
 export function getAllBlocksList() {
