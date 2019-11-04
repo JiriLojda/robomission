@@ -8,11 +8,11 @@ import {
     useValidators
 } from "./programValidationUtils";
 import {InvalidProgramReason} from "../enums/invalidProgramReason";
-import {IFunctionCallParameter, ISetVariableNumericStatement, IStatement} from "../models/programTypes";
+import {Condition, IFunctionCallParameter, ISetVariableNumericStatement, IStatement} from "../models/programTypes";
 import {isValueStatementValid} from "./isValueStatementValid";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {getStatementValidator} from "./getStatementValidator";
-import {isValidConditionStatement} from "./isTestStatementValid";
+import {isTestStatementValid, isValidConditionStatement} from "./isTestStatementValid";
 
 export const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],
@@ -92,5 +92,11 @@ export const isFunctionCallStatementValid = composeValidators([
 
 export const isFunctionReturnValid = composeValidators([
     s => hasExactProperties(s, ['head', 'value']),
+    s => {
+        const valueTestResult = isValueStatementValid(s.value as IStatement);
+        return valueTestResult.reason === InvalidProgramReason.UnknownStatementType ?
+            isTestStatementValid(s.value as Condition) :
+            valueTestResult;
+    }
 ]);
 
