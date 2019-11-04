@@ -16,7 +16,7 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
     switch (battleType) {
         case BattleType.KillAll:
         case BattleType.CollectOrKill:
-            return areAllShipsDestroyed(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!);
+            return isOnlyOneSurvivor(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!);
         case BattleType.GetThereFirst:
             return areAllShipsDestroyed(world) ||
                 isTimeUp(params!.turnsRan!, params!.maxTurns!) ||
@@ -26,8 +26,11 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
     }
 };
 
-const areAllShipsDestroyed = (world: World): boolean =>
+const isOnlyOneSurvivor = (world: World): boolean =>
     world.ships.count(ship => !ship.isDestroyed) <= 1;
+
+const areAllShipsDestroyed = (world: World): boolean =>
+    world.ships.count(ship => !ship.isDestroyed) === 0;
 
 const someShipReachedDestination = (world: World, positions: List<Position>): boolean =>
     world.ships.some(ship => positions.some(position => arePositionsEqual(ship.position, position)));
