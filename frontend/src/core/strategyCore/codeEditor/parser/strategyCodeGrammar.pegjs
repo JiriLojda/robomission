@@ -200,6 +200,7 @@ TileContains
 Tile
   = TileAbsolute
   / TileRelative
+  / TileOfShipGetter
 
 TileAbsolute
   = "Tile[" _ x:Number _ "," _ y:Number _ "]"
@@ -208,6 +209,10 @@ TileAbsolute
 TileRelative
   = "Tile[" _ "~" x:Number _ "," _ "~" y:Number _ "]"
     { return { head: 'position_value_relative', x: x, y: y } }
+
+TileOfShipGetter
+  = "Tile[" _ "position of ship" __ shipId:String _ "]"
+    { return { head: 'get_ship_position', shipId }; }
 
 MapObject
   = Ship / Diamond / Meteoroid / Asteroid / Wormhole / TheEndOfMap
@@ -223,6 +228,7 @@ TheEndOfMap = "TheEndOfMap" { return 'TheEndOfMap' }
 
 Number
   = ConstantNumber
+  / GetCoordinateOfPosition
   / NumberBinary
   / FunctionCallNumber
   / GetNumberVariable
@@ -230,6 +236,22 @@ Number
 ConstantNumber
   = value:Integer
         { return { head: 'constant_number', value: value }; }
+
+GetCoordinateOfPosition
+  = position:Tile "." coordinate:CoordinateProperty
+    { return { head: 'get_position_coordinate', position, coordinate }; }
+
+CoordinateProperty
+  = DirectCoordinateProperty
+  / IndirectCoordinateProperty
+
+DirectCoordinateProperty
+  = value:("x" / "y")
+    { return { head: 'constant_string', value }; }
+
+IndirectCoordinateProperty
+  = "(" _ result:String _ ")"
+    { return result; }
 
 NumberBinary
   = "(" _ left:Number __ op:NumberOp __ right:Number _ ")"

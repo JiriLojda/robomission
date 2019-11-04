@@ -6,6 +6,8 @@ import {
     IFunctionCallParameter,
     IFunctionDefinition,
     IFunctionReturn,
+    IGetPositionCoordinateStatement,
+    IGetShipPositionStatement,
     INumberBinaryStatement,
     IPositionValueStatement,
     IRoboAst,
@@ -89,6 +91,13 @@ function generateStatement(statement: IStatement): string {
             return `${statement.name}(${generateFunctionCallParameters(statement.parameters as IFunctionCallParameter[])})`;
         case StatementType.FunctionReturn:
             return generateFunctionReturn(statement as IFunctionReturn);
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative:
+            return generateTileArgument(statement as IPositionValueStatement);
+        case StatementType.GetShipPosition:
+            return generateGetShipPosition(statement as IGetShipPositionStatement);
+        case StatementType.GetPositionCoordinate:
+            return generateGetCoordinateOfPosition(statement as IGetPositionCoordinateStatement);
         default:
             return generateActionStatement(statement);
     }
@@ -242,6 +251,21 @@ function generateTileArgument(position: IPositionValueStatement) {
     const numberPrefix = position.head === "position_value" ? '' : '~';
 
     return `Tile[${numberPrefix}${generateStatement(position.x)}, ${numberPrefix}${generateStatement(position.y)}]`;
+}
+
+function generateGetShipPosition(statement: IGetShipPositionStatement) {
+    const shipId = generateStatement(statement.shipId);
+
+    return `Tile[position of ship ${shipId}]`;
+}
+
+function generateGetCoordinateOfPosition(statement: IGetPositionCoordinateStatement) {
+    const position = generateStatement(statement.position);
+    const coordinate = statement.coordinate.head === StatementType.ConstantString ?
+        statement.coordinate.value :
+        `(${generateStatement(statement.coordinate)})`;
+
+    return `${position}.${coordinate}`;
 }
 
 function generateLogicBinaryOperation(node: IBinaryLogicCondition): string {
