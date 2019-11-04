@@ -202,7 +202,7 @@ export class DuelStrategyEditor extends React.PureComponent<IStrategyEditorProps
                 this.blocklyEditor = ref;
             }}
             workspaceConfiguration={{trashcan: true, collapse: true}}
-            toolboxCategories={allStrategyCategories}
+            toolboxCategories={this.props.level.toolbox}
             initialXml={generateBlocklyXml(this.state.roboAst)}
             xmlDidChange={this._onXmlChange}
             wrapperDivClassName="flocs-blockly"

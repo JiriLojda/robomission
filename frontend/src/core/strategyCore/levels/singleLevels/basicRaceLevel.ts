@@ -8,6 +8,7 @@ import {raceBasicWorld} from "../worlds/raceBasicWorld";
 import {pushCollisionResolver} from "../../gameBehaviours/pushCollisionResolver";
 import {basicRaceStrategy} from "../../predefinedStrategies/basicRaceStrategy";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
+import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -20,14 +21,17 @@ const finalPositions = [
     new Position({x: 0, y: 4}),
 ];
 
+const shipIds = ['aiShip', 'playerShip'] as const;
+
 export const basicRaceLevel: IGameLevel = {
     name: 'Simple race',
     urlSlug: 'simple-race',
     battleType: BattleType.GetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions)},
-    turnsOrder: List(['aiShip', 'playerShip']),
-    shipsAsts: Map([['aiShip', basicRaceStrategy]]),
+    turnsOrder: List(shipIds),
+    shipsAsts: Map([[shipIds[0], basicRaceStrategy]]),
     world: raceBasicWorld,
     gameBehaviours: behaviours,
+    toolbox: addShipIdConstants(allStrategyCategories, shipIds),
 };
 

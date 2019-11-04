@@ -6,8 +6,24 @@ export type BlocklyBlock = {
 };
 export type BlocklyToolboxCategory = {
     readonly name: string,
-    readonly blocks: BlocklyBlock[]
+    readonly blocks: BlocklyBlock[],
 };
+
+export type BlocklyToolbox = BlocklyToolboxCategory[];
+
+export const addBlocksToToolbox = (toolbox: BlocklyToolbox, group: number, newBlocks: BlocklyBlock[]): BlocklyToolbox =>
+    toolbox.map(
+        (category, i) => i === group ?
+            {...category, blocks: category.blocks.concat(newBlocks)} :
+            category
+    );
+
+export const addShipIdConstants = (toolbox: BlocklyToolbox, shipIds: ReadonlyArray<string>): BlocklyToolbox =>
+    addBlocksToToolbox(
+        toolbox,
+        4,
+        shipIds.map(id => ({ type: BlockType.ConstantString, fields: { value: id } }))
+    );
 
 export const allStrategyCategories: BlocklyToolboxCategory[] = [
     {
@@ -70,8 +86,6 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.ConstantBoolean},
             {type: BlockType.ConstantNumber},
             {type: BlockType.ConstantString},
-            {type: BlockType.ConstantString, fields: {value: 'playerShip'}},
-            {type: BlockType.ConstantString, fields: {value: 'aiShip'}},
         ]
     },
     {

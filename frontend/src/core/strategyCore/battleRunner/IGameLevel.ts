@@ -5,6 +5,7 @@ import {List, Map} from "immutable";
 import {ShipId} from "../models/ship";
 import {IRoboAst} from "../models/programTypes";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
+import {BlocklyToolbox} from "../constants/strategyToolbox";
 
 export interface IGameLevel {
     readonly name: string;
@@ -15,6 +16,7 @@ export interface IGameLevel {
     readonly turnsOrder: List<ShipId>;
     readonly shipsAsts: Map<ShipId, IRoboAst>;
     readonly gameBehaviours: IGameBehaviours;
+    readonly toolbox: BlocklyToolbox;
 }
 
 export const isGameLevelValid = (level: IGameLevel): boolean =>
