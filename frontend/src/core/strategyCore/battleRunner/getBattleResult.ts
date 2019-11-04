@@ -73,12 +73,17 @@ const getGeThereFirst: BattleResultGetter = params => {
     const finalPositions = params.battleEndParams.finishPositions!;
     const presentShips = params.world.ships
         .filter(s => finalPositions.some(p => arePositionsEqual(s.position, p)));
+    const livingShips = params.world.ships
+        .filter(s => !s.isDestroyed);
 
     if (presentShips.size > 1)
         throw invalidProgramError('There cannot be more than one ship in the final position.');
 
     if (presentShips.size === 1)
         return addHistory({type: BattleResultType.Decisive, winner: presentShips.get(0)!.id}, params);
+    
+    if (livingShips.size === 1)
+        return addHistory({type: BattleResultType.Decisive, winner: livingShips.get(0)!.id}, params);
 
     return addHistory({type: BattleResultType.Draw, between: params.world.ships.map(s => s.id).toSet()}, params);
 };
