@@ -13,7 +13,7 @@ import {
     IFunctionDefinition,
     IFunctionReturn,
     INumberBinaryStatement,
-    IPositionValue,
+    IPositionValueStatement,
     IRoboAst,
     IStatement
 } from "../../models/programTypes";
@@ -225,7 +225,7 @@ const getTestContent = (test: Condition): string => {
         case ConditionType.IsTileAccessible:
             return `
                 <block type="tile_accessible">
-                    <value name="position">${generatePositionValue(test.position)}</value>
+                    <value name="position">${generateValueStatement(test.position)}</value>
                 </block>`;
         case ConditionType.LogicBinaryOperation:
             return `
@@ -262,7 +262,7 @@ const getTestContent = (test: Condition): string => {
                 <block type="tile">
                     <field name="comparator">${getComparator(test.comparator)}</field>
                     <field name="value">${test.value}</field>
-                    <value name="position">${generatePositionValue(test.position)}</value>
+                    <value name="position">${generateValueStatement(test.position)}</value>
                 </block>
             `;
         case ConditionType.FunctionCallBoolean:
@@ -294,7 +294,7 @@ const wrapWithTestTag = (input: string) => `
     </value>
   `;
 
-const generatePositionValue = (position?: IPositionValue): string => {
+const generatePositionValue = (position?: IPositionValueStatement): string => {
     if (!position) {
         return '';
     }
@@ -346,6 +346,28 @@ const generateValueStatement = (statement?: IStatement): string => {
         case StatementType.FunctionCallNumber:
         case StatementType.FunctionCallString:
             return generateFncCall(statement as IFunctionCall);
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative:
+            return generatePositionValue(statement as IPositionValueStatement);
+        case StatementType.GetPositionCoordinate:
+            return `
+                <block type="${statement.head}">
+                    <value name="coordinate">
+                        ${generateValueStatement(statement.coordinate)}
+                    </value>
+                    <value name="position">
+                        ${generateValueStatement(statement.position)}
+                    </value>
+                </block>
+            `;
+        case StatementType.GetShipPosition:
+            return `
+                <block type="${statement.head}">
+                    <value name="shipId">
+                        ${generateValueStatement(statement.shipId)}
+                    </value>
+                </block>
+            `;
         default:
             return '';
     }

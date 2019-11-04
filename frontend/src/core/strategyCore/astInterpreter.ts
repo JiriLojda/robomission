@@ -11,7 +11,7 @@ import {
     IPositionItem,
     IRoboAst,
     IRuntimeContext,
-    ISetVariableStatement,
+    ISetVariableStatement, isPosition,
     IStatement
 } from "./models/programTypes";
 import {List, Map} from "immutable";
@@ -203,7 +203,9 @@ const evaluateActionStatement = (
             if (!statement.name || !statement.value || typeof statement.value === 'string' || isConditionStatement(statement.value)) {
                 throw invalidProgramError('The value for the variable has different type.');
             }
-            const value = getObjectFromStatement(statement.value, context);
+            const value = getObjectFromStatement(statement.value, context, world, shipId);
+            if (isPosition(value))
+                throw invalidProgramError('Cannot set position to a variable yet.');
             if (isUserProgramError(value))
                 return getUnusedEvaluationResult(value);
 
@@ -219,7 +221,7 @@ const evaluateActionStatement = (
             );
 
             if (!existingExecution) {
-                const parameters = getCallParametersValues(statementTyped, context);
+                const parameters = getCallParametersValues(statementTyped, context, world, shipId);
                 if (isUserProgramError(parameters) || parameters === evaluationInProgress)
                     return getUnusedEvaluationResult(parameters);
                 setSystemVariable(
@@ -236,7 +238,7 @@ const evaluateActionStatement = (
             if (statement.value && typeof statement.value !== 'string') {
                 const result = isConditionStatement(statement.value) ?
                     evaluateCondition(statement.value, world, shipId, context) :
-                    getObjectFromStatement(statement.value, context);
+                    getObjectFromStatement(statement.value, context, world, shipId);
                 setSystemVariable(context, SystemVariableName.FunctionReturned, { result });
             }
             context.hasEnded = true;

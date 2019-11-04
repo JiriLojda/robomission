@@ -11,6 +11,7 @@ import {InvalidProgramReason} from "../enums/invalidProgramReason";
 import {StatementType} from "../enums/statementType";
 import {IValidatorResult} from "./programValidator";
 import {getStatementValidator} from "./getStatementValidator";
+import {getValueStatementType} from "../utils/getValueStatementType";
 
 export const isValueStatementValid = (statement: IStatement, type?: ValueStatementType): IValidatorResult => {
     if (!statement || !statement.head) {
@@ -61,6 +62,33 @@ export const isValueStatementValid = (statement: IStatement, type?: ValueStateme
                 ],
               statement,
             );
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative:
+            return useValidators([
+                s => hasExactProperties(s, ['head', 'x', 'y']),
+                s => validateCorrectValueType(s, type),
+                s => isValueStatementValid(s.x as IStatement, ValueStatementType.Number),
+                s => isValueStatementValid(s.y as IStatement, ValueStatementType.Number),
+            ],
+                statement
+            );
+        case StatementType.GetShipPosition:
+            return useValidators([
+                s => hasExactProperties(s, ['head', 'shipId']),
+                s => validateCorrectValueType(s, type),
+                s => isValueStatementValid(s.shipId as IStatement, ValueStatementType.String),
+            ],
+                statement
+            );
+        case StatementType.GetPositionCoordinate:
+            return useValidators([
+                s => hasExactProperties(s, ['head', 'position', 'coordinate']),
+                s => validateCorrectValueType(s, type),
+                s => isValueStatementValid(s.position as IStatement, ValueStatementType.Position),
+                s => isValueStatementValid(s.coordinate as IStatement, ValueStatementType.String),
+            ],
+                statement
+            );
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }
@@ -85,16 +113,5 @@ const validateCorrectValueType = (statement: IStatement, type?: ValueStatementTy
         return getValidatorResult(true, InvalidProgramReason.None);
     }
 
-    switch (statement.head) {
-        case StatementType.GetStringVariable:
-        case StatementType.ConstantString:
-        case StatementType.FunctionCallString:
-            return getValidatorResult(type === ValueStatementType.String, InvalidProgramReason.InvalidValueType);
-        case StatementType.GetNumericVariable:
-        case StatementType.ConstantNumber:
-        case StatementType.NumberBinary:
-        case StatementType.FunctionCallNumber:
-            return getValidatorResult(type === ValueStatementType.Number, InvalidProgramReason.InvalidValueType);
-    }
-    throw new Error(`Tried to validate valueType of non-value type statement ${statement.head}.`);
+    return getValidatorResult(type === getValueStatementType(statement), InvalidProgramReason.InvalidValueType);
 };

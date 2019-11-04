@@ -7,6 +7,7 @@ import {WorldObjectType} from "../enums/worldObjectType";
 import {NumberOperation} from "../enums/numberOperation";
 import {endOfMapType} from "../constants/astConstants";
 import {SystemVariableForName} from "./systemVariablePayloads";
+import {number} from "prop-types";
 
 export const defaultFunctionName = '(default_function)';
 
@@ -42,22 +43,16 @@ export interface ICondition {
     value?: TileColor | number | WorldObjectType | ICondition | string;
 }
 
-export interface IPositionValue {
-    head: 'position_value' | 'position_value_relative';
-    x: IStatement;
-    y: IStatement;
-}
-
 export interface ITileCondition extends ICondition {
     head: ConditionType.Tile;
     value: WorldObjectType | endOfMapType;
     comparator: Comparator.Contains | Comparator.NotContains;
-    position: IPositionValue;
+    position: IStatement;
 }
 
 export interface ITileAccessibleCondition extends ICondition {
     head: ConditionType.IsTileAccessible;
-    position: IPositionValue;
+    position: IStatement;
     comparator: undefined;
     value: undefined;
 }
@@ -164,6 +159,29 @@ export interface IStatement {
     name?: string;
     value?: string | IStatement | Condition;
     parameters?: string[] | IFunctionCallParameter[];
+    coordinate?: IStatement;
+    position?: IStatement;
+    shipId?: IStatement;
+    x?: IStatement;
+    y?: IStatement;
+}
+
+export interface IPositionValueStatement extends IStatement {
+    head: StatementType.PositionValue | StatementType.PositionValueRelative;
+    x: IStatement;
+    y: IStatement;
+}
+
+export interface IGetPositionCoordinateStatement extends IStatement {
+    head: StatementType.GetPositionCoordinate;
+    coordinate: IStatement;
+    position: IStatement;
+    body: undefined;
+}
+
+export interface IGetShipPositionStatement extends IStatement {
+    head: StatementType.GetShipPosition;
+    shipId: IStatement;
 }
 
 export interface INumberBinaryStatement extends IStatement {
@@ -198,5 +216,13 @@ export interface ISetVariableNumericStatement extends IStatement {
     name: string;
     value: IStatement;
 }
+
+export type Position = {
+    readonly x: number,
+    readonly y: number,
+};
+
+export const isPosition = (input: any): input is Position =>
+    typeof input === 'object' && !!input && (!!input.x || input.x === 0) && (!!input.y || input.y === 0) && typeof input.x === 'number' && typeof input.y === 'number';
 
 export type IRoboAst = IStatement[];

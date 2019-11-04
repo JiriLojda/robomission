@@ -117,6 +117,10 @@ function blockToAst(block) {
       return functionDefinitionToAst(block);
     case 'function_return':
       return functionReturnToAst(block);
+    case 'get_ship_position':
+      return getShipPositionToAst(block);
+    case 'get_position_coordinate':
+      return getPositionCoordinateToAst(block);
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -314,6 +318,19 @@ function functionReturnToAst(block) {
   const value = blockToAst(getValueBlock(block, 'value'));
 
   return {head: 'function_return', value};
+}
+
+function getShipPositionToAst(block) {
+  const shipId = blockToAst(getValueBlock(block, 'shipId'));
+
+  return {head: 'get_ship_position', shipId};
+}
+
+function getPositionCoordinateToAst(block) {
+  const position = blockToAst(getValueBlock(block, 'position'));
+  const coordinate = blockToAst(getValueBlock(block, 'coordinate'));
+
+  return {head: 'get_position_coordinate', position, coordinate};
 }
 
 //helpers

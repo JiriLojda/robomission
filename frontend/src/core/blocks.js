@@ -769,6 +769,41 @@ const blocks = [
     tooltip: '',
     helpUrl: '',
   },
+  {
+    id: 'get_ship_position',
+    message0: `get position of ship %1`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'shipId',
+        check: 'String'
+      },
+    ],
+    output: 'Position',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'get_position_coordinate',
+    message0: `get coordinate %1 of %2`,
+    args0: [
+      {
+        type: 'input_value',
+        name: 'coordinate',
+        check: 'String'
+      },
+      {
+        type: 'input_value',
+        name: 'position',
+        check: 'Position'
+      },
+    ],
+    output: 'Number',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
 ];
 
 export function getAllBlocksList() {

@@ -36,7 +36,7 @@ export const updateShipInWorld = (world: World, oldShip: Ship, newShip: Ship): W
 };
 
 const assertPositionInWorld = (world: World, x: number, y: number): void => {
-    if (world.size.x <= x || world.size.y <= y) {
+    if (world.size.x <= x || world.size.y <= y || x < 0 || y < 0) {
         throw new Error(`Position [${x}, ${y}] is outside of world size [${world.size.x}, ${world.size.y}].`);
     }
     if (!world.objects.get(y) || !world.objects.get(y)!.get(x)) {

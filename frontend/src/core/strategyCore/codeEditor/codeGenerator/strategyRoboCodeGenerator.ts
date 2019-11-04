@@ -7,7 +7,7 @@ import {
     IFunctionDefinition,
     IFunctionReturn,
     INumberBinaryStatement,
-    IPositionValue,
+    IPositionValueStatement,
     IRoboAst,
     IStatement
 } from "../../models/programTypes";
@@ -192,13 +192,13 @@ function generateTest(node: Condition): string {
             return `not ${value}`;
         }
         case ConditionType.IsTileAccessible: {
-            const position = generateTileArgument(node.position);
+            const position = generateTileArgument(node.position as IPositionValueStatement);
             return `is ${position} accessible`;
         }
         case ConditionType.Position:
             throw invalidProgramError('Unsupported condition Position.');
         case ConditionType.Tile: {
-            const position = generateTileArgument(node.position);
+            const position = generateTileArgument(node.position as IPositionValueStatement);
             const comparator = getComparator(node.comparator);
             const test = generateObjectOnMap(node.value);
 
@@ -238,7 +238,7 @@ function generateObjectOnMap(obj: WorldObjectType | "TheEndOfMap"): string {
     }
 }
 
-function generateTileArgument(position: IPositionValue) {
+function generateTileArgument(position: IPositionValueStatement) {
     const numberPrefix = position.head === "position_value" ? '' : '~';
 
     return `Tile[${numberPrefix}${generateStatement(position.x)}, ${numberPrefix}${generateStatement(position.y)}]`;

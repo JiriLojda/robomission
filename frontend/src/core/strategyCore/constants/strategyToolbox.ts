@@ -59,6 +59,8 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.PositionValue},
             {type: BlockType.PositionValueRelative},
             {type: BlockType.NumberBinary},
+            {type: BlockType.GetShipPosition},
+            {type: BlockType.GetPositionCoordinate},
         ]
     },
     {
@@ -67,6 +69,8 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
             {type: BlockType.ConstantBoolean},
             {type: BlockType.ConstantNumber},
             {type: BlockType.ConstantString},
+            {type: BlockType.ConstantString, fields: {value: 'playerShip'}},
+            {type: BlockType.ConstantString, fields: {value: 'aiShip'}},
         ]
     },
     {

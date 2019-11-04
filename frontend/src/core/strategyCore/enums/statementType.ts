@@ -23,4 +23,8 @@ export enum StatementType {
     FunctionCallString = 'function_call_string',
     FunctionCallNumber = 'function_call_number',
     FunctionReturn = 'function_return',
+    GetShipPosition = 'get_ship_position',
+    GetPositionCoordinate = 'get_position_coordinate',
+    PositionValue = 'position_value',
+    PositionValueRelative = 'position_value_relative',
 }

@@ -2,21 +2,26 @@ import {
     Condition,
     IBinaryLogicCondition,
     IColorCondition,
-    ICompareCondition, IFunctionCall,
+    ICompareCondition,
+    IFunctionCall,
     IFunctionCallBoolean,
+    IGetPositionCoordinateStatement,
+    IGetShipPositionStatement,
     INumberBinaryStatement,
     IPositionCondition,
+    IPositionValueStatement,
     IRuntimeContext,
     isCompareCondition,
+    isPosition,
     IStatement,
     ITileAccessibleCondition,
     ITileCondition
 } from "../models/programTypes";
-import {getObjectsOnPositionWithShips, World} from "../models/world";
+import {getObjectsOnPositionWithShips, isPositionInWorld, World} from "../models/world";
 import {Position} from "../models/position";
 import {TileColor} from "../enums/tileColor";
 import {List} from "immutable";
-import {shipBlockingObjects, unifyShips} from "../enums/worldObjectType";
+import {shipBlockingObjects, unifyShips, WorldObjectType} from "../enums/worldObjectType";
 import {ConditionType} from "../enums/conditionType";
 import {getShip, getShipPosition} from "./worldModelUtils";
 import {Comparator} from "../enums/comparator";
@@ -32,7 +37,7 @@ import {
 } from "./variableUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {NumberOperation} from "../enums/numberOperation";
-import {Ship, ShipId} from "../models/ship";
+import {ShipId} from "../models/ship";
 import {endOfMapConstant} from "../constants/astConstants";
 import {WorldObject} from "../models/worldObject";
 import {getFunctionExecutionId} from "./getFunctionExecutionId";
@@ -49,6 +54,33 @@ const basicComparators = List<Comparator>([
     Comparator.Smaller,
     Comparator.SmallerOrEqual,
 ]);
+type GetObjectFromStatementParams = {
+    readonly context: IRuntimeContext;
+    readonly world: World;
+    readonly shipId: ShipId;
+}
+const getValidatedInput = <T extends number | string | Position>(statement: IStatement, params: GetObjectFromStatementParams, expectedReturnType: 'string' | 'number' | 'Position'): T | UserProgramError | EvaluationInProgress => {
+    const result = getObjectFromStatement(statement, params.context, params.world, params.shipId);
+    if (isUserProgramError(result) || result === evaluationInProgress)
+        return result;
+    if (expectedReturnType === 'Position' && !isPosition(result))
+        throw invalidProgramError('Expected position here, but got ' + result);
+    if (typeof result !== expectedReturnType)
+        throw invalidProgramError(`Expected ${expectedReturnType} here, but got ${typeof result} with value ${JSON.stringify(result)}.`);
+
+    return result as T;
+};
+
+const getValidatedInputsLazily = <T extends number | string | Position>(statements: IStatement[], params: GetObjectFromStatementParams, expectedReturnType: 'string' | 'number' | 'Position'): T[] | UserProgramError | EvaluationInProgress =>
+    statements
+        .reduce((result: T[] | UserProgramError | EvaluationInProgress, statement) => {
+            if (isUserProgramError(result) || result === evaluationInProgress)
+                return result;
+            const newInput = getValidatedInput<T>(statement, params, expectedReturnType);
+            if (isUserProgramError(newInput) || newInput === evaluationInProgress)
+                return newInput as any;
+            return result.concat([newInput]);
+        }, []);
 
 const evaluateNumberBinaryOperation = (leftValue: number, rightValue: number, operation: NumberOperation): number => {
     switch (operation) {
@@ -87,10 +119,10 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
 };
 
 //TODO refactor to getValueOfValueStatement or something like that
-export const getCallParametersValues = (statement: IFunctionCall | IFunctionCallBoolean, context: IRuntimeContext): string[] | UserProgramError | EvaluationInProgress => {
+export const getCallParametersValues = (statement: IFunctionCall | IFunctionCallBoolean, context: IRuntimeContext, world: World, shipId: ShipId): string[] | UserProgramError | EvaluationInProgress => {
     const result = [];
     for (const parameter of statement.parameters) {
-        const parameterValue = getObjectFromStatement(parameter.value, context);
+        const parameterValue = getObjectFromStatement(parameter.value, context, world, shipId);
         if (isUserProgramError(parameterValue) || parameterValue === evaluationInProgress)
             return parameterValue;
         result.push(parameterValue as string);
@@ -99,7 +131,8 @@ export const getCallParametersValues = (statement: IFunctionCall | IFunctionCall
     return result;
 };
 
-export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext): number | string | UserProgramError | EvaluationInProgress => {
+type ObjectStatementResult = number | string | Position | UserProgramError | EvaluationInProgress;
+export const getObjectFromStatement = (statement: IStatement, context: IRuntimeContext, world: World, shipId: ShipId): ObjectStatementResult => {
     switch (statement.head) {
         case StatementType.GetNumericVariable: {
             const variableName = statement.name || '';
@@ -130,26 +163,79 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
         }
         case StatementType.NumberBinary: {
             const statementTyped = statement as INumberBinaryStatement;
-            const leftValue = getObjectFromStatement(statementTyped.leftValue, context);
-            const rightValue = getObjectFromStatement(statementTyped.rightValue, context);
-            if (typeof leftValue === 'string' || typeof rightValue === 'string') {
+            const leftValue = getObjectFromStatement(statementTyped.leftValue, context, world, shipId);
+            if (isUserProgramError(leftValue) || leftValue === evaluationInProgress)
+                return leftValue;
+            const rightValue = getObjectFromStatement(statementTyped.rightValue, context, world, shipId);
+            if (isUserProgramError(rightValue) || rightValue === evaluationInProgress)
+                return rightValue;
+            if (typeof leftValue !== 'number' || typeof rightValue !== 'number') {
                 throw invalidProgramError('number operation needs number arguments');
             }
 
             return evaluateNumberBinaryOperation(leftValue, rightValue, statementTyped.operator);
         }
         case StatementType.FunctionCallNumber:
-            return executeFncIfNeeded<number>(context, statement as IFunctionCall, 'number');
+            return executeFncIfNeeded<number>(context, statement as IFunctionCall, 'number', world, shipId);
         case StatementType.FunctionCallString:
-            return executeFncIfNeeded<string>(context, statement as IFunctionCall, 'string');
+            return executeFncIfNeeded<string>(context, statement as IFunctionCall, 'string', world, shipId);
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative: {
+            const statementTyped = statement as IPositionValueStatement;
+            const x = getObjectFromStatement(statementTyped.x, context, world, shipId);
+            if (isUserProgramError(x) || x === evaluationInProgress)
+                return x;
+            const y = getObjectFromStatement(statementTyped.y, context, world, shipId);
+            if (isUserProgramError(y) || y === evaluationInProgress)
+                return y;
+            if (typeof x !== 'number' || typeof y !== 'number')
+                throw invalidProgramError('Expected the x and y to be number.');
+            const ship = getShip(world, shipId);
+            if (!ship)
+                throw invalidProgramError('Invalid shipId provided to getObjectFromStatement.');
+            const shipPosition = statementTyped.head === StatementType.PositionValueRelative ?
+                ship.position :
+                new Position();
+
+            return new Position({x: shipPosition.x + x, y: shipPosition.y + y});
+        }
+        case StatementType.GetShipPosition: {
+            const statementTyped = statement as IGetShipPositionStatement;
+            const searchedShipId = getObjectFromStatement(statementTyped.shipId, context, world, shipId);
+            if (isUserProgramError(searchedShipId) || searchedShipId === evaluationInProgress)
+                return searchedShipId;
+            if (typeof searchedShipId !== 'string')
+                throw invalidProgramError('searchedShipId is expected to be string.');
+
+            const foundShip = getShip(world, searchedShipId);
+            if (!foundShip)
+                return UserProgramError.ProvidedShipIdDoesNotExist;
+
+            return foundShip.position;
+        }
+        case StatementType.GetPositionCoordinate: {
+            const statementTyped = statement as IGetPositionCoordinateStatement;
+            const position = getObjectFromStatement(statementTyped.position, context, world, shipId);
+            const coordinate = getObjectFromStatement(statementTyped.coordinate, context, world, shipId);
+            if (isUserProgramError(position) || position === evaluationInProgress)
+                return position;
+            if (isUserProgramError(coordinate) || coordinate === evaluationInProgress)
+                return coordinate;
+            if (typeof coordinate !== 'string' || !isPosition(position))
+                throw invalidProgramError('Types mismatch in GetPositionCoordinate case.');
+            if (coordinate.trim().toLocaleLowerCase() !== 'x' && coordinate.trim().toLocaleLowerCase() !== 'y')
+                return UserProgramError.ProvidedStringIsNotCoordinate;
+
+            return coordinate.trim().toLocaleLowerCase() === 'x' ? position.x : position.y;
+        }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);
     }
 };
 
-const handleComparatorConditions = (condition: ICompareCondition, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
-    const leftValue = getObjectFromStatement(condition.leftValue, context);
-    const rightValue = getObjectFromStatement(condition.rightValue, context);
+const handleComparatorConditions = (condition: ICompareCondition, context: IRuntimeContext, world: World, shipId: ShipId): boolean | UserProgramError | EvaluationInProgress => {
+    const leftValue = getObjectFromStatement(condition.leftValue, context, world, shipId);
+    const rightValue = getObjectFromStatement(condition.rightValue, context, world, shipId);
 
     if (isUserProgramError(leftValue) || leftValue === evaluationInProgress)
         return leftValue;
@@ -174,42 +260,10 @@ const getComparedObject = (condition: Condition, world: World, shipPosition: Pos
 const getWorldObjectsOnTile = (position: Position, world: World): List<WorldObject> =>
     getObjectsOnPositionWithShips(world, position.x, position.y);
 
-const isPositionOnMap = (x: number, y: number, world: World): boolean =>
-    x >= 0 && x < world.size.x && y >= 0 && y < world.size.y;
-
-const getPositionArgument = (
-    condition: ITileCondition | ITileAccessibleCondition,
-    context: IRuntimeContext,
-    world: World,
-    ship: Ship,
-): Position | UserProgramError | EvaluationInProgress => {
-    const x = getObjectFromStatement(condition.position.x, context);
-    if (isUserProgramError(x) || x === evaluationInProgress)
-        return x;
-    if (typeof x !== 'number')
-        throw invalidProgramError('position can only have number arguments');
-
-    const y = getObjectFromStatement(condition.position.y, context);
-    if (isUserProgramError(y) || y === evaluationInProgress)
-        return y;
-    if (typeof y !== 'number')
-        throw invalidProgramError('position can only have number arguments');
-
-    const isRelative = condition.position.head === 'position_value_relative';
-    const newX = isRelative ? ship.position.x + x : x;
-    const newY = isRelative ? ship.position.y + y : y;
-
-    if (!isPositionOnMap(newX, newY, world))
-        return UserProgramError.ReferencedPositionIsNotOnMap;
-
-    return new Position({x: newX, y: newY});
-};
-
 const handleObjectComparison = (condition: IColorCondition | IPositionCondition | ITileCondition, world: World, shipId: ShipId, context: IRuntimeContext): boolean | UserProgramError | EvaluationInProgress => {
-    const ship = getShip(world, shipId);
     const shipPosition = getShipPosition(world, shipId);
 
-    if (!shipPosition || !ship) {
+    if (!shipPosition) {
         throw new Error('Cannot evaluate a condition when ship is not present.');
     }
 
@@ -218,29 +272,29 @@ const handleObjectComparison = (condition: IColorCondition | IPositionCondition 
     }
 
     if (condition.comparator === Comparator.Contains) {
-        const position = getPositionArgument(condition, context, world, ship);
-
-        if (condition.value === endOfMapConstant)
-            return position === UserProgramError.ReferencedPositionIsNotOnMap;
-        if (position === UserProgramError.ReferencedPositionIsNotOnMap)
-            return false;
+        const position = getObjectFromStatement(condition.position, context, world, shipId);
         if (isUserProgramError(position) || position === evaluationInProgress)
             return position;
+        if (!isPosition(position))
+            throw invalidProgramError('Position is expected here.', 'handleObjectComparison');
+
+        if (!isPositionInWorld(position, world))
+            return condition.value === endOfMapConstant;
         const objects = getWorldObjectsOnTile(position, world);
-        return unifyShips(objects.map(o => o.type)).contains(condition.value);
+        return unifyShips(objects.map(o => o.type)).contains(condition.value as WorldObjectType);
     }
 
     if (condition.comparator === Comparator.NotContains) {
-        const position = getPositionArgument(condition, context, world, ship);
-
-        if (condition.value === endOfMapConstant)
-            return position !== UserProgramError.ReferencedPositionIsNotOnMap;
-        if (position === UserProgramError.ReferencedPositionIsNotOnMap)
-            return true;
+        const position = getObjectFromStatement(condition.position, context, world, shipId);
         if (isUserProgramError(position) || position === evaluationInProgress)
             return position;
+        if (!isPosition(position))
+            throw invalidProgramError('Position is expected here.', 'handleObjectComparison');
+
+        if (isPositionInWorld(position, world))
+            return condition.value !== endOfMapConstant;
         const objects = getWorldObjectsOnTile(position, world);
-        return !unifyShips(objects.map(o => o.type)).contains(condition.value);
+        return !unifyShips(objects.map(o => o.type)).contains(condition.value as WorldObjectType);
     }
 
     if (basicComparators.contains(condition.comparator)) {
@@ -294,14 +348,13 @@ const handleLogicalBinaryOperation = (condition: IBinaryLogicCondition, world: W
 };
 
 const handleAccessibleTileCondition = (condition: ITileAccessibleCondition, world: World, context: IRuntimeContext, shipId: ShipId): boolean | UserProgramError | EvaluationInProgress => {
-    const ship = world.ships.find(s => s.id === shipId);
-    if (!ship)
-        throw invalidProgramError(`ShipId ${shipId} does not exist on the map`, 'evaluateCondition');
-
-    const position = getPositionArgument(condition, context, world, ship);
-
+    const position = getObjectFromStatement(condition.position, context, world, shipId);
     if (isUserProgramError(position) || position === evaluationInProgress)
-        return position === UserProgramError.ReferencedPositionIsNotOnMap ? false : position;
+        return position;
+    if (!isPosition(position))
+        throw invalidProgramError(`Position is expected here. Got ${JSON.stringify(position)}`, 'handleAccessibleTileCondition');
+    if (!isPositionInWorld(position, world))
+        return false;
 
     const objectsOnTile = getObjectsOnPositionWithShips(world, position.x, position.y);
 
@@ -312,6 +365,8 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
     context: IRuntimeContext,
     fncCall: IFunctionCallBoolean | IFunctionCall,
     expectedType: 'boolean' | 'number' | 'string',
+    world: World,
+    shipId: ShipId,
 ): T | EvaluationInProgress | UserProgramError => {
     const executionId = getFunctionExecutionId(context, fncCall.name, fncCall.parameters);
     const existingExecution = getSystemVariable(
@@ -321,7 +376,7 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
     );
 
     if (!existingExecution) {
-        const parameters = getCallParametersValues(fncCall, context);
+        const parameters = getCallParametersValues(fncCall, context, world, shipId);
         if (isUserProgramError(parameters) || parameters === evaluationInProgress)
             return parameters;
         setSystemVariable(
@@ -359,11 +414,11 @@ export const evaluateCondition = (condition: Condition, world: World, shipId: Sh
     }
 
     if (condition.head === ConditionType.FunctionCallBoolean) {
-        return executeFncIfNeeded<boolean>(context, condition, 'boolean');
+        return executeFncIfNeeded<boolean>(context, condition, 'boolean', world, shipId);
     }
 
     if (isCompareCondition(condition)) {
-        return handleComparatorConditions(condition, context);
+        return handleComparatorConditions(condition, context, world, shipId);
     }
 
     return handleObjectComparison(condition, world, shipId, context);

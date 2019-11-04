@@ -27,10 +27,7 @@ export const isTestStatementValid = (condition: Condition): IValidatorResult => 
             return getValidatorResult(true, InvalidProgramReason.None);
         case ConditionType.Tile:
         case ConditionType.IsTileAccessible:
-            return getValidatorResult(
-                !!condition.position && !!condition.position.x && !!condition.position.y,
-                InvalidProgramReason.MissingParameter
-            );
+            return isValueStatementValid(condition.position, ValueStatementType.Position);
         case ConditionType.Not:
             return useValidators(
                 [

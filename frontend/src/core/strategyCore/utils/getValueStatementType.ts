@@ -21,11 +21,16 @@ export const getValueStatementType = (statement: IStatement | Condition): ValueS
         case StatementType.FunctionCallNumber:
         case StatementType.ConstantNumber:
         case StatementType.GetNumericVariable:
+        case StatementType.GetPositionCoordinate:
             return ValueStatementType.Number;
         case StatementType.ConstantString:
         case StatementType.FunctionCallString:
         case StatementType.GetStringVariable:
             return ValueStatementType.String;
+        case StatementType.GetShipPosition:
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative:
+            return ValueStatementType.Position;
         default:
             throw invalidProgramError(`Statement ${statement.head} is not a value statement.`);
     }

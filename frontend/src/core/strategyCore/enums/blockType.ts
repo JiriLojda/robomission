@@ -34,4 +34,6 @@ export enum BlockType {
     FunctionParameterDefinition = 'function_parameter_definition',
     FunctionDefinition = 'function_definition',
     FunctionReturn = 'function_return',
+    GetShipPosition = 'get_ship_position',
+    GetPositionCoordinate = 'get_position_coordinate',
 }

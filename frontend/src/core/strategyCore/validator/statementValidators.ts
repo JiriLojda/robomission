@@ -13,7 +13,6 @@ import {isValueStatementValid} from "./isValueStatementValid";
 import {ValueStatementType} from "../enums/valueStatementType";
 import {getStatementValidator} from "./getStatementValidator";
 import {isValidConditionStatement} from "./isTestStatementValid";
-import {IValidatorResult} from "./programValidator";
 
 export const isWhileStatementValid = getStatementValidator(
     ['head', 'body', 'test'],
