@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {IGameLevel} from "../../battleRunner/IGameLevel";
+import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {centralDiamondsBasicStrategy} from "../../predefinedStrategies/centralDiamondsBasicStrategy";
 import {diamondStarWorld} from "../worlds/diamondStarWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
@@ -16,6 +16,11 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
+const help: LevelHelp = {
+    title: 'Just a test',
+    text: 'This level is just testing game type. Should not be published unless remade.',
+};
+
 export const starCollectDiamondsBasicLevel: IGameLevel = {
     name: `Star collect basic`,
     urlSlug: 'star-collect-basic',
@@ -26,4 +31,5 @@ export const starCollectDiamondsBasicLevel: IGameLevel = {
     world: diamondStarWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
+    help,
 };

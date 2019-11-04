@@ -1,7 +1,7 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
 import {basicScanStrategy} from "../../predefinedStrategies/basicScanStrategy";
-import {IGameLevel} from "../../battleRunner/IGameLevel";
+import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {basicKillAllWorld} from "../worlds/basicKillAllWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
@@ -16,6 +16,11 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
+const help: LevelHelp = {
+    title: 'Simple shooting contest',
+    text: 'This is very simple shooting contest. Your only goal here is to shoot the oponent\'s ship.',
+};
+
 export const basicScanKillAllLevel: IGameLevel = {
     name: `Kill 'em all basic`,
     urlSlug: 'kill-em-all-basic',
@@ -26,4 +31,5 @@ export const basicScanKillAllLevel: IGameLevel = {
     world: basicKillAllWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
+    help,
 };

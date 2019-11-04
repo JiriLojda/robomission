@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {IGameLevel} from "../../battleRunner/IGameLevel";
+import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
@@ -23,6 +23,16 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
+const help: LevelHelp = {
+    title: 'Race to for the win.',
+    text: 'In this level you have to be the fastest rocket and get to one of the colored tiles ' +
+        'on the other side of the map. Also hitting an object does not result in a crash. ' +
+        'Upon moving to an occupied tile one of two happens. 1) There is a free tile in the ' +
+        'direction the ship is moving, then both, hitting object and hit objects move in this direction ' +
+        'effectively pushing the hit object. 2) The tile in the direction the ship is moving is ' +
+        'either occupied or out of the map. Then nothing happens, the ship just can\'t move.'
+};
+
 export const basicRaceLevel: IGameLevel = {
     name: 'Simple race',
     urlSlug: 'simple-race',
@@ -33,5 +43,6 @@ export const basicRaceLevel: IGameLevel = {
     world: raceBasicWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
+    help,
 };
 

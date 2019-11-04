@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {IGameLevel} from "../../battleRunner/IGameLevel";
+import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
@@ -25,6 +25,13 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
+const help: LevelHelp = {
+    title: 'Pass the guard',
+    text: 'This is a special round. Your goal is to get to one of the green tiles.' +
+        'The trick is that the opponent will try to stop you. On top of that you ship ' +
+        'cannot shoot while the opponent can. You just have to slip by unnoticed.',
+};
+
 export const narrowAlleyPassLevel: IGameLevel = {
     name: 'Narrow alley pass',
     urlSlug: 'narrow-alley-pass',
@@ -35,5 +42,6 @@ export const narrowAlleyPassLevel: IGameLevel = {
     world: narrowPathWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
+    help,
 };
 

@@ -1,7 +1,6 @@
-import {IStrategyEditorProps, StrategyEditor as StrategyEditorComponent} from "../components/editor/StrategyEditor";
 import React from "react";
 import { connect } from 'react-redux';
-import {DualStrategyMainBoard} from "../components/editor/DualStrategyMainBoard";
+import {DualStrategyMainBoard, IStrategyEditorProps} from "../components/editor/DualStrategyMainBoard";
 
 interface IOwnProps {
     readonly levelUrlSlug: string;
@@ -12,6 +11,7 @@ const mapStateToProps = (state: any, ownProps: IOwnProps): IStrategyEditorProps 
 
     return {
         level,
+
     };
 };
 

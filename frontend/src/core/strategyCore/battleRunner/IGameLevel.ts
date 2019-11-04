@@ -7,6 +7,11 @@ import {IRoboAst} from "../models/programTypes";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 import {BlocklyToolbox} from "../constants/strategyToolbox";
 
+export type LevelHelp = {
+    readonly text: string;
+    readonly title: string;
+}
+
 export interface IGameLevel {
     readonly name: string;
     readonly urlSlug: string;
@@ -17,6 +22,7 @@ export interface IGameLevel {
     readonly shipsAsts: Map<ShipId, IRoboAst>;
     readonly gameBehaviours: IGameBehaviours;
     readonly toolbox: BlocklyToolbox;
+    readonly help: LevelHelp;
 }
 
 export const isGameLevelValid = (level: IGameLevel): boolean =>

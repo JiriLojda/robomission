@@ -1,21 +1,10 @@
 import React from 'react';
-import * as ReactBlocklyComponent from 'react-blockly-component';
-import {BlocklyEditor} from 'react-blockly-component';
-import {blocklyXmlToRoboAst} from '../../core/blockly';
-import {generateBlocklyXml} from '../../core/strategyCore/codeEditor/xmlGenerator/blocklyXmlGenerator';
-import SplitPane from "react-split-pane";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
 import {convertWorldToEditorModel, World} from '../../core/strategyCore/models/world'
 import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
-import {isRoboAstValid} from "../../core/strategyCore/validator/programValidator";
-import {
-    getInvalidProgramReasonDisplayName,
-    InvalidProgramReason
-} from "../../core/strategyCore/enums/invalidProgramReason";
-import {allStrategyCategories} from "../../core/strategyCore/constants/strategyToolbox";
 import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {List} from "immutable";
@@ -25,17 +14,11 @@ import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
-import {parseStrategyRoboCode} from "../../core/strategyCore/codeEditor/parser/strategyParser";
-import CodeEditor from "./CodeEditor";
-import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
-import {Toggle} from "material-ui";
-import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
 import {MapOverlay} from "./MapOverlay";
-import {StatementType} from "../../core/strategyCore/enums/statementType";
-import {DuelStrategyEditor} from "./DuelStrategyEditor";
+import {StrategyEditor} from "./StrategyEditor";
+import {createEmptyAst} from "../../utils/createEmptyAst";
+import {HelpModal} from "../uiComponents/HelpModal";
 
-
-const getEmptyXml = () => generateBlocklyXml([{head: StatementType.Start, body: []}]);
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
@@ -86,6 +69,7 @@ interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     isMapOverlayShown: boolean;
     showEditorFor: "first" | "second" | "none";
+    isHelpModalShown: boolean;
 }
 
 export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorProps, IState> {
@@ -94,12 +78,13 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
         super(props);
         this.state = {
             blocklySettings: { trashcan: true, disable: false },
-            roboAsts: {first: blocklyXmlToRoboAst(getEmptyXml()), second: blocklyXmlToRoboAst(getEmptyXml()) },
+            roboAsts: {first: createEmptyAst(), second: createEmptyAst() },
             runtimeContext: getEmptyRuntimeContext(),
             world: props.level.world,
             userProgramError: undefined,
             isMapOverlayShown: false,
             showEditorFor: "none",
+            isHelpModalShown: true,
         };
     }
 
@@ -158,19 +143,21 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 columnSize={40}
             />;
         if (this.state.showEditorFor === "first") {
-            return <DuelStrategyEditor
+            return <StrategyEditor
                 level={this.props.level}
                 canRunBattle={false}
                 initialAst={this.state.roboAsts.first}
-                onSubmitAst={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, first: newAst}, showEditorFor: "none"}))}
+                showMapAndHelpOnMount={false}
+                onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, first: newAst}, showEditorFor: "none"}))}
             />;
         }
         if (this.state.showEditorFor === "second") {
-            return <DuelStrategyEditor
+            return <StrategyEditor
                 level={this.props.level}
                 canRunBattle={false}
                 initialAst={this.state.roboAsts.second}
-                onSubmitAst={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, second: newAst}, showEditorFor: "none"}))}
+                showMapAndHelpOnMount={false}
+                onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, second: newAst}, showEditorFor: "none"}))}
             />;
         }
 
@@ -205,6 +192,11 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 style={{margin: 2, minWidth: 50}}
                 onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
             />
+            <RaisedButton
+                label={'show help'}
+                style={{ margin: 2, minWidth: 50 }}
+                onClick={() => this.setState(() => ({isHelpModalShown: true}))}
+            />
             <ErrorMessage>
                 {getUserProgramErrorDisplayName(this.state.userProgramError)}
             </ErrorMessage>
@@ -214,6 +206,12 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             <SpaceWorld
                 fields={convertWorldToEditorModel(this.state.world)}
                 width={200}
+            />
+            <HelpModal
+                title={this.props.level.help.title}
+                message={this.props.level.help.text}
+                isOpened={this.state.isHelpModalShown}
+                onClose={() => this.setState(() => ({isHelpModalShown: false}))}
             />
         </span>
     }

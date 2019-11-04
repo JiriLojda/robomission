@@ -15,7 +15,6 @@ import {
     getInvalidProgramReasonDisplayName,
     InvalidProgramReason
 } from "../../core/strategyCore/enums/invalidProgramReason";
-import {allStrategyCategories} from "../../core/strategyCore/constants/strategyToolbox";
 import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {List} from "immutable";
@@ -31,10 +30,7 @@ import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeG
 import {Toggle} from "material-ui";
 import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
 import {MapOverlay} from "./MapOverlay";
-import {StatementType} from "../../core/strategyCore/enums/statementType";
-
-
-const getEmptyXml = () => generateBlocklyXml([{head: StatementType.Start, body: []}]);
+import {HelpModal} from "../uiComponents/HelpModal";
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
@@ -73,6 +69,10 @@ const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
 
 export interface IStrategyEditorProps {
     readonly level: IGameLevel;
+    readonly canRunBattle: boolean;
+    readonly onCodeSubmit?: (code: IRoboAst) => void;
+    readonly initialAst: IRoboAst;
+    readonly showMapAndHelpOnMount: boolean;
 }
 
 interface IState {
@@ -88,6 +88,7 @@ interface IState {
     codeError?: string;
     code?: string;
     isMapOverlayShown: boolean;
+    isHelpModalShown: boolean;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5;
@@ -98,13 +99,14 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         super(props);
         this.state = {
             blocklySettings: { trashcan: true, disable: false },
-            roboAst: blocklyXmlToRoboAst(getEmptyXml()),
+            roboAst: props.initialAst,
             runtimeContext: getEmptyRuntimeContext(),
             world: props.level.world,
             userProgramError: undefined,
             validationResult: InvalidProgramReason.None,
             useCodeEditor: false,
-            isMapOverlayShown: props.level.world.size.x > 5,
+            isMapOverlayShown: props.level.world.size.x > 5 && props.showMapAndHelpOnMount,
+            isHelpModalShown: props.showMapAndHelpOnMount,
         };
     }
 
@@ -165,6 +167,10 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     };
 
     _runBattle = (): void => {
+        if (!this.props.canRunBattle) {
+            console.warn('This should not be called when cannotRunBattle.');
+            return;
+        }
         this.setState(() => ({isMapOverlayShown: true}));
         const level = this.props.level;
         const userShipId = level.turnsOrder.find(id => !level.shipsAsts.has(id)) || 'userShip';
@@ -208,86 +214,114 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
 
     render() {
         if (this.state.isMapOverlayShown)
-            return <MapOverlay
-                world={this.state.world}
-                onLeave={() => this.setState(() => ({isMapOverlayShown: false}))}
-                columnSize={40}
-            />;
+            return <span>
+                <HelpModal
+                    title={this.props.level.help.title}
+                    message={this.props.level.help.text}
+                    isOpened={this.state.isHelpModalShown}
+                    onClose={() => this.setState(() => ({isHelpModalShown: false}))}
+                />
+                <MapOverlay
+                    world={this.state.world}
+                    onLeave={() => this.setState(() => ({isMapOverlayShown: false}))}
+                    columnSize={40}
+                />
+        </span>;
 
-        return <SplitPane
-            split="vertical"
-            minSize={200}
-            maxSize={-400}
-            size={200}
-            resizerStyle={{
-                backgroundColor: '#aaa',
-                width: 4,
-                cursor: 'col-resize',
-            }}
-            onChange={() => this.blocklyEditor && this.blocklyEditor.resize()}
-        >
-            <span>
-                {shouldShowMinimap(this.state.world) &&
-                    <SpaceWorld
-                        fields={convertWorldToEditorModel(this.state.world)}
-                        width={200}
-                    />
-                }
-                <RaisedButton
-                    label={'run battle'}
-                    disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
-                    primary
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._runBattle}
-                />
-                <RaisedButton
-                    label={'reset'}
-                    secondary
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._reset}
-                />
-                <RaisedButton
-                    label={'ast to console'}
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={() => console.log(JSON.stringify(this.state.roboAst))}
-                />
-                <RaisedButton
-                    label={'import ast'}
-                    style={{ margin: 2, minWidth: 50 }}
-                    onClick={this._importAst}
-                />
-                <Toggle
-                    toggled={this.state.useCodeEditor}
-                    label="Use code editor"
-                    labelStyle={{color: 'black'}}
-                    onToggle={() => this.setState(prev => ({
-                        useCodeEditor: !prev.useCodeEditor,
-                        code: generateStrategyRoboCode(prev.roboAst),
-                    }))} />
+        return <span>
+                <SplitPane
+                split="vertical"
+                minSize={200}
+                maxSize={-400}
+                size={200}
+                resizerStyle={{
+                    backgroundColor: '#aaa',
+                    width: 4,
+                    cursor: 'col-resize',
+                }}
+                onChange={() => this.blocklyEditor && this.blocklyEditor.resize()}
+            >
+                <span>
+                    {shouldShowMinimap(this.state.world) &&
+                        <SpaceWorld
+                            fields={convertWorldToEditorModel(this.state.world)}
+                            width={200}
+                        />
+                    }
+                    {this.props.canRunBattle && <RaisedButton
+                        label={'run battle'}
+                        disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
+                        primary
+                        style={{ margin: 2, minWidth: 50 }}
+                        onClick={this._runBattle}
+                    />}
+                    {!!this.props.onCodeSubmit && <RaisedButton
+                      label={'submit code'}
+                      disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
+                      primary
+                      style={{ margin: 2, minWidth: 50 }}
+                      onClick={() => this.props.onCodeSubmit!(this.state.roboAst)}
+                    />}
                     <RaisedButton
-                        label={'Show map'}
+                        label={'reset'}
                         secondary
                         style={{ margin: 2, minWidth: 50 }}
-                        onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
+                        onClick={this._reset}
                     />
-                <ErrorMessage>
-                    {getUserProgramErrorDisplayName(this.state.userProgramError)}
-                </ErrorMessage>
-                <ErrorMessage>
-                    {
-                        this.state.validationResult !== InvalidProgramReason.None ?
-                            getInvalidProgramReasonDisplayName(this.state.validationResult) :
-                            undefined
-                    }
-                </ErrorMessage>
-                <ErrorMessage>
-                    {this.state.codeError}
-                </ErrorMessage>
-                <ResultMessage type={getMessageTypeForResult(this.state.battleResult)}>
-                    {getBattleResultMessage(this.state.battleResult)}
-                </ResultMessage>
-            </span>
-            {this._renderEditor()}
-        </SplitPane>
+                    <RaisedButton
+                        label={'ast to console'}
+                        style={{ margin: 2, minWidth: 50 }}
+                        onClick={() => console.log(JSON.stringify(this.state.roboAst))}
+                    />
+                    <RaisedButton
+                        label={'import ast'}
+                        style={{ margin: 2, minWidth: 50 }}
+                        onClick={this._importAst}
+                    />
+                    <RaisedButton
+                        label={'show help'}
+                        style={{ margin: 2, minWidth: 50 }}
+                        onClick={() => this.setState(() => ({isHelpModalShown: true}))}
+                    />
+                    <Toggle
+                        toggled={this.state.useCodeEditor}
+                        label="Use code editor"
+                        labelStyle={{color: 'black'}}
+                        onToggle={() => this.setState(prev => ({
+                            useCodeEditor: !prev.useCodeEditor,
+                            code: generateStrategyRoboCode(prev.roboAst),
+                        }))} />
+                        <RaisedButton
+                            label={'Show map'}
+                            secondary
+                            style={{ margin: 2, minWidth: 50 }}
+                            onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
+                        />
+                    <ErrorMessage>
+                        {getUserProgramErrorDisplayName(this.state.userProgramError)}
+                    </ErrorMessage>
+                    <ErrorMessage>
+                        {
+                            this.state.validationResult !== InvalidProgramReason.None ?
+                                getInvalidProgramReasonDisplayName(this.state.validationResult) :
+                                undefined
+                        }
+                    </ErrorMessage>
+                    <ErrorMessage>
+                        {this.state.codeError}
+                    </ErrorMessage>
+                    <ResultMessage type={getMessageTypeForResult(this.state.battleResult)}>
+                        {getBattleResultMessage(this.state.battleResult)}
+                    </ResultMessage>
+                </span>
+                {this._renderEditor()}
+            </SplitPane>
+            <HelpModal
+                title={this.props.level.help.title}
+                message={this.props.level.help.text}
+                isOpened={this.state.isHelpModalShown}
+                onClose={() => this.setState(() => ({isHelpModalShown: false}))}
+            />
+        </span>
     }
 }
