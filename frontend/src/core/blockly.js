@@ -216,7 +216,7 @@ function tileBlockToAst(block) {
 
 function setVariableBlockToAst(block) {
   const name = getFieldValue(block, 'name');
-  const value = getFieldValue(block, 'value');
+  const value = blockToAst(getValueBlock(block, 'value'));
   return { head: 'setVariable', name, value };
 }
 

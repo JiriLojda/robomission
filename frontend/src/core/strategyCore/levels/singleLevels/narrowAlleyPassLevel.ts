@@ -5,7 +5,6 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
 import {pushCollisionResolver} from "../../gameBehaviours/pushCollisionResolver";
-import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper";
 import {narrowPathWorld} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";

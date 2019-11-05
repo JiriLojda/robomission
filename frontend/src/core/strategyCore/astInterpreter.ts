@@ -194,23 +194,19 @@ const evaluateActionStatement = (
         case StatementType.TurnRight:
             return getUsedEvaluationResult(updateShipInWorld(world, ship, turnShip(ship, 'right')));
         case StatementType.SetVariable:
-            if (!statement.name || !statement.value || typeof statement.value !== 'string') {
-                throw new Error('While setting variable statement has to have name and value.');
-            }
-            setUserVariable(context, statement.name, statement.value);
-            return getUnusedEvaluationResult(world);
-        case StatementType.SetVariableNumeric:
+        case StatementType.SetVariableNumeric: {
             if (!statement.name || !statement.value || typeof statement.value === 'string' || isConditionStatement(statement.value)) {
                 throw invalidProgramError('The value for the variable has different type.');
             }
             const value = getObjectFromStatement(statement.value, context, world, shipId);
             if (isPosition(value))
                 throw invalidProgramError('Cannot set position to a variable yet.');
-            if (isUserProgramError(value))
+            if (isUserProgramError(value) || value === evaluationInProgress)
                 return getUnusedEvaluationResult(value);
 
             setUserVariable(context, statement.name, typeof value === 'number' ? value.toString() : value);
             return getUnusedEvaluationResult(world);
+        }
         case StatementType.FunctionCallVoid:
             const statementTyped = statement as IFunctionCall;
             const executionId = getFunctionExecutionId(context, statementTyped.name, statementTyped.parameters);
@@ -222,6 +218,7 @@ const evaluateActionStatement = (
 
             if (!existingExecution) {
                 const parameters = getCallParametersValues(statementTyped, context, world, shipId);
+                console.warn('Calling fnc ' + statementTyped.name, ' params ', parameters);
                 if (isUserProgramError(parameters) || parameters === evaluationInProgress)
                     return getUnusedEvaluationResult(parameters);
                 setSystemVariable(
@@ -239,6 +236,8 @@ const evaluateActionStatement = (
                 const result = isConditionStatement(statement.value) ?
                     evaluateCondition(statement.value, world, shipId, context) :
                     getObjectFromStatement(statement.value, context, world, shipId);
+                if (isUserProgramError(result) || result === evaluationInProgress)
+                    return getUnusedEvaluationResult(result);
                 setSystemVariable(context, SystemVariableName.FunctionReturned, { result });
             }
             context.hasEnded = true;
@@ -358,6 +357,7 @@ export const doNextStep = (
     context: IRuntimeContext,
     behaviours: IGameBehaviours
 ): [IRuntimeContext, World] | UserProgramError => {
+    console.log(context.minorActionsLeft);
     if (context.minorActionsLeft <= 0) {
         console.log('No actions left, let others play too.');
         return [context, world];
@@ -371,6 +371,9 @@ export const doNextStep = (
         return result;
 
     result[0].minorActionsLeft--;
+    if (result[0].minorActionsLeft === 0) {
+        console.warn('There are no minor action left!!!');
+    }
     console.log('----------end step for ', shipId, ', action used: ', result[0].wasActionExecuted, 'minors left: ', result[0].minorActionsLeft, '----------');
 
     return result;

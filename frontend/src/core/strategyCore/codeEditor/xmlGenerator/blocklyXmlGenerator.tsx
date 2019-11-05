@@ -101,7 +101,7 @@ function generateSetStringVariableBlock(statement: IStatement, nextNodes: IBlock
     return `
     <block type="setVariable">
         <field name="name">${statement.name}</field>
-        <field name="value">${statement.value}</field>
+        <value name="value">${generateValueStatement(statement.value as IStatement)}</value>
         ${generateNextBlocksIfPresent(nextNodes)}
     </block>
     `;

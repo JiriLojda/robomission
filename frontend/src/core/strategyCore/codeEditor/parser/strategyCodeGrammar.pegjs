@@ -102,7 +102,7 @@ ActionStatementType
   = "fly"/"shoot"/"left"/"right"/"pick_up_diamond"/"turn-right"/"turn-left"
 
 SetStringVariableStatement
-  = name:Identifier __ "=" __ value:StringValue
+  = name:Identifier __ "=" __ value:String
     { return { head: 'setVariable', name: name, value: value } }
 
 SetNumericVariableStatement

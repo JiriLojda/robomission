@@ -209,7 +209,7 @@ export interface ISetVariableStatement extends IStatement {
     test: undefined;
     count: undefined;
     name: string;
-    value: string;
+    value: IStatement;
 }
 
 export interface ISetVariableNumericStatement extends IStatement {

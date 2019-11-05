@@ -1367,7 +1367,7 @@
                       if (s3 !== peg$FAILED) {
                           s4 = peg$parse__();
                           if (s4 !== peg$FAILED) {
-                              s5 = peg$parseStringValue();
+                              s5 = peg$parseString();
                               if (s5 !== peg$FAILED) {
                                   peg$savedPos = s0;
                                   s1 = peg$c47(s1, s5);

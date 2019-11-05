@@ -84,7 +84,7 @@ function generateStatement(statement: IStatement): string {
         case StatementType.SetVariableNumeric:
             return `${statement.name} = ${generateStatement(statement.value as IStatement)}`;
         case StatementType.SetVariable:
-            return `${statement.name} = ${statement.value}`;
+            return `${statement.name} = ${generateStatement(statement.value as IStatement)}`;
         case StatementType.FunctionCallString:
         case StatementType.FunctionCallNumber:
         case StatementType.FunctionCallVoid:

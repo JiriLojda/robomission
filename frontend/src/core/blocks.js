@@ -390,9 +390,9 @@ const blocks = [
         text: 'name',
       },
       {
-        type: 'field_input',
+        type: 'input_value',
         name: 'value',
-        text: 'value',
+        check: 'String',
       },
     ],
     previousStatement: null,

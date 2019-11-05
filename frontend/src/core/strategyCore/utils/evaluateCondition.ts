@@ -306,7 +306,7 @@ const handleObjectComparison = (condition: IColorCondition | IPositionCondition 
         if (!isPosition(position))
             throw invalidProgramError('Position is expected here.', 'handleObjectComparison');
 
-        if (isPositionInWorld(position, world))
+        if (!isPositionInWorld(position, world))
             return condition.value !== endOfMapConstant;
         const objects = getWorldObjectsOnTile(position, world);
         return !unifyShips(objects.map(o => o.type)).contains(condition.value as WorldObjectType);
