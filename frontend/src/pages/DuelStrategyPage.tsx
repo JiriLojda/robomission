@@ -3,6 +3,7 @@ import {StrategyLevelsOverview} from "../components/StrategyLevelsOverview";
 import {IGameLevel} from "../core/strategyCore/battleRunner/IGameLevel";
 import {List} from "immutable";
 import {connect} from "react-redux";
+import {duelLevelsCategories} from "../core/strategyCore/levels/allDuelLevels";
 
 interface IProps {
     readonly allLevels: List<IGameLevel>;
@@ -22,7 +23,7 @@ const StrategyPageComponent: React.ComponentType<IProps> = props => (
             right: 0,
         }}
     >
-        <StrategyLevelsOverview allLevels={props.allLevels}/>
+        <StrategyLevelsOverview allLevelsCategories={duelLevelsCategories} />
     </div>
 );
 
