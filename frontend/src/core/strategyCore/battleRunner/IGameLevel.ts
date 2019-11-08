@@ -6,11 +6,14 @@ import {ShipId} from "../models/ship";
 import {IRoboAst} from "../models/programTypes";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 import {BlocklyToolbox} from "../constants/strategyToolbox";
+import {IValidatorResult} from "../validator/programValidator";
 
 export type LevelHelp = {
     readonly text: string;
     readonly title: string;
 }
+
+export type RoboAstValidator = (roboAst: IRoboAst) => IValidatorResult;
 
 export interface IGameLevel {
     readonly name: string;
@@ -23,6 +26,7 @@ export interface IGameLevel {
     readonly gameBehaviours: IGameBehaviours;
     readonly toolbox: BlocklyToolbox;
     readonly help: LevelHelp;
+    readonly additionalValidators: List<RoboAstValidator>;
 }
 
 export const isGameLevelValid = (level: IGameLevel): boolean =>

@@ -21,6 +21,10 @@ export enum InvalidProgramReason {
     FncReturnsDifferentTypes = 'FncReturnsDifferentTypes',
     FncCallReturnTypeMismatch = 'FncCallReturnTypeMismatch',
     None = 'None',
+
+    // custom levels validation errors
+    FunctionsCannotBeDefined = 'FunctionsCannotBeDefined',
+    MaximumNumberOfBlocksReached = 'MaximumNumberOfBlocksReached',
 }
 
 export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
@@ -37,6 +41,8 @@ export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.FncIsCalledWithDifferentReturnTypes,
     InvalidProgramReason.FncReturnsDifferentTypes,
     InvalidProgramReason.FncCallReturnTypeMismatch,
+    InvalidProgramReason.FunctionsCannotBeDefined,
+    InvalidProgramReason.MaximumNumberOfBlocksReached,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -81,9 +87,17 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return 'Some of your functions return different type the expected by it\'s calls.';
         case InvalidProgramReason.None:
             return 'No problem here.';
+
+        // Custom levels validation errors
+        case InvalidProgramReason.FunctionsCannotBeDefined:
+            return wrapCustomLevelValidationMessage('usage of functions is prohibited.');
+        case InvalidProgramReason.MaximumNumberOfBlocksReached:
+            return wrapCustomLevelValidationMessage('there is a limit on number of blocks used and you crossed it.');
         default:
             throw new Error(`Unknown invalid program reason ${reason}.`);
     }
 };
 
 const getBadParserMessage = (message: string): string => `Bad parser: ${message}.`;
+
+const wrapCustomLevelValidationMessage = (message: string): string => `In this level: ${message}`;

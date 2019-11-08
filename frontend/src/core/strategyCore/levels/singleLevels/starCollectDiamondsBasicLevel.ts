@@ -32,4 +32,5 @@ export const starCollectDiamondsBasicLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    additionalValidators: List(),
 };

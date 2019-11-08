@@ -31,6 +31,7 @@ import {Toggle} from "material-ui";
 import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
 import {MapOverlay} from "./MapOverlay";
 import {HelpModal} from "../uiComponents/HelpModal";
+import {getValidatorResult} from "../../core/strategyCore/validator/programValidationUtils";
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
@@ -115,7 +116,14 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
     _onXmlChange = (e: unknown) => {
         const roboAst = blocklyXmlToRoboAst(e);
         const validationResult = isRoboAstValid(roboAst);
-        this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: validationResult.reason}));
+        const withAdditionalValidation = !validationResult.isValid ?
+            validationResult :
+            this.props.level.additionalValidators
+                .reduce(
+                    (found, validator) => !found.isValid ? found : validator(roboAst),
+                    getValidatorResult(true, InvalidProgramReason.None)
+                );
+        this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: withAdditionalValidation.reason}));
     };
 
     _onCodeChange = (code: string) => {
@@ -129,10 +137,17 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             return;
         } else {
             const validationResult = isRoboAstValid(parseResult.result);
+            const withAdditionalValidation = !validationResult.isValid ?
+                validationResult :
+                this.props.level.additionalValidators
+                    .reduce(
+                        (found, validator) => !found.isValid ? found : validator(parseResult.result),
+                        getValidatorResult(true, InvalidProgramReason.None)
+                    );
             this.setState(() => ({
                 roboAst: parseResult.result,
                 runtimeContext: getEmptyRuntimeContext(),
-                validationResult: validationResult.reason,
+                validationResult: withAdditionalValidation.reason,
                 codeError: undefined,
             }));
         }

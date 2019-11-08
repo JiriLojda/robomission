@@ -2,11 +2,13 @@ import {List, Map} from "immutable";
 import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollisionResolver";
 import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShotResolver";
-import {IGameLevel, LevelHelp} from "../../../battleRunner/IGameLevel";
+import {IGameLevel, LevelHelp, RoboAstValidator} from "../../../battleRunner/IGameLevel";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
 import {BattleType} from "../../../battleRunner/BattleType";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {smallGetOutWorld} from "../../worlds/intorductoryLevelsWorlds/smallGetOutWorld";
+import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValidator";
+import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -29,6 +31,11 @@ const help: LevelHelp = {
         'You can shoot using the "shoot" command.'
 };
 
+const additionalValidators: List<RoboAstValidator> = List([
+    noFunctionsValidator,
+    createMaxNumberOfBlocksValidator(4),
+]);
+
 export const flyLeftShootLevel: IGameLevel = {
     name: 'First mission',
     urlSlug: 'first-mission',
@@ -40,5 +47,6 @@ export const flyLeftShootLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    additionalValidators,
 };
 

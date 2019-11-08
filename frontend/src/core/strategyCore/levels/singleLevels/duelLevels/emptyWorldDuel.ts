@@ -33,4 +33,5 @@ export const emptyWorldDuel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    additionalValidators: List(),
 };

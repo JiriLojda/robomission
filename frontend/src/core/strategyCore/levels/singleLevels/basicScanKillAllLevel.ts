@@ -32,4 +32,5 @@ export const basicScanKillAllLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    additionalValidators: List(),
 };
