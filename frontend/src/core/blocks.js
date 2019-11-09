@@ -78,7 +78,7 @@ const blocks = [
   },
   {
     id: 'pick_up_diamond',
-    message0: 'pick up diamond',
+    message0: translate('blockly.pickUpDiamond'),
     args0: [],
     previousStatement: null,
     nextStatement: null,
@@ -137,7 +137,7 @@ const blocks = [
   },
   {
     id: 'position_value_relative',
-    message0: `relative ${translate('blockly.position')} to ship x = %1 y = %2`,
+    message0: `${translate('relative')} ${translate('blockly.position')} ${translate('blockly.toShip')} x = %1 y = %2`,
     args0: [
       {
         type: 'input_value',
@@ -213,7 +213,7 @@ const blocks = [
           [translate('object.meteoroid'), 'M'],
           [translate('object.asteroid'), 'A'],
           [translate('object.wormhole'), 'W'],
-          ['The end of map', 'TheEndOfMap'],
+          [translate('object.endOfMap'), 'TheEndOfMap'],
         ],
       },
     ],
@@ -224,7 +224,7 @@ const blocks = [
   },
   {
     id: 'tile_accessible',
-    message0: `${translate('blockly.tile')} %1 is accessible`,
+    message0: `${translate('blockly.tile')} %1 ${translate('blockly.isAccessible')}`,
     args0: [
       {
         type: 'input_value',
@@ -382,7 +382,7 @@ const blocks = [
     //variables
   {
     id: 'setVariable',
-    message0: `set %1 to %2`,
+    message0: `${translate('blockly.set')} %1 ${translate('blockly.to')} %2`,
     args0: [
       {
         type: 'field_input',
@@ -403,7 +403,7 @@ const blocks = [
   },
   {
     id: 'setVariableNumeric',
-    message0: `set %1 to %2`,
+    message0: `${translate('blockly.set')} %1 ${translate('blockly.to')} %2`,
     args0: [
       {
         type: 'field_input',
@@ -424,7 +424,7 @@ const blocks = [
   },
   {
     id: 'getStringVariable',
-    message0: `get %1 as string`,
+    message0: `${translate('blockly.get')} %1 ${translate('blockly.as')} ${translate('blockly.string')}`,
     args0: [
       {
         type: 'field_input',
@@ -439,7 +439,7 @@ const blocks = [
   },
   {
     id: 'getNumericVariable',
-    message0: `get %1 as a number`,
+    message0: `${translate('blockly.get')} %1 ${translate('blockly.as')} ${translate('blockly.number')}`,
     args0: [
       {
         type: 'field_input',
@@ -455,7 +455,7 @@ const blocks = [
     //comparators
   {
     id: 'numericCompare',
-    message0: `number %1 %2 number %3`,
+    message0: `${translate('blockly.number')} %1 %2 ${translate('blockly.number')} %3`,
     args0: [
       {
         type: 'input_value',
@@ -487,7 +487,7 @@ const blocks = [
   },
   {
     id: 'stringCompare',
-    message0: `string %1 %2 string %3`,
+    message0: `${translate('blockly.string')} %1 %2 ${translate('blockly.string')} %3`,
     args0: [
       {
         type: 'input_value',
@@ -552,7 +552,7 @@ const blocks = [
   },
   {
     id: 'logic_not',
-    message0: `not %1`,
+    message0: `${translate('blockly.not')} %1`,
     args0: [
       {
         type: 'input_value',
@@ -615,7 +615,7 @@ const blocks = [
   },
   {
     id: 'function_definition',
-    message0: 'function %1 %2',
+    message0: `${translate('blockly.function')} %1 %2`,
     args0: [
       {
         type: 'field_input',
@@ -635,7 +635,7 @@ const blocks = [
   },
   {
     id: 'function_parameter_definition',
-    message0: `arg %1 %2`,
+    message0: `${translate('blockly.parameter')} %1 %2`,
     args0: [
       {
         type: 'field_input',
@@ -655,7 +655,7 @@ const blocks = [
   },
   {
     id: 'function_parameter_call',
-    message0: `value %1 next:%2`,
+    message0: `${translate('blockly.value')} %1 ${translate('blockly.next')}:%2`,
     args0: [
       {
         type: 'input_value',
@@ -675,7 +675,7 @@ const blocks = [
   },
   {
     id: 'function_call_boolean',
-    message0: `call %1 parameters: %2 as boolean`,
+    message0: `${translate('blockly.call')} %1 ${translate('blockly.parameters')}: %2 ${translate('blockly.as')} ${translate('blockly.boolean')}`,
     args0: [
       {
         type: 'field_input',
@@ -695,7 +695,7 @@ const blocks = [
   },
   {
     id: 'function_call_number',
-    message0: `call %1 parameters: %2 as number`,
+    message0: `${translate('blockly.call')} %1 ${translate('blockly.parameters')}: %2 ${translate('blockly.as')} ${translate('blockly.number')}`,
     args0: [
       {
         type: 'field_input',
@@ -715,7 +715,7 @@ const blocks = [
   },
   {
     id: 'function_call_string',
-    message0: `call %1 parameters: %2 as string`,
+    message0: `${translate('blockly.call')} %1 ${translate('blockly.parameters')}: %2 ${translate('blockly.as')} ${translate('blockly.string')}`,
     args0: [
       {
         type: 'field_input',
@@ -735,7 +735,7 @@ const blocks = [
   },
   {
     id: 'function_call_void',
-    message0: `call %1 parameters: %2 as action`,
+    message0: `${translate('blockly.call')} %1 ${translate('blockly.parameters')}: %2 ${translate('blockly.as')} ${translate('blockly.void')}`,
     args0: [
       {
         type: 'field_input',
@@ -756,7 +756,7 @@ const blocks = [
   },
   {
     id: 'function_return',
-    message0: `return %1`,
+    message0: `${translate('blockly.return')} %1`,
     args0: [
       {
         type: 'input_value',
@@ -771,7 +771,7 @@ const blocks = [
   },
   {
     id: 'get_ship_position',
-    message0: `get position of ship %1`,
+    message0: `${translate('blockly.getPositionOfShip')} %1`,
     args0: [
       {
         type: 'input_value',
@@ -786,7 +786,7 @@ const blocks = [
   },
   {
     id: 'get_position_coordinate',
-    message0: `get coordinate %1 of %2`,
+    message0: `${translate('blockly.getCoordinate')} %1 ${translate('blockly.of')} %2`,
     args0: [
       {
         type: 'input_value',
@@ -806,7 +806,7 @@ const blocks = [
   },
   {
     id: 'get_direction_of_ship',
-    message0: `direction of ship %1`,
+    message0: `${translate('blockly.getDirectionOfShip')} %1`,
     args0: [
       {
         type: 'input_value',

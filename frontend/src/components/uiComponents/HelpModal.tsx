@@ -12,7 +12,7 @@ interface IHelpModalProps {
 
 const getModalActions = (onClose: () => void) => [
     <FlatButton
-        label={'close'}
+        label={translate('Close')}
         primary={true}
         onClick={onClose}
     />,
