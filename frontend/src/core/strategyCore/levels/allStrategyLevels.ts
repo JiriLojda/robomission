@@ -11,12 +11,14 @@ import {firstChallengeLevel} from "./singleLevels/introductoryLevels/firstChalle
 import {firstRepeatLevel} from "./singleLevels/introductoryLevels/firstRepeatLevel";
 import {firstWhileLevel} from "./singleLevels/introductoryLevels/firstWhileLevel";
 import {secondWhileLevel} from "./singleLevels/introductoryLevels/secondWhileLevel";
+import {firstIfsLevel} from "./singleLevels/introductoryLevels/firstIfsLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
     turnPickUpLevel,
     firstChallengeLevel,
     firstRepeatLevel,
+    firstIfsLevel,
     firstWhileLevel,
     secondWhileLevel,
 ];
