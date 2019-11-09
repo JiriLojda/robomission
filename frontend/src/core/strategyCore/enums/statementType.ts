@@ -16,6 +16,7 @@ export enum StatementType {
     GetStringVariable = 'getStringVariable',
     GetNumericVariable = 'getNumericVariable',
     ConstantNumber = 'constant_number',
+    RandomNumber = 'random_number',
     ConstantString = 'constant_string',
     NumberBinary = 'number_binary',
     FunctionDefinition = 'function_definition',

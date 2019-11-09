@@ -99,6 +99,8 @@ function blockToAst(block) {
       return constantBooleanToAst(block);
     case 'constant_number':
       return constantNumberToAst(block);
+    case 'random_number':
+      return randomNumberToAst(block);
     case 'constant_string':
       return constantStringToAst(block);
     case 'number_binary':
@@ -339,6 +341,10 @@ function getDirectionOfShipToAst(block) {
   const shipId = blockToAst(getValueBlock(block, 'shipId'));
 
   return {head: 'get_direction_of_ship', shipId};
+}
+
+function randomNumberToAst(block) {
+  return {head: 'random_number'};
 }
 
 //helpers

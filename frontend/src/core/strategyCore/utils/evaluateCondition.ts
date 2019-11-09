@@ -156,6 +156,9 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
             }
             return number;
         }
+        case StatementType.RandomNumber: {
+            return Math.random() * 100 % 1;
+        }
         case StatementType.ConstantString: {
             if (typeof statement.value !== 'string') {
                 throw new Error('You have to define constant string value.');

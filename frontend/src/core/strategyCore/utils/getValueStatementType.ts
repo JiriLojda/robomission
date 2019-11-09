@@ -20,6 +20,7 @@ export const getValueStatementType = (statement: IStatement | Condition): ValueS
         case StatementType.NumberBinary:
         case StatementType.FunctionCallNumber:
         case StatementType.ConstantNumber:
+        case StatementType.RandomNumber:
         case StatementType.GetNumericVariable:
         case StatementType.GetPositionCoordinate:
             return ValueStatementType.Number;
