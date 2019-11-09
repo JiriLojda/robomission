@@ -15,13 +15,16 @@ const allMessages = {
   en: messagesEn,
 };
 
+function getPreferredLanguage() {
+  return window.navigator.languages
+    ? window.navigator.languages[0]
+    : (window.navigator.language || window.navigator.userLanguage)
+}
 
 export function getLocale() {
-  const labels = getDomainLabels();
-  const firstLabel = labels[0];
-  const domainIndex = availableDomains.indexOf(firstLabel);
-  const locale = (domainIndex >= 0) ? availableDomains[domainIndex] : defaultLocale;
-  return locale;
+  const browserPreferred = getPreferredLanguage();
+
+  return availableDomains.includes(browserPreferred) ? browserPreferred : defaultLocale;
 }
 
 
