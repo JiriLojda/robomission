@@ -3,6 +3,7 @@ import {BattleType} from "./BattleType";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {arePositionsEqual, Position} from "../models/position";
 import {List} from "immutable";
+import {WorldObjectType} from "../enums/worldObjectType";
 
 export interface IBattleEndParams {
     readonly turnsRan: number;
@@ -16,11 +17,13 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
     switch (battleType) {
         case BattleType.KillAll:
         case BattleType.CollectOrKill:
-            return isOnlyOneSurvivor(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!);
+            return isOnlyOneSurvivor(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!) || !areDiamondsLeft(world);
         case BattleType.GetThereFirst:
             return areAllShipsDestroyed(world) ||
                 isTimeUp(params!.turnsRan!, params!.maxTurns!) ||
                 someShipReachedDestination(world, params!.finishPositions!);
+        case BattleType.JustCollect:
+            return isTimeUp(params!.turnsRan!, params!.maxTurns) || !areDiamondsLeft(world);
         default:
             throw invalidProgramError(`Unknown battle type ${battleType}`);
     }
@@ -37,10 +40,16 @@ const someShipReachedDestination = (world: World, positions: List<Position>): bo
 
 const isTimeUp = (realTurns: number, maxTurns: number): boolean => realTurns >= maxTurns;
 
+const areDiamondsLeft = (world: World): boolean =>
+    world.objects.some(row =>
+        row.some(tile => tile.some(obj => obj.type === WorldObjectType.Diamond))
+    );
+
 const assertInput = (battleType: BattleType, params?: IBattleEndParams): void => {
     switch (battleType) {
         case BattleType.KillAll:
         case BattleType.CollectOrKill:
+        case BattleType.JustCollect:
             if (battleType === BattleType.KillAll && !hasExactlyThis(["maxTurns", "turnsRan"], params)) {
                 throw invalidProgramError('Kill all battle type does not expect params.');
             }

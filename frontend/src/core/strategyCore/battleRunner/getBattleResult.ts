@@ -24,6 +24,8 @@ export const getBattleResult = (params: IGetBattleResultParams): BattleResult =>
             return getCollectOrKillResult(params);
         case BattleType.GetThereFirst:
             return getGeThereFirst(params);
+        case BattleType.JustCollect:
+            return getJustCollectResult(params);
         default:
             throw invalidProgramError(`Unknown battle type ${params.battleType}`);
     }
@@ -49,6 +51,10 @@ const getCollectOrKillResult: BattleResultGetter = params => {
     if (killAllResult.type === BattleResultType.Decisive)
         return killAllResult;
 
+    return getJustCollectResult(params);
+};
+
+const getJustCollectResult: BattleResultGetter = params => {
     const diamondCounts = params.world.ships
         .map(s => ({
             count: s.carriedObjects.filter(o => o === WorldObjectType.Diamond).count(),

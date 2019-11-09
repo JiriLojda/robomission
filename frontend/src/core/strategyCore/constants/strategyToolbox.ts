@@ -25,9 +25,25 @@ export const addShipIdConstants = (toolbox: BlocklyToolbox, shipIds: ReadonlyArr
         shipIds.map(id => ({ type: BlockType.ConstantString, fields: { value: id } }))
     );
 
-export const allStrategyCategories: BlocklyToolboxCategory[] = [
+export const categoryNames = {
+    commands: 'commands',
+    variables: 'variables',
+    cycles: 'cycles',
+    values: 'values',
+    constants: 'constants',
+    conditions: 'conditions',
+    branching: 'branching',
+    logic: 'logic',
+    functions: 'functions',
+};
+
+export const filterCategories = (toolbox: BlocklyToolbox, categories: string[]): BlocklyToolbox =>
+    toolbox
+        .filter(category => categories.includes(category.name));
+
+export const allStrategyCategories: BlocklyToolbox = [
     {
-        name: 'commands',
+        name: categoryNames.commands,
         blocks: [
             {
                 type: BlockType.Fly,
@@ -54,7 +70,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ],
     },
     {
-        name: 'variables',
+        name: categoryNames.variables,
         blocks: [
             {type: BlockType.SetVariable},
             {type: BlockType.SetVariableNumeric},
@@ -63,14 +79,14 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ],
     },
     {
-        name: 'cycles',
+        name: categoryNames.cycles,
         blocks: [
             {type: BlockType.Repeat},
             {type: BlockType.While},
         ]
     },
     {
-        name: 'values',
+        name: categoryNames.values,
         blocks: [
             {type: BlockType.PositionValue},
             {type: BlockType.PositionValueRelative},
@@ -81,7 +97,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ]
     },
     {
-        name: 'constants',
+        name: categoryNames.constants,
         blocks: [
             {type: BlockType.ConstantBoolean},
             {type: BlockType.ConstantNumber},
@@ -89,7 +105,7 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ]
     },
     {
-        name: 'conditions',
+        name: categoryNames.conditions,
         blocks: [
             {type: BlockType.Tile},
             {type: BlockType.Color},
@@ -100,21 +116,21 @@ export const allStrategyCategories: BlocklyToolboxCategory[] = [
         ]
     },
     {
-        name: 'branching',
+        name: categoryNames.branching,
         blocks: [
             {type: BlockType.If},
             {type: BlockType.IfElse},
         ]
     },
     {
-        name: 'logic',
+        name: categoryNames.logic,
         blocks: [
             {type: BlockType.LogicBinariOperation},
             {type: BlockType.LogicNot},
         ]
     },
     {
-        name: 'functions',
+        name: categoryNames.functions,
         blocks: [
             {type: BlockType.FunctionDefinition},
             {type: BlockType.FunctionParameterDefinition},
