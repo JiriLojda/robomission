@@ -27,6 +27,11 @@ const isValueStatement = (statement?: IStatement | Condition): boolean =>
         StatementType.GetNumericVariable,
         StatementType.GetStringVariable,
         StatementType.NumberBinary,
+        StatementType.GetDirectionOfShip,
+        StatementType.PositionValueRelative,
+        StatementType.PositionValue,
+        StatementType.GetShipPosition,
+        StatementType.GetPositionCoordinate,
         ConditionType.FunctionCallBoolean,
         ConditionType.Color,
         ConditionType.ConstantBoolean,
@@ -52,6 +57,7 @@ const findInnerValueStatements = (statement?: IStatement | Condition): (IStateme
             return findValueStatements(statement.test);
         case StatementType.FunctionReturn:
         case StatementType.SetVariableNumeric:
+        case StatementType.SetVariable:
             return findValueStatements(statement.value as IStatement);
         case ConditionType.NumericCompare:
         case ConditionType.StringCompare:
@@ -68,11 +74,20 @@ const findInnerValueStatements = (statement?: IStatement | Condition): (IStateme
                 .flatMap(p => findValueStatements(p.value));
         case ConditionType.IsTileAccessible:
         case ConditionType.Tile:
-            return findValueStatements(statement.position.x)
-                .concat(findValueStatements(statement.position.y));
+            return findValueStatements(statement.position);
         case StatementType.NumberBinary:
             return findValueStatements((statement as INumberBinaryStatement).leftValue)
                 .concat(findValueStatements((statement as INumberBinaryStatement).rightValue));
+        case StatementType.PositionValue:
+        case StatementType.PositionValueRelative:
+            return findValueStatements(statement.x)
+                .concat(findValueStatements(statement.y));
+        case StatementType.GetShipPosition:
+        case StatementType.GetDirectionOfShip:
+            return findValueStatements(statement.shipId);
+        case StatementType.GetPositionCoordinate:
+            return findValueStatements(statement.coordinate)
+                .concat(findValueStatements(statement.position));
         default:
             return [];
     }

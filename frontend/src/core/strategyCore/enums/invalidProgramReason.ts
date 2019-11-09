@@ -25,6 +25,7 @@ export enum InvalidProgramReason {
     // custom levels validation errors
     FunctionsCannotBeDefined = 'FunctionsCannotBeDefined',
     MaximumNumberOfBlocksReached = 'MaximumNumberOfBlocksReached',
+    RestrictedBlockUsed = 'RestrictedBlockUsed',
 }
 
 export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
@@ -43,6 +44,7 @@ export const userCausedProgramErrors: Set<InvalidProgramReason> = Set([
     InvalidProgramReason.FncCallReturnTypeMismatch,
     InvalidProgramReason.FunctionsCannotBeDefined,
     InvalidProgramReason.MaximumNumberOfBlocksReached,
+    InvalidProgramReason.RestrictedBlockUsed,
 ]);
 
 export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason): string => {
@@ -93,6 +95,8 @@ export const getInvalidProgramReasonDisplayName = (reason: InvalidProgramReason)
             return wrapCustomLevelValidationMessage('usage of functions is prohibited.');
         case InvalidProgramReason.MaximumNumberOfBlocksReached:
             return wrapCustomLevelValidationMessage('there is a limit on number of blocks used and you crossed it.');
+        case InvalidProgramReason.RestrictedBlockUsed:
+            return wrapCustomLevelValidationMessage('you cannot use some blocks, yet you used them.');
         default:
             throw new Error(`Unknown invalid program reason ${reason}.`);
     }

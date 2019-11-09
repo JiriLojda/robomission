@@ -24,6 +24,7 @@ export const HelpModal: React.ComponentType<IHelpModalProps> = props =>
         open={props.isOpened}
         actions={getModalActions(props.onClose)}
         onRequestClose={props.onClose}
+        autoScrollBodyContent
     >
         {props.message}
     </Dialog>);
