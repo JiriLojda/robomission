@@ -12,6 +12,7 @@ import {firstRepeatLevel} from "./singleLevels/introductoryLevels/firstRepeatLev
 import {firstWhileLevel} from "./singleLevels/introductoryLevels/firstWhileLevel";
 import {secondWhileLevel} from "./singleLevels/introductoryLevels/secondWhileLevel";
 import {firstIfsLevel} from "./singleLevels/introductoryLevels/firstIfsLevel";
+import {secondIfsLevel} from "./singleLevels/introductoryLevels/secondIfsLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -19,6 +20,7 @@ const introductoryLevels = [
     firstChallengeLevel,
     firstRepeatLevel,
     firstIfsLevel,
+    secondIfsLevel,
     firstWhileLevel,
     secondWhileLevel,
 ];

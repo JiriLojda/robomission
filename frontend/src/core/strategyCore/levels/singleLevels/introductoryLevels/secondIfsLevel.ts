@@ -8,7 +8,7 @@ import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValida
 import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
-import {firstIfsWorld} from "../../worlds/intorductoryLevelsWorlds/firstIfsWorld";
+import {secondIfsWorld} from "../../worlds/intorductoryLevelsWorlds/secondIfsWorld";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -20,11 +20,9 @@ const behaviours: IGameBehaviours = {
 
 const help: LevelHelp = {
     title: 'Collect the diamonds',
-    text: 'Now we will try ifs. "if" block will execute its body only if the condition given to it evaluates to true. ' +
-        'Otherwise the whole is just skipped. The "if-else" block has additional part. This second part (else part) ' +
-        'will be executed if the condition in the "if" is evaluated to false. ' +
-        'Now in this mission you will have to collect all the diamonds. Your opponent here will do nothing. ' +
-        'You are restricted to the maximum of 7 blocks so you better use a cycle. Also shooting is ineffective.'
+    text: 'This is similar to the previous level, except here some diamonds are missing. ' +
+        'Try to collect them all without hitting into anything. ' +
+        'Again you are limited to 7 blocks, so use them carefully.'
 };
 
 const additionalValidators: List<RoboAstValidator> = List([
@@ -32,14 +30,14 @@ const additionalValidators: List<RoboAstValidator> = List([
     createMaxNumberOfBlocksValidator(7),
 ]);
 
-export const firstIfsLevel: IGameLevel = {
-    name: 'Your first if',
-    urlSlug: 'your-first-if',
+export const secondIfsLevel: IGameLevel = {
+    name: 'If 2',
+    urlSlug: 'if-2',
     battleType: BattleType.JustCollect,
     battleParams: {turnsRan: 0, maxTurns: 100},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[1], createEmptyAst()]]),
-    world: firstIfsWorld,
+    world: secondIfsWorld,
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [
         categoryNames.commands,
