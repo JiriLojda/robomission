@@ -8,11 +8,13 @@ import {starWithDiamondsLevel} from "./singleLevels/starWithDiamondsLevel";
 import {flyLeftShootLevel} from "./singleLevels/introductoryLevels/FlyLeftShootLevel";
 import {turnPickUpLevel} from "./singleLevels/introductoryLevels/TurnPickUpLevel";
 import {firstChallengeLevel} from "./singleLevels/introductoryLevels/firstChallengeLevel";
+import {firstRepeatLevel} from "./singleLevels/introductoryLevels/firstRepeatLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
     turnPickUpLevel,
     firstChallengeLevel,
+    firstRepeatLevel,
 ];
 
 const otherLevels = [
