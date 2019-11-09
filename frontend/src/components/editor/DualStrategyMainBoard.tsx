@@ -148,6 +148,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 canRunBattle={false}
                 initialAst={this.state.roboAsts.first}
                 showMapAndHelpOnMount={false}
+                shouldDisplayExportAst={false}
                 onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, first: newAst}, showEditorFor: "none"}))}
             />;
         }
@@ -157,6 +158,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 canRunBattle={false}
                 initialAst={this.state.roboAsts.second}
                 showMapAndHelpOnMount={false}
+                shouldDisplayExportAst={false}
                 onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, second: newAst}, showEditorFor: "none"}))}
             />;
         }

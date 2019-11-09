@@ -74,6 +74,7 @@ export interface IStrategyEditorProps {
     readonly onCodeSubmit?: (code: IRoboAst) => void;
     readonly initialAst: IRoboAst;
     readonly showMapAndHelpOnMount: boolean;
+    readonly shouldDisplayExportAst: boolean;
 }
 
 interface IState {
@@ -278,11 +279,13 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         style={{ margin: 2, minWidth: 50 }}
                         onClick={this._reset}
                     />
-                    <RaisedButton
-                        label={'ast to console'}
-                        style={{ margin: 2, minWidth: 50 }}
-                        onClick={() => console.log(JSON.stringify(this.state.roboAst))}
-                    />
+                    {this.props.shouldDisplayExportAst &&
+                        <RaisedButton
+                            label={'ast to console'}
+                            style={{margin: 2, minWidth: 50}}
+                            onClick={() => console.log(JSON.stringify(this.state.roboAst))}
+                        />
+                    }
                     <RaisedButton
                         label={'show help'}
                         style={{ margin: 2, minWidth: 50 }}

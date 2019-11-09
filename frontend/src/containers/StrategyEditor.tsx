@@ -18,6 +18,7 @@ const mapStateToProps = (state: any, ownProps: IOwnProps): IStrategyEditorProps 
         initialAst: emptyAst,
         onCodeSubmit: undefined,
         showMapAndHelpOnMount: true,
+        shouldDisplayExportAst: process.env.NODE_ENV === 'development',
     };
 };
 
