@@ -11,7 +11,7 @@ export interface IStrategyLevelsOverviewDataProps {
 export const StrategyLevelsOverview: React.ComponentType<IStrategyLevelsOverviewDataProps> = props => (
     <LongPage>
         {props.allLevelsCategories.map(([categoryName, categoryLevels], index) =>
-            <LevelsCategoryCard allLevels={categoryLevels} categoryName={categoryName} categoryIndex={index}/>
+            <LevelsCategoryCard key={index} allLevels={categoryLevels} categoryName={categoryName} categoryIndex={index}/>
         )}
     </LongPage>
 );

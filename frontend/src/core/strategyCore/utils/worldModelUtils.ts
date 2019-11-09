@@ -1,21 +1,23 @@
 import {MovingDirection} from "../enums/movingDirection";
 import {
     addObjectOnPosition,
-    getObjectsOnPosition, getObjectsOnPositionWithShips,
-    isEnterablePosition, isPositionInWorld,
+    getObjectsOnPosition,
+    getObjectsOnPositionWithShips,
+    isEnterablePosition,
+    isPositionInWorld,
     setObjectsOnPosition,
     World
 } from "../models/world";
 import {Ship, ShipId} from "../models/ship";
 import {arePositionsEqual, Position} from "../models/position";
 import {
-    destructableObjects,
-    laserBlockingObjects,
+    standardDestructibleObjects,
     shipRepresentingObjects,
-    WorldObjectType
+    WorldObjectType,
+    standardLaserBlockingObjects
 } from "../enums/worldObjectType";
 import {Direction} from "../enums/direction";
-import {List} from "immutable";
+import {List, Set} from "immutable";
 import {getNextDirection, getNthPositionInDirection, getPositionToFlyOn} from "./directionUtils";
 import {invalidProgramError} from "./invalidProgramError";
 import {WorldObject} from "../models/worldObject";
@@ -77,20 +79,24 @@ export const getCannotMoveReason = (world: World, ship: Ship, direction: MovingD
 type CannotMoveReason = 'None' | 'EndOfMap' | 'AnotherShip' | 'Object';
 
 
-export const makeShipShoot = (world: World, shipId: ShipId): World => {
+export const makeShipShoot = (
+    world: World,
+    shipId: ShipId,
+    destructibleObjects: Set<WorldObjectType> = standardDestructibleObjects,
+    laserBlockingObjects: Set<WorldObjectType> = standardLaserBlockingObjects,
+): World => {
     const ship = getShip(world, shipId);
 
     if (!ship) {
         throw new Error(`Cannot find a ship with id '${shipId}'.`);
     }
 
-    let newWorld = world;
-    getPositionsInFrontOfShip(ship, world).reduce((laserStopped, shootPosition) => {
-        if (laserStopped)
-            return true;
+    return getPositionsAffectedByShot(ship, world, laserBlockingObjects).reduce((newWorld, shootPosition) => {
         let objects = getObjectsOnPosition(world, shootPosition.x, shootPosition.y);
-        laserStopped = objects.some(o => laserBlockingObjects.contains(o.type));
-        if (objects.some(o => destructableObjects.contains(o.type))) {
+        if (objects.some(o => !destructibleObjects.contains(o.type))) {
+            return newWorld;
+        }
+        if (objects.some(o => destructibleObjects.contains(o.type))) {
             objects = objects.push(new WorldObject({type: WorldObjectType.Explosion}));
         }
         if (ship.direction === Direction.Left || ship.direction === Direction.Right) {
@@ -98,14 +104,37 @@ export const makeShipShoot = (world: World, shipId: ShipId): World => {
         } else {
             objects = objects.push(new WorldObject({type: WorldObjectType.Laser}));
         }
-        objects = objects.filter(o => !destructableObjects.contains(o.type));
+        objects = objects.filter(o => !destructibleObjects.contains(o.type));
         newWorld = setObjectsOnPosition(newWorld, shootPosition.x, shootPosition.y, objects);
         newWorld = killShipsOnPosition(newWorld, shootPosition);
-        return laserStopped;
-    }, false);
-
-    return newWorld;
+        return newWorld;
+    }, world);
 };
+
+const isShotStopped = (world: World, position: Position, laserStoppingObjects: Set<WorldObjectType>): boolean =>
+    getObjectsOnPositionWithShips(world, position.x, position.y)
+        .some(o => laserStoppingObjects.has(o.type));
+
+const getPositionsAffectedByShot = (ship: Ship, world: World, laserStoppingObjects: Set<WorldObjectType>): List<Position> =>
+    getPositionsInFrontOfShip(ship, world)
+        .reduce(
+            (acc, position) => {
+                const laserStopped = acc.laserStopped || isShotStopped(world, position, laserStoppingObjects);
+                return ({
+                    laserStopped,
+                    result: !laserStopped || (!acc.laserStopped && isShotStopped(world, position, laserStoppingObjects)) ?
+                        acc.result.push(position) :
+                        acc.result,
+                });
+            },
+            {laserStopped: false, result: List()}
+            ).result;
+
+export const findObjectToShoot = (world: World, ship: Ship): WorldObject | undefined =>
+    getPositionsInFrontOfShip(ship, world)
+        .map(position => world.objects.get(position.y)!.get(position.x)!)
+        .map(objects => objects.find(o => standardDestructibleObjects.contains(o.type)))
+        .find(object => !!object);
 
 export const makeShipPickupDiamond = (world: World, shipId: ShipId): World => {
     const ship = getShip(world, shipId);

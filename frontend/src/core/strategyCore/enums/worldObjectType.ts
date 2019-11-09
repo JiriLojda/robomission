@@ -18,20 +18,6 @@ export enum WorldObjectType {
     Explosion = 'explosion',
 }
 
-export const destructableObjects: Set<WorldObjectType> = Set([
-    WorldObjectType.Ship,
-    WorldObjectType.ShipUp,
-    WorldObjectType.ShipDown,
-    WorldObjectType.ShipLeft,
-    WorldObjectType.ShipRight,
-    WorldObjectType.Meteoroid,
-    WorldObjectType.Asteroid,
-]);
-
-export const laserBlockingObjects: Set<WorldObjectType> = Set([
-    ...destructableObjects.toArray(),
-]);
-
 export const shipRepresentingObjects: Set<WorldObjectType> = Set([
     WorldObjectType.ShipRight,
     WorldObjectType.ShipLeft,
@@ -39,6 +25,16 @@ export const shipRepresentingObjects: Set<WorldObjectType> = Set([
     WorldObjectType.ShipUp,
     WorldObjectType.Ship,
     WorldObjectType.ShipBroken,
+]);
+
+export const standardDestructibleObjects: Set<WorldObjectType> = Set([
+    ...shipRepresentingObjects.toArray(),
+    WorldObjectType.Meteoroid,
+    WorldObjectType.Asteroid,
+]);
+
+export const standardLaserBlockingObjects: Set<WorldObjectType> = Set([
+    ...standardDestructibleObjects.toArray(),
 ]);
 
 export const shipBlockingObjects: Set<WorldObjectType> = Set([

@@ -7,20 +7,12 @@ import {narrowAlleyPassLevel} from "./singleLevels/narrowAlleyPassLevel";
 import {starWithDiamondsLevel} from "./singleLevels/starWithDiamondsLevel";
 import {flyLeftShootLevel} from "./singleLevels/introductoryLevels/FlyLeftShootLevel";
 import {turnPickUpLevel} from "./singleLevels/introductoryLevels/TurnPickUpLevel";
+import {firstChallengeLevel} from "./singleLevels/introductoryLevels/firstChallengeLevel";
 
-export const allStrategyLevels: List<IGameLevel> = List([
-    basicScanKillAllLevel,
-    starCollectDiamondsBasicLevel,
-    basicRaceLevel,
-    narrowAlleyPassLevel,
-    starWithDiamondsLevel,
+const introductoryLevels = [
     flyLeftShootLevel,
     turnPickUpLevel,
-]);
-
-const intoductoryLevels = [
-    flyLeftShootLevel,
-    turnPickUpLevel,
+    firstChallengeLevel,
 ];
 
 const otherLevels = [
@@ -32,6 +24,11 @@ const otherLevels = [
 ];
 
 export const strategyLevelsCategories: List<[string, List<IGameLevel>]> = List([
-    ['Introduction', List(intoductoryLevels)],
+    ['Introduction', List(introductoryLevels)],
     ['Others', List(otherLevels)],
+]);
+
+export const allStrategyLevels: List<IGameLevel> = List([
+    ...introductoryLevels,
+    ...otherLevels,
 ]);

@@ -16,6 +16,7 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
 
     switch (battleType) {
         case BattleType.KillAll:
+            return isOnlyOneSurvivor(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!);
         case BattleType.CollectOrKill:
             return isOnlyOneSurvivor(world) || isTimeUp(params!.turnsRan!, params!.maxTurns!) || !areDiamondsLeft(world);
         case BattleType.GetThereFirst:
