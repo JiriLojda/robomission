@@ -171,6 +171,17 @@ export default {
   'blockly.getCoordinate': 'get coordinate',
   'blockly.toShip': 'to ship',
   'blockly.getPositionOfShip': 'get position of ship',
+
+  'blockly.categories.commands': 'commands',
+  'blockly.categories.variables': 'variables',
+  'blockly.categories.cycles': 'cycles',
+  'blockly.categories.values': 'values',
+  'blockly.categories.constants': 'constants',
+  'blockly.categories.conditions': 'conditions',
+  'blockly.categories.branching': 'branching',
+  'blockly.categories.logic': 'logic',
+  'blockly.categories.functions': 'functions',
+
   'object.ship': 'ship',
   'object.diamond': 'diamond',
   'object.meteoroid': 'meteoroid',

@@ -1,4 +1,5 @@
 import {BlockType} from "../enums/blockType";
+import {translate} from "../../../localization";
 
 export type BlocklyBlock = {
     readonly type: BlockType,
@@ -26,15 +27,15 @@ export const addShipIdConstants = (toolbox: BlocklyToolbox, shipIds: ReadonlyArr
     );
 
 export const categoryNames = {
-    commands: 'commands',
-    variables: 'variables',
-    cycles: 'cycles',
-    values: 'values',
-    constants: 'constants',
-    conditions: 'conditions',
-    branching: 'branching',
-    logic: 'logic',
-    functions: 'functions',
+    commands: translate('blockly.categories.commands'),
+    variables: translate('blockly.categories.variables'),
+    cycles: translate('blockly.categories.cycles'),
+    values: translate('blockly.categories.values'),
+    constants: translate('blockly.categories.constants'),
+    conditions: translate('blockly.categories.conditions'),
+    branching: translate('blockly.categories.branching'),
+    logic: translate('blockly.categories.logic'),
+    functions: translate('blockly.categories.functions'),
 };
 
 export const filterCategories = (toolbox: BlocklyToolbox, categories: string[]): BlocklyToolbox =>

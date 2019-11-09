@@ -171,6 +171,17 @@ export default {
   'blockly.getCoordinate': 'vezmi souřadnici',
   'blockly.toShip': 'k lodi',
   'blockly.getPositionOfShip': 'vezmi pozici lodě',
+
+  'blockly.categories.commands': 'povely',
+  'blockly.categories.variables': 'proměnné',
+  'blockly.categories.cycles': 'smyčky',
+  'blockly.categories.values': 'hodnoty',
+  'blockly.categories.constants': 'konstanty',
+  'blockly.categories.conditions': 'podmínky',
+  'blockly.categories.branching': 'větvení',
+  'blockly.categories.logic': 'logika',
+  'blockly.categories.functions': 'funkce',
+
   'object.ship': 'loď',
   'object.diamond': 'diamant',
   'object.meteoroid': 'meteorit',
