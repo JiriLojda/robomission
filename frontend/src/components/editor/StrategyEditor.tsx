@@ -203,11 +203,6 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
         this._drawHistory(result.history.reverse());
     };
 
-     _importAst = () => {
-         const ast = JSON.parse(prompt('Enter your ast here', 'ast') || '[]');
-         this.setState(() => ({roboAst: ast, validationResult: isRoboAstValid(ast).reason}));
-     };
-
     _renderEditor = () => this.state.useCodeEditor ? (
         <CodeEditor
             code={this.state.code || ''}
@@ -287,11 +282,6 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         label={'ast to console'}
                         style={{ margin: 2, minWidth: 50 }}
                         onClick={() => console.log(JSON.stringify(this.state.roboAst))}
-                    />
-                    <RaisedButton
-                        label={'import ast'}
-                        style={{ margin: 2, minWidth: 50 }}
-                        onClick={this._importAst}
                     />
                     <RaisedButton
                         label={'show help'}
