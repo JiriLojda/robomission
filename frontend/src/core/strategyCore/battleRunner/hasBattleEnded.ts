@@ -23,6 +23,10 @@ export const hasBattleEnded = (world: World, battleType: BattleType, params: IBa
             return areAllShipsDestroyed(world) ||
                 isTimeUp(params!.turnsRan!, params!.maxTurns!) ||
                 someShipReachedDestination(world, params!.finishPositions!);
+        case BattleType.GetThereFirstOrKill:
+            return isOnlyOneSurvivor(world) ||
+                isTimeUp(params!.turnsRan!, params!.maxTurns!) ||
+                someShipReachedDestination(world, params!.finishPositions!);
         case BattleType.JustCollect:
             return isTimeUp(params!.turnsRan!, params!.maxTurns) || !areDiamondsLeft(world);
         default:
@@ -56,6 +60,7 @@ const assertInput = (battleType: BattleType, params?: IBattleEndParams): void =>
             }
             return;
         case BattleType.GetThereFirst:
+        case BattleType.GetThereFirstOrKill:
             if (!hasExactlyThis(['finishPositions', "turnsRan", "maxTurns"], params)) {
                 throw invalidProgramError(`Battle type ${battleType} needs everything set up.`);
             }

@@ -3,4 +3,5 @@ export enum BattleType {
     CollectOrKill = 'collectOrKill',
     GetThereFirst = 'getThereFirst',
     JustCollect = 'justCollect',
+    GetThereFirstOrKill = 'getThereFirstOrKill'
 }

@@ -26,6 +26,8 @@ export const getBattleResult = (params: IGetBattleResultParams): BattleResult =>
             return getGeThereFirst(params);
         case BattleType.JustCollect:
             return getJustCollectResult(params);
+        case BattleType.GetThereFirstOrKill:
+            return getGetThereFirstOrKill(params);
         default:
             throw invalidProgramError(`Unknown battle type ${params.battleType}`);
     }
@@ -87,6 +89,14 @@ const getGeThereFirst: BattleResultGetter = params => {
         return addHistory({type: BattleResultType.Decisive, winner: presentShips.get(0)!.id}, params);
 
     return addHistory({type: BattleResultType.Draw, between: params.world.ships.map(s => s.id).toSet()}, params);
+};
+
+const getGetThereFirstOrKill: BattleResultGetter = params => {
+    const killAllResult = getKillAllResult(params);
+    if (killAllResult.type === BattleResultType.Decisive)
+        return killAllResult;
+
+    return getGeThereFirst(params);
 };
 
 const addHistory = <T>(input: T, params: IGetBattleResultParams): T & {history: List<World>} =>

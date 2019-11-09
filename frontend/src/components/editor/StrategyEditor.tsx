@@ -92,7 +92,7 @@ interface IState {
     isHelpModalShown: boolean;
 }
 
-const shouldShowMinimap = (world: World) => world.size.x <= 5;
+const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 7;
 
 export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IState> {
 
