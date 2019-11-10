@@ -1,4 +1,6 @@
 /* eslint-disable quote-props */
+import {UserProgramError} from "../core/strategyCore/enums/userProgramError";
+
 export default {
   'Close': 'Close',
   'I understand': 'I understand',
@@ -331,4 +333,24 @@ export default {
   'user.signup': 'Sign Up',
   'user.login-failed': 'Incorrect email or password.',
   'user.signup-success': 'You have signed up successfully!',
+
+  'UserProgramError.ShipCannotMove':
+    'Your ship cannot move this way.',
+  'UserProgramError.VariableDoesNotExist':
+    'You tried to get a variable that was not set before.',
+  'UserProgramError.VariableIsNotNumerical':
+    'You tried to get a non-numerical value as numerical.',
+  'UserProgramError.ReferencedPositionIsNotOnMap':
+    'You referenced a tile outside the map. Please check your program.',
+  'UserProgramError.GotDifferentTypeThanExpected':
+    'Some of your statement returned different type than was expected. Please contact the author as this is unexpected.',
+  'UserProgramError.ProvidedShipIdDoesNotExist':
+    'The shipId you provided to getShipPosition does not exist. Please revisit the statement.',
+  'UserProgramError.ProvidedStringIsNotCoordinate':
+    'The provided string does not specify any coordinate. You have to put "x" or "y" there.',
+
+  'BattleResult.UserProgramError': 'caused an error:',
+  'BattleResult.Win': 'You won!!! Yay',
+  'BattleResult.Draw': 'Ups seems we have a draw between',
+  'BattleResult.Loose': 'Damn son, you lost. Try it again.',
 };

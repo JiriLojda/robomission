@@ -331,4 +331,24 @@ export default {
   'user.signup': 'Registrace',
   'user.login-failed': 'Nesprávný email nebo heslo.',
   'user.signup-success': 'Registrace proběhla úspěšně!',
+
+  'UserProgramError.ShipCannotMove':
+    'Tvoje loď se nemůže hýbat.',
+  'UserProgramError.VariableDoesNotExist':
+    'Pokusil ses načíst proměnnou, která neexistuje.',
+  'UserProgramError.VariableIsNotNumerical':
+    'Pokusil ses načíst proměnnou která neni číslo, jako číslo.',
+  'UserProgramError.ReferencedPositionIsNotOnMap':
+    'Ukazuješ na pole mimo mapu. Prosím zkontroluj si svůj program.',
+  'UserProgramError.GotDifferentTypeThanExpected':
+    'Některý z bloků vrátil jiný typ hodnoty než je očekáváno. Prosím kontaktuj autora, protože toto chování není očekávané.',
+  'UserProgramError.ProvidedShipIdDoesNotExist':
+    'Zadal jsi id lodě, které neexistuje. Prosím zkontroluj svůj program.',
+  'UserProgramError.ProvidedStringIsNotCoordinate':
+    'Zadaný řetězec nespecifikuje žádnou souřadnici. Prosím zadej "x" nebo "y".',
+
+  'BattleResult.UserProgramError': 'způsobil chybu:',
+  'BattleResult.Win': 'Vyhrál jsi!!!',
+  'BattleResult.Draw': 'Jaj, vypadá to na remízu mezi',
+  'BattleResult.Loose': 'Hm, prohrál jsi. Zkus to znovu.',
 };

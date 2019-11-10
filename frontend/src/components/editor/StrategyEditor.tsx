@@ -42,13 +42,13 @@ const getBattleResultMessage = (result?: BattleResult): string | undefined => {
     if (!result)
         return undefined;
     if (isSuccess(result))
-        return 'You won!!! Yay';
+        return translate('BattleResult.Win');
     if (result.type === BattleResultType.Draw)
-        return `Ups seems we have a draw between ${result.between.join(', ')}.`;
+        return `${translate('BattleResult.Draw')} ${result.between.join(', ')}.`;
     if (result.type === BattleResultType.ProgramError)
-        return `Please, learn to write the code first... you ${result.blame}, ${getUserProgramErrorDisplayName(result.error)}`;
+        return `${result.blame} ${translate('BattleResult.UserProgramError')} ${getUserProgramErrorDisplayName(result.error)}`;
     if (result.type === BattleResultType.Decisive)
-        return 'Damn son, you lost. Try it again.';
+        return translate('BattleResult.Loose');
     throw invalidProgramError(`This should not happen. type: ${result.type}.`, 'getBattleResultMessage');
 };
 
