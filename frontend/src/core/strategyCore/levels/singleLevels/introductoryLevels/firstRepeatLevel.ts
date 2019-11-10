@@ -10,7 +10,7 @@ import {pushCollisionResolver} from "../../../gameBehaviours/pushCollisionResolv
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {firstRepeatWorld} from "../../worlds/intorductoryLevelsWorlds/firstRepeatWorld";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
@@ -29,7 +29,7 @@ const additionalValidators: List<RoboAstValidator> = List([
 ]);
 
 export const firstRepeatLevel: IGameLevel = {
-    name: 'Your first repeat',
+    name: findTranslatedName(HelpTranslationKey.FirstRepeat),
     urlSlug: 'your-first-repeat',
     battleType: BattleType.JustCollect,
     battleParams: {turnsRan: 0, maxTurns: 100},

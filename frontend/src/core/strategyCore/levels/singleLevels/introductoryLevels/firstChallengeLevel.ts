@@ -11,7 +11,7 @@ import {pushCollisionResolver} from "../../../gameBehaviours/pushCollisionResolv
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {shipRepresentingObjects} from "../../../enums/worldObjectType";
 import {justShootingStrategy} from "../../../predefinedStrategies/justShootingStrategy";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
@@ -29,7 +29,7 @@ const additionalValidators: List<RoboAstValidator> = List([
 ]);
 
 export const firstChallengeLevel: IGameLevel = {
-    name: 'First Challenge',
+    name: findTranslatedName(HelpTranslationKey.FirstChallenge),
     urlSlug: 'first-challenge',
     battleType: BattleType.KillAll,
     battleParams: {turnsRan: 0, maxTurns: 100},

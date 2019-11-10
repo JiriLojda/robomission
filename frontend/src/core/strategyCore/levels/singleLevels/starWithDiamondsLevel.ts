@@ -7,7 +7,7 @@ import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveS
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {starWithDiamondsWorld} from "../worlds/starWithDiamondsWorld";
 import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamondsStrategy";
-import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -21,7 +21,7 @@ const shipIds = ['aiShip', 'playerShip'] as const;
 const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.StarWithDiamonds);
 
 export const starWithDiamondsLevel: IGameLevel = {
-    name: 'Star with diamonds',
+    name: findTranslatedName(HelpTranslationKey.StarWithDiamonds),
     urlSlug: 'star-with-diamonds',
     battleType: BattleType.CollectOrKill,
     battleParams: {turnsRan: 0, maxTurns: 100},

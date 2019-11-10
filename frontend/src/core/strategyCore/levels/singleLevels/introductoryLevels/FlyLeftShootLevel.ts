@@ -9,7 +9,7 @@ import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {smallGetOutWorld} from "../../worlds/intorductoryLevelsWorlds/smallGetOutWorld";
 import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -28,7 +28,7 @@ const additionalValidators: List<RoboAstValidator> = List([
 ]);
 
 export const flyLeftShootLevel: IGameLevel = {
-    name: 'First mission',
+    name: findTranslatedName(HelpTranslationKey.FlyLeftShoot),
     urlSlug: 'first-mission',
     battleType: BattleType.KillAll,
     battleParams: {turnsRan: 0, maxTurns: 100},

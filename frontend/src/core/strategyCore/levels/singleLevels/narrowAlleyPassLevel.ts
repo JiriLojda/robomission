@@ -9,7 +9,7 @@ import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper"
 import {narrowPathWorld} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
-import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -29,7 +29,7 @@ const shipIds = ['aiShip', 'playerShip'] as const;
 const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass);
 
 export const narrowAlleyPassLevel: IGameLevel = {
-    name: 'Narrow alley pass',
+    name: findTranslatedName(HelpTranslationKey.NarrowAlleyPass),
     urlSlug: 'narrow-alley-pass',
     battleType: BattleType.GetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions)},

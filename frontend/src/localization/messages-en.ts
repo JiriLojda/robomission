@@ -1,7 +1,8 @@
 /* eslint-disable quote-props */
 import {allEnHelpMessages} from "./helpMessages-en";
+import {HelpTranslationKey} from "./helpTranslationKey";
 
-const messages = {
+const messages: {[index: string]: string} = {
   'Close': 'Close',
   'I understand': 'I understand',
   'Intro': 'Intro',
@@ -406,6 +407,29 @@ const messages = {
   'InvalidProgramReason.CustomLevelMessage': 'In this level',
 };
 
+const levelNames: [HelpTranslationKey, string][] = [
+    [HelpTranslationKey.EmptyWorldDuel, 'Empty world duel'],
+    [HelpTranslationKey.FirstChallenge, 'First Challenge'],
+    [HelpTranslationKey.FirstIfs, 'Your first if'],
+    [HelpTranslationKey.FirstRepeat, 'Your first repeat'],
+    [HelpTranslationKey.FirstWhile, 'Your first while'],
+    [HelpTranslationKey.FlyLeftShoot, 'First mission'],
+    [HelpTranslationKey.SecondIfs, 'If 2'],
+    [HelpTranslationKey.SecondWhile, 'Your second while'],
+    [HelpTranslationKey.TurnPickUp, 'Turn around'],
+    [HelpTranslationKey.BasicRace, 'Simple race'],
+    [HelpTranslationKey.BasicScanKillAll, `Kill 'em all basic`],
+    [HelpTranslationKey.NarrowAlleyPass, 'Narrow alley pass'],
+    [HelpTranslationKey.StarCollectDiamondsBasic, `Star collect basic`],
+    [HelpTranslationKey.StarWithDiamonds, 'Star with diamonds'],
+];
+
+const registerLevelNames = () => {
+  for (const [key, name] of levelNames) {
+    messages[`level.${key}.name`] = name;
+  }
+};
+
 const registerHelpMessages = () => {
   for (const help of allEnHelpMessages) {
     messages[`help.${help[0]}.title`] = help[1].title;
@@ -415,4 +439,5 @@ const registerHelpMessages = () => {
   return messages;
 };
 
+registerLevelNames();
 export default registerHelpMessages();

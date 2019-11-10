@@ -9,7 +9,7 @@ import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/creat
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {firstIfsWorld} from "../../worlds/intorductoryLevelsWorlds/firstIfsWorld";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
@@ -28,7 +28,7 @@ const additionalValidators: List<RoboAstValidator> = List([
 ]);
 
 export const firstIfsLevel: IGameLevel = {
-    name: 'Your first if',
+    name: findTranslatedName(HelpTranslationKey.FirstIfs),
     urlSlug: 'your-first-if',
     battleType: BattleType.JustCollect,
     battleParams: {turnsRan: 0, maxTurns: 100},

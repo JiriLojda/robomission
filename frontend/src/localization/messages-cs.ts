@@ -1,7 +1,8 @@
 /* eslint-disable quote-props, max-len */
 import {allCsHelpMessages} from "./helpMessages-cs";
+import {HelpTranslationKey} from "./helpTranslationKey";
 
-const messages = {
+const messages: {[index: string]: string} = {
   'Close': 'Zavřít',
   'I understand': 'Rozumím',
   'Intro': 'Intro',
@@ -406,6 +407,29 @@ const messages = {
   'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
 };
 
+const levelNames: [HelpTranslationKey, string][] = [
+  [HelpTranslationKey.EmptyWorldDuel, 'Duel v prázdném světě'],
+  [HelpTranslationKey.FirstChallenge, 'První výzva'],
+  [HelpTranslationKey.FirstIfs, 'Tvůj první If'],
+  [HelpTranslationKey.FirstRepeat, 'Tvůj první repeat'],
+  [HelpTranslationKey.FirstWhile, 'Tvůj první while'],
+  [HelpTranslationKey.FlyLeftShoot, 'První mise'],
+  [HelpTranslationKey.SecondIfs, 'If 2'],
+  [HelpTranslationKey.SecondWhile, 'Tvůj druhý while'],
+  [HelpTranslationKey.TurnPickUp, 'Otoč se'],
+  [HelpTranslationKey.BasicRace, 'Jednoduchý závod'],
+  [HelpTranslationKey.BasicScanKillAll, `Jednoduché střílení`],
+  [HelpTranslationKey.NarrowAlleyPass, 'Úzký průchod'],
+  [HelpTranslationKey.StarCollectDiamondsBasic, `Jednoduché sbírání hvězdy`],
+  [HelpTranslationKey.StarWithDiamonds, 'Hvězda s diamanty'],
+];
+
+const registerLevelNames = () => {
+  for (const [key, name] of levelNames) {
+    messages[`level.${key}.name`] = name;
+  }
+};
+
 const registerHelpMessages = () => {
   for (const help of allCsHelpMessages) {
     messages[`help.${help[0]}.title`] = help[1].title;
@@ -415,4 +439,5 @@ const registerHelpMessages = () => {
   return messages;
 };
 
+registerLevelNames();
 export default registerHelpMessages();

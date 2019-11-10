@@ -6,7 +6,7 @@ import {BattleType} from "../../../battleRunner/BattleType";
 import {empty77World} from "../../worlds/empty77World";
 import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -20,7 +20,7 @@ const shipIds = ['first', 'second'] as const;
 const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.EmptyWorldDuel);
 
 export const emptyWorldDuel: IGameLevel = {
-    name: 'Empty world duel',
+    name: findTranslatedName(HelpTranslationKey.EmptyWorldDuel),
     urlSlug: 'empty-world-duel',
     battleType: BattleType.KillAll,
     battleParams: {turnsRan: 0, maxTurns: 100},

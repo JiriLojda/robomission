@@ -11,7 +11,7 @@ import {StatementType} from "../../../enums/statementType";
 import {Position} from "../../../models/position";
 import {secondWhileWorld} from "../../worlds/intorductoryLevelsWorlds/secondWhileWorld";
 import {randomSwitchAndShootStrategy} from "../../../predefinedStrategies/randomSwitchAndShoot";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['aiShip', 'playerShip'] as const;
@@ -40,7 +40,7 @@ const allowedCategories = [
 const finishPositions = List([new Position({x: 0, y: 1})]);
 
 export const secondWhileLevel: IGameLevel = {
-    name: 'Your second while',
+    name: findTranslatedName(HelpTranslationKey.SecondWhile),
     urlSlug: 'your-second-while',
     battleType: BattleType.GetThereFirstOrKill,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions},

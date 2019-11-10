@@ -11,7 +11,7 @@ import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {firstRepeatWorld} from "../../worlds/intorductoryLevelsWorlds/firstRepeatWorld";
 import {createRestrictedBlocksValidator} from "../../additionalValidators/createRestrictedBlocksValidator";
 import {StatementType} from "../../../enums/statementType";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
@@ -39,7 +39,7 @@ const allowedCategories = [
 ];
 
 export const firstWhileLevel: IGameLevel = {
-    name: 'Your first while',
+    name: findTranslatedName(HelpTranslationKey.FirstWhile),
     urlSlug: 'your-first-while',
     battleType: BattleType.JustCollect,
     battleParams: {turnsRan: 0, maxTurns: 100},

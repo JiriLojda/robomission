@@ -9,7 +9,7 @@ import {pushCollisionResolver} from "../../gameBehaviours/pushCollisionResolver"
 import {basicRaceStrategy} from "../../predefinedStrategies/basicRaceStrategy";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
-import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -28,7 +28,7 @@ const shipIds = ['aiShip', 'playerShip'] as const;
 const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicRace);
 
 export const basicRaceLevel: IGameLevel = {
-    name: 'Simple race',
+    name: findTranslatedName(HelpTranslationKey.BasicRace),
     urlSlug: 'simple-race',
     battleType: BattleType.GetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions)},

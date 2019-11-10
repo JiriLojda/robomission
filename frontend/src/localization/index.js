@@ -2,8 +2,8 @@ import csLocaleData from 'react-intl/locale-data/cs';
 import enLocaleData from 'react-intl/locale-data/en';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import { getDomainLabels } from '../utils/url';
-import messagesCs from './messages-cs';
-import messagesEn from './messages-en';
+import messagesCs from './messages-cs.ts';
+import messagesEn from './messages-en.ts';
 import Text from './Text';
 
 

@@ -10,7 +10,7 @@ import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValida
 import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {turnDiamondsWorld} from "../../worlds/intorductoryLevelsWorlds/TurnDiamondsWorld";
 import {StatementType} from "../../../enums/statementType";
-import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -31,7 +31,7 @@ const additionalValidators: List<RoboAstValidator> = List([
 const aiRoboAst = addSimpleStatementToRoboAstBody(StatementType.PickUpDiamond, createEmptyAst());
 
 export const turnPickUpLevel: IGameLevel = {
-    name: 'Turn around',
+    name: findTranslatedName(HelpTranslationKey.TurnPickUp),
     urlSlug: 'turn-around',
     battleType: BattleType.JustCollect,
     battleParams: {turnsRan: 0, maxTurns: 100},

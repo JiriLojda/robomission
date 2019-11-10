@@ -2,13 +2,16 @@ import {translate} from "../../../../localization";
 import {LevelHelp} from "../../battleRunner/IGameLevel";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
-export const findTranslatedHelpTitle = (urlSlug: HelpTranslationKey): string =>
-    translate(`help.${urlSlug}.title`);
+const findTranslatedHelpTitle = (key: HelpTranslationKey): string =>
+    translate(`help.${key}.title`);
 
-export const findTranslatedHelpMessage = (urlSlug: HelpTranslationKey): string =>
-    translate(`help.${urlSlug}.message`);
+const findTranslatedHelpMessage = (key: HelpTranslationKey): string =>
+    translate(`help.${key}.message`);
 
-export const createTranslatedHelp = (urlSlug: HelpTranslationKey): LevelHelp => ({
-    title: findTranslatedHelpTitle(urlSlug),
-    text: findTranslatedHelpMessage(urlSlug),
+export const createTranslatedHelp = (key: HelpTranslationKey): LevelHelp => ({
+    title: findTranslatedHelpTitle(key),
+    text: findTranslatedHelpMessage(key),
 });
+
+export const findTranslatedName = (key: HelpTranslationKey): string =>
+    translate(`level.${key}.name`);

@@ -7,7 +7,7 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
-import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
@@ -21,7 +21,7 @@ const shipIds = ['aiShip', 'playerShip'] as const;
 const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicScanKillAll);
 
 export const basicScanKillAllLevel: IGameLevel = {
-    name: `Kill 'em all basic`,
+    name: findTranslatedName(HelpTranslationKey.BasicScanKillAll),
     urlSlug: 'kill-em-all-basic',
     battleType: BattleType.KillAll,
     battleParams: {turnsRan: 0, maxTurns: 40},
