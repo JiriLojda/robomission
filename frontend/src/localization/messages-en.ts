@@ -409,6 +409,10 @@ const messages: {[index: string]: string} = {
   'level.category.introduction': 'Introduction',
   'level.category.others': 'Others',
   'level.category.justOthers': 'Just Others',
+
+  'battleType.shoot': 'shoot',
+  'battleType.collect': 'collect',
+  'battleType.race': 'race',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

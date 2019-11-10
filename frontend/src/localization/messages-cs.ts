@@ -409,6 +409,10 @@ const messages: {[index: string]: string} = {
   'level.category.introduction': 'Úvod',
   'level.category.others': 'Ostatní',
   'level.category.justOthers': 'Jen ostatní',
+
+  'battleType.shoot': 'střílej',
+  'battleType.collect': 'sbírej',
+  'battleType.race': 'závod',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

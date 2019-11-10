@@ -7,6 +7,7 @@ import Rating from "./Rating";
 import {Card, CardHeader, CardText} from "material-ui/Card";
 import Avatar from "material-ui/Avatar";
 import {theme} from "../theme";
+import {getBattleTypeDisplayName} from "../core/strategyCore/battleRunner/BattleType";
 
 export interface ILevelsCategoryCardProps {
     readonly allLevels: List<IGameLevel>;
@@ -57,7 +58,7 @@ export const LevelsCategoryCard: React.ComponentType<ILevelsCategoryCardProps> =
                     }}>
                     {props.allLevels.map(level => (
                         <Link to={`level/${level.urlSlug}`} key={level.urlSlug}>
-                            <GridTile title={level.name} subtitle={level.battleType} titlePosition="bottom">
+                            <GridTile title={level.name} subtitle={getBattleTypeDisplayName(level.battleType)} titlePosition="bottom">
                                 <div style={{
                                     backgroundColor: '#888',
                                     height: '100%',
