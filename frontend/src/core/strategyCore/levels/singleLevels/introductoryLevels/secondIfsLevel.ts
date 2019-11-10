@@ -9,6 +9,8 @@ import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/creat
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {secondIfsWorld} from "../../worlds/intorductoryLevelsWorlds/secondIfsWorld";
+import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -18,12 +20,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 
-const help: LevelHelp = {
-    title: 'Collect the diamonds',
-    text: 'This is similar to the previous level, except here some diamonds are missing. ' +
-        'Try to collect them all without hitting into anything. ' +
-        'Again you are limited to 7 blocks, so use them carefully.'
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.SecondIfs);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

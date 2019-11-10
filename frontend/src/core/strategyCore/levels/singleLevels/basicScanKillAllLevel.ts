@@ -7,6 +7,8 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
+import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -16,10 +18,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Simple shooting contest',
-    text: 'This is very simple shooting contest. Your only goal here is to shoot the oponent\'s ship.',
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicScanKillAll);
 
 export const basicScanKillAllLevel: IGameLevel = {
     name: `Kill 'em all basic`,

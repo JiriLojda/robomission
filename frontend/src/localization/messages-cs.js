@@ -1,5 +1,7 @@
 /* eslint-disable quote-props, max-len */
-export default {
+import {allCsHelpMessages} from "./helpMessages-cs";
+
+const messages = {
   'Close': 'Zavřít',
   'I understand': 'Rozumím',
   'Intro': 'Intro',
@@ -403,3 +405,14 @@ export default {
   'InvalidProgramReason.BadParserMessage': 'Chyba parseru (kontaktujte autora)',
   'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
 };
+
+const registerHelpMessages = () => {
+  for (const help of allCsHelpMessages) {
+    messages[`help.${help[0]}.title`] = help[1].title;
+    messages[`help.${help[0]}.message`] = help[1].message;
+  }
+
+  return messages;
+};
+
+export default registerHelpMessages();

@@ -9,6 +9,8 @@ import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {smallGetOutWorld} from "../../worlds/intorductoryLevelsWorlds/smallGetOutWorld";
 import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
+import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -18,18 +20,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Destroy your opponent',
-    text: 'Welcome to robomission. In this level you will try to make you ship move and shoot. ' +
-        'Your objective is to destroy the other ship. Your ship is red, while the opponent\'s is blue. ' +
-        'In this level there are standard rules. You can destroy other objects with you gun. ' +
-        'Only the first object is destroyed. To destroy more objects in a row, you have to shoot ' +
-        'multiple times. If you hit other objects or fly out of the map, you ship will be destroyed. ' +
-        'These are the standard rules. Those can change in other levels. But lets get to your mission. ' +
-        'You can fly forward using the "fly" command in the commands section. "Right" and "Left" will fly ' +
-        'diagonally forward to the left or right respectively while maintaining same direction of the ship. ' +
-        'You can shoot using the "shoot" command.'
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.FlyLeftShoot);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

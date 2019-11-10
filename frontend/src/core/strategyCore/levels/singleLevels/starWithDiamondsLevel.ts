@@ -7,6 +7,8 @@ import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveS
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {starWithDiamondsWorld} from "../worlds/starWithDiamondsWorld";
 import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamondsStrategy";
+import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -16,12 +18,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Get the diamonds',
-    text: 'Just get most of the diamonds you can. In this round none of the ships can shoot ' +
-        'and collisions are deadly so be careful. Use accessibility check before flying. ' +
-        'Hint: check whether the diamond you are flying for is still there.',
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.StarWithDiamonds);
 
 export const starWithDiamondsLevel: IGameLevel = {
     name: 'Star with diamonds',

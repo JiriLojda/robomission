@@ -7,6 +7,8 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
+import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -16,10 +18,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Just a test',
-    text: 'This level is just testing game type. Should not be published unless remade.',
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.StarCollectDiamondsBasic);
 
 export const starCollectDiamondsBasicLevel: IGameLevel = {
     name: `Star collect basic`,

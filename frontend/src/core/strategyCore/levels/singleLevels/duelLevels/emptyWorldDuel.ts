@@ -6,6 +6,8 @@ import {BattleType} from "../../../battleRunner/BattleType";
 import {empty77World} from "../../worlds/empty77World";
 import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
+import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -15,12 +17,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['first', 'second'] as const;
 
-const help: LevelHelp = {
-    title: 'Simple duel level',
-    text: 'This is a simple duel level. Try to shoot your opponent on an empty map.' +
-        'Either of you can edit your code through the "edit first/second player code" buttons. ' +
-        'Once you are satisfied with you code submit it and run the battle.',
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.EmptyWorldDuel);
 
 export const emptyWorldDuel: IGameLevel = {
     name: 'Empty world duel',

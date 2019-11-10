@@ -20,8 +20,5 @@ export const isUserProgramError = (variable: any): variable is UserProgramError 
     return false;
 };
 
-export const getUserProgramErrorDisplayName = (userProgramError?: UserProgramError) => {
-    const result = translate(`UserProgramError.${userProgramError}`);
-
-    return result.startsWith('UserProgramError.') ? undefined : result;
-};
+export const getUserProgramErrorDisplayName = (userProgramError?: UserProgramError) =>
+    !userProgramError ? undefined : translate(`UserProgramError.${userProgramError}`);

@@ -9,6 +9,8 @@ import {pushCollisionResolver} from "../../gameBehaviours/pushCollisionResolver"
 import {basicRaceStrategy} from "../../predefinedStrategies/basicRaceStrategy";
 import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
+import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -23,15 +25,7 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Race to for the win.',
-    text: 'In this level you have to be the fastest rocket and get to one of the colored tiles ' +
-        'on the other side of the map. Also hitting an object does not result in a crash. ' +
-        'Upon moving to an occupied tile one of two happens. 1) There is a free tile in the ' +
-        'direction the ship is moving, then both, hitting object and hit objects move in this direction ' +
-        'effectively pushing the hit object. 2) The tile in the direction the ship is moving is ' +
-        'either occupied or out of the map. Then nothing happens, the ship just can\'t move.'
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicRace);
 
 export const basicRaceLevel: IGameLevel = {
     name: 'Simple race',

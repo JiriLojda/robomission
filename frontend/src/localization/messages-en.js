@@ -1,8 +1,7 @@
 /* eslint-disable quote-props */
-import {UserProgramError} from "../core/strategyCore/enums/userProgramError";
-import {InvalidProgramReason} from "../core/strategyCore/enums/invalidProgramReason";
+import {allEnHelpMessages} from "./helpMessages-en";
 
-export default {
+const messages = {
   'Close': 'Close',
   'I understand': 'I understand',
   'Intro': 'Intro',
@@ -406,3 +405,14 @@ export default {
   'InvalidProgramReason.BadParserMessage': 'Bad parser (contact the author)',
   'InvalidProgramReason.CustomLevelMessage': 'In this level',
 };
+
+const registerHelpMessages = () => {
+  for (const help of allEnHelpMessages) {
+    messages[`help.${help[0]}.title`] = help[1].title;
+    messages[`help.${help[0]}.message`] = help[1].message;
+  }
+
+  return messages;
+};
+
+export default registerHelpMessages();

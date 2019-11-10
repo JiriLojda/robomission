@@ -10,6 +10,8 @@ import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValida
 import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {turnDiamondsWorld} from "../../worlds/intorductoryLevelsWorlds/TurnDiamondsWorld";
 import {StatementType} from "../../../enums/statementType";
+import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -19,15 +21,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Collect all the diamonds',
-    text: 'Now lets learn the rest of the commands you can give to your ship. ' +
-        'In this round you will have to collect more diamonds than your opponent. ' +
-        'Remember, you cannot win by shooting you opponent. You have to have more diamonds collected. ' +
-        'He is going to collect only the diamond he stands on, so you have to take the other two to win.' +
-        'To pick up a diamond use the "pick up diamond" command. You will also have to turn around. ' +
-        'To turn your ship use the "turn left" or "turn right" command.'
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.TurnPickUp);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

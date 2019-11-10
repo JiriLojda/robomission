@@ -10,6 +10,8 @@ import {pushCollisionResolver} from "../../../gameBehaviours/pushCollisionResolv
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../utils/createEmptyAst";
 import {firstRepeatWorld} from "../../worlds/intorductoryLevelsWorlds/firstRepeatWorld";
+import {createTranslatedHelp} from "../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -19,12 +21,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 
-const help: LevelHelp = {
-    title: 'Collect the diamonds',
-    text: 'In this level, we will explore repeat cycle. Repeat does what the name suggests. ' +
-        'It repeats the commands in its body given number of times. It is supposed to help you ' +
-        'not to repeat yourself. So here you have to collect all the diamonds. while using only 3 blocks.'
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.FirstRepeat);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

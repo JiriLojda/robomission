@@ -9,6 +9,8 @@ import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper"
 import {narrowPathWorld} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
+import {createTranslatedHelp} from "../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -24,12 +26,7 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = {
-    title: 'Pass the guard',
-    text: 'This is a special round. Your goal is to get to one of the green tiles.' +
-        'The trick is that the opponent will try to stop you. On top of that you ship ' +
-        'cannot shoot while the opponent can. You just have to slip by unnoticed.',
-};
+const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass);
 
 export const narrowAlleyPassLevel: IGameLevel = {
     name: 'Narrow alley pass',
