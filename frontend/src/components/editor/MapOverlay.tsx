@@ -2,6 +2,7 @@ import React from 'react';
 import {convertWorldToEditorModel, World} from "../../core/strategyCore/models/world";
 import SpaceWorld from "../SpaceWorld";
 import RaisedButton from "material-ui/RaisedButton";
+import {translate} from "../../localization";
 
 interface IMapOverlayProps {
     world: World,
@@ -17,7 +18,7 @@ export const MapOverlay = (props: IMapOverlayProps) => (
         flexWrap: 'wrap'
     }}>
         <RaisedButton
-            label={'Back to the editor'}
+            label={translate('editor.backToEditor')}
             secondary
             style={{ margin: 2, minWidth: 50, marginLeft: 'auto'}}
             onClick={props.onLeave}

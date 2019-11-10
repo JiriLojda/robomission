@@ -189,6 +189,13 @@ export default {
   'object.wormhole': 'wormhole',
   'object.endOfMap': 'the end of map',
 
+  'editor.runBattle': 'run battle',
+  'editor.showMap': 'show map',
+  'editor.showHelp': 'show help',
+  'editor.submitCode': 'submit code',
+  'editor.useCodeEditor': 'use code editor',
+  'editor.backToEditor': 'back to the editor',
+
   'ps.story.commands': 'Spaceship Control',
   'ps.story.commands-2': 'Shooting and Wormholes',
   'ps.story.repeat': 'Repeat N-times',

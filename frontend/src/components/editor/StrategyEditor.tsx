@@ -32,6 +32,7 @@ import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/stra
 import {MapOverlay} from "./MapOverlay";
 import {HelpModal} from "../uiComponents/HelpModal";
 import {getValidatorResult} from "../../core/strategyCore/validator/programValidationUtils";
+import {translate} from "../../localization";
 
 //TODO: just temporary (hardcoded id...)
 const isSuccess = (result?: BattleResult): boolean =>
@@ -260,14 +261,14 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         />
                     }
                     {this.props.canRunBattle && <RaisedButton
-                        label={'run battle'}
+                        label={translate('editor.runBattle')}
                         disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
                         primary
                         style={{ margin: 2, minWidth: 50 }}
                         onClick={this._runBattle}
                     />}
                     {!!this.props.onCodeSubmit && <RaisedButton
-                      label={'submit code'}
+                      label={translate('editor.submitCode')}
                       disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
                       primary
                       style={{ margin: 2, minWidth: 50 }}
@@ -287,20 +288,20 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                         />
                     }
                     <RaisedButton
-                        label={'show help'}
+                        label={translate('editor.showHelp')}
                         style={{ margin: 2, minWidth: 50 }}
                         onClick={() => this.setState(() => ({isHelpModalShown: true}))}
                     />
                     <Toggle
                         toggled={this.state.useCodeEditor}
-                        label="Use code editor"
+                        label={translate('editor.useCodeEditor')}
                         labelStyle={{color: 'black'}}
                         onToggle={() => this.setState(prev => ({
                             useCodeEditor: !prev.useCodeEditor,
                             code: generateStrategyRoboCode(prev.roboAst),
                         }))} />
                         <RaisedButton
-                            label={'Show map'}
+                            label={translate('editor.showMap')}
                             secondary
                             style={{ margin: 2, minWidth: 50 }}
                             onClick={() => this.setState(() => ({isMapOverlayShown: true}))}

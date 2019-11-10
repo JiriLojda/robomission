@@ -182,6 +182,13 @@ export default {
   'blockly.categories.logic': 'logika',
   'blockly.categories.functions': 'funkce',
 
+  'editor.runBattle': 'spusť bitvu',
+  'editor.showMap': 'zobraz mapu',
+  'editor.showHelp': 'zobraz nápovědu',
+  'editor.submitCode': 'potvrdit kód',
+  'editor.useCodeEditor': 'použij textový editor',
+  'editor.backToEditor': 'zpátky do editoru',
+
   'object.ship': 'loď',
   'object.diamond': 'diamant',
   'object.meteoroid': 'meteorit',
