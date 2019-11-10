@@ -351,4 +351,55 @@ export default {
   'BattleResult.Win': 'Vyhrál jsi!!!',
   'BattleResult.Draw': 'Jaj, vypadá to na remízu mezi',
   'BattleResult.Loose': 'Hm, prohrál jsi. Zkus to znovu.',
+
+  'InvalidProgramReason.DefinedAdditionalProp':
+    'některé property jsou definované navíc.',
+  'InvalidProgramReason.InvalidStatement':
+    'některý blok je nevalidní.',
+  'InvalidProgramReason.NoOrBadStartStatement':
+    'chybí startovní blok nebo je nevalidní.',
+  'InvalidProgramReason.UnknownStatementType':
+    'něěkterý blok má neznámý typ.',
+  'InvalidProgramReason.MissingTestCondition':
+    'Musíš nastavit podmínku ve všech blocích které ji vyžadují.',
+  'InvalidProgramReason.MissingParameter':
+    'Některý z tvých bloků nemají nastavený parameter.',
+  'InvalidProgramReason.UndefinedRequiredProp':
+    'Některý z tvých bloků nemají definovaný props.',
+  'InvalidProgramReason.InvalidValueType':
+    'Některá z tebou předávaných hodnot má typ jiný než je v daném bloku očekáván.',
+  'InvalidProgramReason.CodeNotParsed':
+    'Nepodařilo se zpracovat kód. Prosím zkontroluj zprávu níže (v angličtině).',
+  'InvalidProgramReason.DuplicateFunctionName':
+    'Názvy funkcí musejí být unikátní. Zkontroluj názvy svých funkcí, prosím.',
+  'InvalidProgramReason.DuplicateFunctionParameters':
+    'Názvy parametrů funkcí musejí být v dané funkci unikátní. Zkontroluj své funkce, prosím.',
+  'InvalidProgramReason.EmptyFunctionName':
+    'Název funkce nemůže být prázdný.',
+  'InvalidProgramReason.EmptyParameterName':
+    'Název parametru nemůže být prázdný.',
+  'InvalidProgramReason.FncCallWithInvalidNumberOfParameters':
+    'Některé z tvých volání funkce dostává nesprávný počet parametrů.',
+  'InvalidProgramReason.UnknownFunctionCalled':
+    'Pokusil ses zavolat nedefinovanou funkci. Prosím zadefinuj prvně všechny funkce.',
+  'InvalidProgramReason.FncShouldReturnAndNoEndingReturn':
+    'Některé z tvých funkcí by měli vracet hodnotu, ale nemají "vrať" blok na konci svého těla.',
+  'InvalidProgramReason.FncIsCalledWithDifferentReturnTypes':
+    'Některé z tvých funkcí jsou volané tak, že je pokaždé očekáván jiný návratový typ.',
+  'InvalidProgramReason.FncReturnsDifferentTypes':
+    'Některé z tvých funkcí vrací jiný typ v každém "vrať" bloku.',
+  'InvalidProgramReason.FncCallReturnTypeMismatch':
+    'Některé z tvých funkcí vrací jiný typ než je očekáváno při jejich volání.',
+  'InvalidProgramReason.None':
+    'Vše je v pořádku.',
+
+  'InvalidProgramReason.FunctionsCannotBeDefined':
+    'používání funkcí je zakázáno.',
+  'InvalidProgramReason.MaximumNumberOfBlocksReached':
+    'překročil jsi limit na počet bloků.',
+  'InvalidProgramReason.RestrictedBlockUsed':
+    'použil jsi některý ze zakázaných bloků.',
+
+  'InvalidProgramReason.BadParserMessage': 'Chyba parseru (kontaktujte autora)',
+  'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
 };

@@ -1,5 +1,6 @@
 /* eslint-disable quote-props */
 import {UserProgramError} from "../core/strategyCore/enums/userProgramError";
+import {InvalidProgramReason} from "../core/strategyCore/enums/invalidProgramReason";
 
 export default {
   'Close': 'Close',
@@ -353,4 +354,55 @@ export default {
   'BattleResult.Win': 'You won!!! Yay',
   'BattleResult.Draw': 'Ups seems we have a draw between',
   'BattleResult.Loose': 'Damn son, you lost. Try it again.',
+
+  'InvalidProgramReason.DefinedAdditionalProp':
+    'defined additional property.',
+  'InvalidProgramReason.InvalidStatement':
+    'some statement is invalid.',
+  'InvalidProgramReason.NoOrBadStartStatement':
+    'start statement is missing or invalid.',
+  'InvalidProgramReason.UnknownStatementType':
+    'some statement has an unknown type.',
+  'InvalidProgramReason.MissingTestCondition':
+    'You have to set condition in each conditional block.',
+  'InvalidProgramReason.MissingParameter':
+    'One of your statements is missing a parameter.',
+  'InvalidProgramReason.UndefinedRequiredProp':
+    'One of the statements has some required props undefined.',
+  'InvalidProgramReason.InvalidValueType':
+    'One of your value statements has type not matching its usage.',
+  'InvalidProgramReason.CodeNotParsed':
+    'We failed to parse your code. Check the output, please.',
+  'InvalidProgramReason.DuplicateFunctionName':
+    'Function names has to be unique. Check your functions, please.',
+  'InvalidProgramReason.DuplicateFunctionParameters':
+    'Function parameter names has to be unique in the function.',
+  'InvalidProgramReason.EmptyFunctionName':
+    'Function name cannot be empty.',
+  'InvalidProgramReason.EmptyParameterName':
+    'Parameter name cannot be empty.',
+  'InvalidProgramReason.FncCallWithInvalidNumberOfParameters':
+    'Some of your function calls have incorrect number of arguments passed.',
+  'InvalidProgramReason.UnknownFunctionCalled':
+    'You tried to call an unknown function. Define the function first.',
+  'InvalidProgramReason.FncShouldReturnAndNoEndingReturn':
+    'Some of your functions should return a value and does not have return at the end.',
+  'InvalidProgramReason.FncIsCalledWithDifferentReturnTypes':
+    'Some of your functions are called with different return types expected each time.',
+  'InvalidProgramReason.FncReturnsDifferentTypes':
+    'Some of your functions return different types with each return statement.',
+  'InvalidProgramReason.FncCallReturnTypeMismatch':
+    'Some of your functions return different type the expected by it\'s calls.',
+  'InvalidProgramReason.None':
+    'No problem here.',
+
+  'InvalidProgramReason.FunctionsCannotBeDefined':
+    'usage of functions is prohibited.',
+  'InvalidProgramReason.MaximumNumberOfBlocksReached':
+    'there is a limit on number of blocks used and you crossed it.',
+  'InvalidProgramReason.RestrictedBlockUsed':
+    'you cannot use some blocks, yet you used them.',
+
+  'InvalidProgramReason.BadParserMessage': 'Bad parser (contact the author)',
+  'InvalidProgramReason.CustomLevelMessage': 'In this level',
 };
