@@ -405,6 +405,10 @@ const messages: {[index: string]: string} = {
 
   'InvalidProgramReason.BadParserMessage': 'Bad parser (contact the author)',
   'InvalidProgramReason.CustomLevelMessage': 'In this level',
+
+  'level.category.introduction': 'Introduction',
+  'level.category.others': 'Others',
+  'level.category.justOthers': 'Just Others',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

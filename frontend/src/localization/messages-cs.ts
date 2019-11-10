@@ -405,6 +405,10 @@ const messages: {[index: string]: string} = {
 
   'InvalidProgramReason.BadParserMessage': 'Chyba parseru (kontaktujte autora)',
   'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
+
+  'level.category.introduction': 'Úvod',
+  'level.category.others': 'Ostatní',
+  'level.category.justOthers': 'Jen ostatní',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

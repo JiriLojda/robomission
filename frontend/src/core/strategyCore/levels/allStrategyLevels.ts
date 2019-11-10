@@ -13,6 +13,7 @@ import {firstWhileLevel} from "./singleLevels/introductoryLevels/firstWhileLevel
 import {secondWhileLevel} from "./singleLevels/introductoryLevels/secondWhileLevel";
 import {firstIfsLevel} from "./singleLevels/introductoryLevels/firstIfsLevel";
 import {secondIfsLevel} from "./singleLevels/introductoryLevels/secondIfsLevel";
+import {translate} from "../../../localization";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -34,8 +35,8 @@ const otherLevels = [
 ];
 
 export const strategyLevelsCategories: List<[string, List<IGameLevel>]> = List([
-    ['Introduction', List(introductoryLevels)],
-    ['Others', List(otherLevels)],
+    [translate('level.category.introduction'), List(introductoryLevels)],
+    [translate('level.category.others'), List(otherLevels)],
 ]);
 
 export const allStrategyLevels: List<IGameLevel> = List([
