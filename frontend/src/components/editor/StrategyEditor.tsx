@@ -1,178 +1,73 @@
-import React from 'react';
-import * as ReactBlocklyComponent from 'react-blockly-component';
-import {BlocklyEditor} from 'react-blockly-component';
-import {blocklyXmlToRoboAst} from '../../core/blockly';
-import {generateBlocklyXml} from '../../core/strategyCore/codeEditor/xmlGenerator/blocklyXmlGenerator';
-import SplitPane from "react-split-pane";
-import SpaceWorld from "../SpaceWorld";
-import RaisedButton from "material-ui/RaisedButton";
-import {convertWorldToEditorModel, World} from '../../core/strategyCore/models/world'
-import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
-import {ErrorMessage} from "../uiComponents/ErrorMessage";
-import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
-import {isRoboAstValid} from "../../core/strategyCore/validator/programValidator";
-import {
-    getInvalidProgramReasonDisplayName,
-    InvalidProgramReason
-} from "../../core/strategyCore/enums/invalidProgramReason";
-import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
-import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
-import {List} from "immutable";
-import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
-import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
-import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
-import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
-import {ICancelablePromise} from "../../utils/cancelablePromise";
+import React from "react";
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
-import {parseStrategyRoboCode} from "../../core/strategyCore/codeEditor/parser/strategyParser";
-import CodeEditor from "./CodeEditor";
-import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
-import {Toggle} from "material-ui";
-import StrategyRoboCodeHighlighter from '../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter.js';
-import {MapOverlay} from "./MapOverlay";
+import {IRoboAst} from "../../core/strategyCore/models/programTypes";
+import {World} from "../../core/strategyCore/models/world";
+import {BattleResult} from "../../core/strategyCore/battleRunner/BattleResult";
+import {ICancelablePromise} from "../../utils/cancelablePromise";
+import {List} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
-import {getValidatorResult} from "../../core/strategyCore/validator/programValidationUtils";
-import {translate} from "../../localization";
+import SplitPane from "react-split-pane";
+import {StandardEditorSidebar} from "../../containers/strategyEditor/StandardEditorSidebar";
+import {StrategyInnerEditor} from "../../containers/strategyEditor/StrategyInnerEditor";
+import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
+import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
+import {MapOverlay} from "./MapOverlay";
 
-//TODO: just temporary (hardcoded id...)
-const isSuccess = (result?: BattleResult): boolean =>
-    !!result && result.type === BattleResultType.Decisive && result.winner === 'playerShip';
-
-const getBattleResultMessage = (result?: BattleResult): string | undefined => {
-    if (!result)
-        return undefined;
-    if (isSuccess(result))
-        return translate('BattleResult.Win');
-    if (result.type === BattleResultType.Draw)
-        return `${translate('BattleResult.Draw')} ${result.between.join(', ')}.`;
-    if (result.type === BattleResultType.ProgramError)
-        return `${result.blame} ${translate('BattleResult.UserProgramError')} ${getUserProgramErrorDisplayName(result.error)}`;
-    if (result.type === BattleResultType.Decisive)
-        return translate('BattleResult.Loose');
-    throw invalidProgramError(`This should not happen. type: ${result.type}.`, 'getBattleResultMessage');
-};
-
-const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
-    if (!result)
-        return ResultMessageType.Success;
-    if (isSuccess(result))
-        return ResultMessageType.Success;
-
-    switch (result.type) {
-        case BattleResultType.Decisive:
-        case BattleResultType.ProgramError:
-            return ResultMessageType.Bad;
-        case BattleResultType.Draw:
-            return ResultMessageType.Draw;
-        default:
-            throw invalidProgramError('This should not happen.');
-    }
-};
-
-export interface IStrategyEditorProps {
+export interface INewEditingDataProps {
     readonly level: IGameLevel;
     readonly canRunBattle: boolean;
-    readonly onCodeSubmit?: (code: IRoboAst) => void;
-    readonly initialAst: IRoboAst;
-    readonly showMapAndHelpOnMount: boolean;
-    readonly shouldDisplayExportAst: boolean;
+    readonly roboAst: IRoboAst;
+    readonly isMapShown: boolean;
+    readonly isHelpShown: boolean;
+    readonly currentWorld: World;
 }
 
+export interface INewEditingCallbackProps {
+    readonly onCodeSubmit: (() => void) | undefined;
+    readonly onHelpClosed: () => void;
+    readonly worldChanged: (newWorld: World) => void;
+    readonly reset: (originalWorld: World) => void;
+    readonly battleResultChanged: (newBattleResult: BattleResult) => void;
+    readonly toggleMap: () => void;
+    readonly initializeStore: (level: IGameLevel) => void;
+}
+
+type Props = INewEditingDataProps & INewEditingCallbackProps;
+
 interface IState {
-    blocklySettings: {trashcan: boolean, disable: boolean};
-    roboAst: IRoboAst;
-    runtimeContext: IRuntimeContext;
-    world: World;
-    userProgramError?: UserProgramError;
-    validationResult: InvalidProgramReason;
-    battleResult?: BattleResult;
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     useCodeEditor: boolean;
-    codeError?: string;
-    code?: string;
-    isMapOverlayShown: boolean;
-    isHelpModalShown: boolean;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
 
-export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IState> {
-
-    constructor(props: IStrategyEditorProps) {
+export class StrategyEditor extends React.PureComponent<Props, IState> {
+    constructor(props: Props) {
         super(props);
         this.state = {
-            blocklySettings: { trashcan: true, disable: false },
-            roboAst: props.initialAst,
-            runtimeContext: getEmptyRuntimeContext(),
-            world: props.level.world,
-            userProgramError: undefined,
-            validationResult: InvalidProgramReason.None,
             useCodeEditor: false,
-            isMapOverlayShown: props.level.world.size.x > 5 && props.showMapAndHelpOnMount,
-            isHelpModalShown: props.showMapAndHelpOnMount,
-        };
+        }
     }
 
-    blocklyEditor: BlocklyEditor | null = null;
+    componentWillMount(): void {
+        this.props.initializeStore(this.props.level);
+    }
 
-    _onXmlChange = (e: unknown) => {
-        const roboAst = blocklyXmlToRoboAst(e);
-        const validationResult = isRoboAstValid(roboAst);
-        const withAdditionalValidation = !validationResult.isValid ?
-            validationResult :
-            this.props.level.additionalValidators
-                .reduce(
-                    (found, validator) => !found.isValid ? found : validator(roboAst),
-                    getValidatorResult(true, InvalidProgramReason.None)
-                );
-        this.setState(() => ({roboAst, runtimeContext: getEmptyRuntimeContext(), validationResult: withAdditionalValidation.reason}));
-    };
+    private _showCodeEditor = () => this.setState({useCodeEditor: true});
+    private _hideCodeEditor = () => this.setState({useCodeEditor: false});
 
-    _onCodeChange = (code: string) => {
-        this.setState(() => ({code: code }));
-        const parseResult = parseStrategyRoboCode(code);
-        if (!parseResult.isSuccessful) {
-            this.setState(() => ({
-                codeError: parseResult.error,
-                validationResult: InvalidProgramReason.CodeNotParsed,
-            }));
-            return;
-        } else {
-            const validationResult = isRoboAstValid(parseResult.result);
-            const withAdditionalValidation = !validationResult.isValid ?
-                validationResult :
-                this.props.level.additionalValidators
-                    .reduce(
-                        (found, validator) => !found.isValid ? found : validator(parseResult.result),
-                        getValidatorResult(true, InvalidProgramReason.None)
-                    );
-            this.setState(() => ({
-                roboAst: parseResult.result,
-                runtimeContext: getEmptyRuntimeContext(),
-                validationResult: withAdditionalValidation.reason,
-                codeError: undefined,
-            }));
-        }
-    };
-
-    _reset = () => {
+    private _reset = () => {
         if (this.state.drawingPromise) {
             this.state.drawingPromise.cancel();
         }
-        this.setState(() => ({
-            runtimeContext: getEmptyRuntimeContext(),
-            world: this.props.level.world,
-            userProgramError: undefined,
-            battleResult: undefined,
-            drawingPromise: undefined,
-        }));
+        this.props.reset(this.props.level.world);
     };
 
-    _drawNewWorld = (newWorld: World) => {
-        this.setState(() => ({world: newWorld}));
+    private _drawNewWorld = (newWorld: World) => {
+        this.props.worldChanged(newWorld);
     };
 
-    _drawHistory = (history: List<World>) => {
+    private _drawHistory = (history: List<World>) => {
         const callback = createDrawHistory(this._drawNewWorld, 400);
 
         const promise = callback(history);
@@ -183,65 +78,46 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
             .then(h => !h || this._drawHistory(h))
     };
 
-    _runBattle = (): void => {
+    private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
             console.warn('This should not be called when cannotRunBattle.');
             return;
         }
-        this.setState(() => ({isMapOverlayShown: true}));
+        this.props.toggleMap();
         const level = this.props.level;
         const userShipId = level.turnsOrder.find(id => !level.shipsAsts.has(id)) || 'userShip';
-        const allAsts = level.shipsAsts.set(userShipId, this.state.roboAst);
+        const allAsts = level.shipsAsts.set(userShipId, this.props.roboAst);
         const result = runBattle({
-            world: this.state.world,
+            world: this.props.level.world,
             battleParams: level.battleParams,
             battleType: level.battleType,
             shipsOrder: level.turnsOrder,
             roboAsts: level.turnsOrder.map(id => allAsts.get(id)!).toList(),
             behaviours: level.gameBehaviours,
         });
-        this.setState(() => ({battleResult: result}));
+        this.props.battleResultChanged(result);
 
         this._drawHistory(result.history.reverse());
     };
 
-    _renderEditor = () => this.state.useCodeEditor ? (
-        <CodeEditor
-            code={this.state.code || ''}
-            onChange={this._onCodeChange}
-            highlighter={new StrategyRoboCodeHighlighter()}
-        />
-        ) : (
-        <ReactBlocklyComponent.BlocklyEditor
-            ref={(ref: BlocklyEditor) => {
-                this.blocklyEditor = ref;
-            }}
-            workspaceConfiguration={{trashcan: true, collapse: true}}
-            toolboxCategories={this.props.level.toolbox}
-            initialXml={generateBlocklyXml(this.state.roboAst)}
-            xmlDidChange={this._onXmlChange}
-            wrapperDivClassName="flocs-blockly"
-        />
-    );
-
-    render() {
-        if (this.state.isMapOverlayShown)
+    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+        if (this.props.isMapShown)
             return <span>
                 <HelpModal
                     title={this.props.level.help.title}
                     message={this.props.level.help.text}
-                    isOpened={this.state.isHelpModalShown}
-                    onClose={() => this.setState(() => ({isHelpModalShown: false}))}
+                    isOpened={this.props.isHelpShown}
+                    onClose={this.props.onHelpClosed}
                 />
                 <MapOverlay
-                    world={this.state.world}
-                    onLeave={() => this.setState(() => ({isMapOverlayShown: false}))}
+                    world={this.props.currentWorld}
+                    onLeave={this.props.toggleMap}
                     columnSize={40}
                 />
         </span>;
 
         return <span>
-                <SplitPane
+            <SplitPane
                 split="vertical"
                 minSize={200}
                 maxSize={-400}
@@ -251,85 +127,28 @@ export class StrategyEditor extends React.PureComponent<IStrategyEditorProps, IS
                     width: 4,
                     cursor: 'col-resize',
                 }}
-                onChange={() => this.blocklyEditor && this.blocklyEditor.resize()}
             >
-                <span>
-                    {shouldShowMinimap(this.state.world) &&
-                        <SpaceWorld
-                            fields={convertWorldToEditorModel(this.state.world)}
-                            width={200}
-                        />
-                    }
-                    {this.props.canRunBattle && <RaisedButton
-                        label={translate('editor.runBattle')}
-                        disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
-                        primary
-                        style={{ margin: 2, minWidth: 50 }}
-                        onClick={this._runBattle}
-                    />}
-                    {!!this.props.onCodeSubmit && <RaisedButton
-                      label={translate('editor.submitCode')}
-                      disabled={this.state.validationResult !== InvalidProgramReason.None || !!this.state.codeError}
-                      primary
-                      style={{ margin: 2, minWidth: 50 }}
-                      onClick={() => this.props.onCodeSubmit!(this.state.roboAst)}
-                    />}
-                    <RaisedButton
-                        label={'reset'}
-                        secondary
-                        style={{ margin: 2, minWidth: 50 }}
-                        onClick={this._reset}
-                    />
-                    {this.props.shouldDisplayExportAst &&
-                        <RaisedButton
-                            label={'ast to console'}
-                            style={{margin: 2, minWidth: 50}}
-                            onClick={() => console.log(JSON.stringify(this.state.roboAst))}
-                        />
-                    }
-                    <RaisedButton
-                        label={translate('editor.showHelp')}
-                        style={{ margin: 2, minWidth: 50 }}
-                        onClick={() => this.setState(() => ({isHelpModalShown: true}))}
-                    />
-                    <Toggle
-                        toggled={this.state.useCodeEditor}
-                        label={translate('editor.useCodeEditor')}
-                        labelStyle={{color: 'black'}}
-                        onToggle={() => this.setState(prev => ({
-                            useCodeEditor: !prev.useCodeEditor,
-                            code: generateStrategyRoboCode(prev.roboAst),
-                        }))} />
-                        <RaisedButton
-                            label={translate('editor.showMap')}
-                            secondary
-                            style={{ margin: 2, minWidth: 50 }}
-                            onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
-                        />
-                    <ErrorMessage>
-                        {getUserProgramErrorDisplayName(this.state.userProgramError)}
-                    </ErrorMessage>
-                    <ErrorMessage>
-                        {
-                            this.state.validationResult !== InvalidProgramReason.None ?
-                                getInvalidProgramReasonDisplayName(this.state.validationResult) :
-                                undefined
-                        }
-                    </ErrorMessage>
-                    <ErrorMessage>
-                        {this.state.codeError}
-                    </ErrorMessage>
-                    <ResultMessage type={getMessageTypeForResult(this.state.battleResult)}>
-                        {getBattleResultMessage(this.state.battleResult)}
-                    </ResultMessage>
-                </span>
-                {this._renderEditor()}
+                <StandardEditorSidebar
+                    onCodeSubmit={this.props.onCodeSubmit}
+                    canRunBattle={this.props.canRunBattle}
+                    isCodeEditorShown={this.state.useCodeEditor}
+                    onHideCodeEditor={this._hideCodeEditor}
+                    onShowCodeEditor={this._showCodeEditor}
+                    onReset={this._reset}
+                    onRunBattle={this._runBattle}
+                    shouldShowMinimap={shouldShowMinimap(this.props.level.world)}
+                />
+                <StrategyInnerEditor
+                    additionalValidators={this.props.level.additionalValidators}
+                    showCodeEditor={this.state.useCodeEditor}
+                    toolbox={this.props.level.toolbox}
+                />
             </SplitPane>
             <HelpModal
                 title={this.props.level.help.title}
                 message={this.props.level.help.text}
-                isOpened={this.state.isHelpModalShown}
-                onClose={() => this.setState(() => ({isHelpModalShown: false}))}
+                isOpened={this.props.isHelpShown}
+                onClose={this.props.onHelpClosed}
             />
         </span>
     }

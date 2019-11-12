@@ -8,6 +8,7 @@ export enum UserProgramError {
     GotDifferentTypeThanExpected = 'GotDifferentTypeThanExpected',
     ProvidedShipIdDoesNotExist = 'ProvidedShipIdDoesNotExist',
     ProvidedStringIsNotCoordinate = 'ProvidedStringIsNotCoordinate',
+    None = 'None',
 }
 
 export const isUserProgramError = (variable: any): variable is UserProgramError => {
@@ -20,5 +21,5 @@ export const isUserProgramError = (variable: any): variable is UserProgramError 
     return false;
 };
 
-export const getUserProgramErrorDisplayName = (userProgramError?: UserProgramError) =>
-    !userProgramError ? undefined : translate(`UserProgramError.${userProgramError}`);
+export const getUserProgramErrorDisplayName = (userProgramError: UserProgramError): string | undefined =>
+    userProgramError === UserProgramError.None ? undefined : translate(`UserProgramError.${userProgramError}`);

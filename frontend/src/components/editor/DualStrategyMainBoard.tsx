@@ -15,9 +15,9 @@ import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramE
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {MapOverlay} from "./MapOverlay";
-import {StrategyEditor} from "./StrategyEditor";
 import {createEmptyAst} from "../../utils/createEmptyAst";
 import {HelpModal} from "../uiComponents/HelpModal";
+import {StrategyEditor} from "../../containers/strategyEditor/StrategyEditor";
 
 
 //TODO: just temporary (hardcoded id...)
@@ -57,18 +57,21 @@ const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
 
 export interface IStrategyEditorProps {
     readonly level: IGameLevel;
+    readonly editedRoboAst: IRoboAst;
 }
+
+type Player = "first" | "second" | "none";
 
 interface IState {
     blocklySettings: {trashcan: boolean, disable: boolean};
     roboAsts: {first: IRoboAst, second: IRoboAst};
     runtimeContext: IRuntimeContext;
     world: World;
-    userProgramError?: UserProgramError;
+    userProgramError: UserProgramError;
     battleResult?: BattleResult;
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     isMapOverlayShown: boolean;
-    showEditorFor: "first" | "second" | "none";
+    showEditorFor: Player;
     isHelpModalShown: boolean;
 }
 
@@ -81,7 +84,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             roboAsts: {first: createEmptyAst(), second: createEmptyAst() },
             runtimeContext: getEmptyRuntimeContext(),
             world: props.level.world,
-            userProgramError: undefined,
+            userProgramError: UserProgramError.None,
             isMapOverlayShown: false,
             showEditorFor: "none",
             isHelpModalShown: true,
@@ -95,7 +98,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
         this.setState(() => ({
             runtimeContext: getEmptyRuntimeContext(),
             world: this.props.level.world,
-            userProgramError: undefined,
+            userProgramError: UserProgramError.None,
             battleResult: undefined,
             drawingPromise: undefined,
         }));
@@ -135,6 +138,18 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
         this._drawHistory(result.history.reverse());
     };
 
+    private _codeSubmitted = () => {
+        const newAst = this.props.editedRoboAst;
+        switch (this.state.showEditorFor) {
+            case "second":
+                return this.setState(prev => ({roboAsts: {...prev.roboAsts, second: newAst}, showEditorFor: "none"}));
+            case "first":
+                return this.setState(prev => ({roboAsts: {...prev.roboAsts, first: newAst}, showEditorFor: "none"}));
+            default:
+                throw invalidProgramError(`Editor is for ${this.state.showEditorFor} right after code submitted.`);
+        }
+    };
+
     render() {
         if (this.state.isMapOverlayShown)
             return <MapOverlay
@@ -146,20 +161,18 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             return <StrategyEditor
                 level={this.props.level}
                 canRunBattle={false}
-                initialAst={this.state.roboAsts.first}
+                initialRoboAst={this.state.roboAsts.first}
                 showMapAndHelpOnMount={false}
-                shouldDisplayExportAst={false}
-                onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, first: newAst}, showEditorFor: "none"}))}
+                onCodeSubmit={this._codeSubmitted}
             />;
         }
         if (this.state.showEditorFor === "second") {
             return <StrategyEditor
                 level={this.props.level}
                 canRunBattle={false}
-                initialAst={this.state.roboAsts.second}
+                initialRoboAst={this.state.roboAsts.second}
                 showMapAndHelpOnMount={false}
-                shouldDisplayExportAst={false}
-                onCodeSubmit={newAst => this.setState(prev => ({roboAsts: {...prev.roboAsts, second: newAst}, showEditorFor: "none"}))}
+                onCodeSubmit={this._codeSubmitted}
             />;
         }
 

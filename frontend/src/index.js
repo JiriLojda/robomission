@@ -7,7 +7,7 @@ import {globalConfiguration} from './config';
 import {createFlocsStore} from './store';
 import FlocsThemeProvider from './theme/FlocsThemeProvider';
 import {StrategyPage} from "./pages/StrategyPage";
-import {StrategyEditor} from "./containers/StrategyEditor";
+import {StrategySimpleLevel} from "./containers/StrategySimpleLevel";
 import {DuelStrategyPage} from "./pages/DuelStrategyPage";
 import {DuelStrategyEditor} from "./containers/DuelStrategyEditor";
 import {initialStore} from "./initialStore";
@@ -28,7 +28,7 @@ const app = (
             <Redirect exact from="/" to="/strategy" />
             <Route exact path="/strategy" component={StrategyPage} />
             <Route exact path="/duel-strategy" component={DuelStrategyPage} />
-            <Route exact path="/strategy/level/:urlSlug" render={props => <StrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
+            <Route exact path="/strategy/level/:urlSlug" render={props => <StrategySimpleLevel levelUrlSlug={props.match.params.urlSlug}/>} />
             <Route exact path="/duel-strategy/level/:urlSlug" render={props => <DuelStrategyEditor levelUrlSlug={props.match.params.urlSlug}/>} />
           </Switch>
         </AppContainer>
