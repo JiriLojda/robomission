@@ -1,18 +1,18 @@
 import {List, Map} from "immutable";
-import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
-import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollisionResolver";
-import {IGameLevel, LevelHelp, RoboAstValidator} from "../../../battleRunner/IGameLevel";
-import {allStrategyCategories, categoryNames, filterCategories} from "../../../constants/strategyToolbox";
-import {BattleType} from "../../../battleRunner/BattleType";
-import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValidator";
-import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
-import {createRestrictedBlocksValidator} from "../../additionalValidators/createRestrictedBlocksValidator";
-import {StatementType} from "../../../enums/statementType";
-import {Position} from "../../../models/position";
-import {secondWhileWorld} from "../../worlds/intorductoryLevelsWorlds/secondWhileWorld";
-import {randomSwitchAndShootStrategy} from "../../../predefinedStrategies/randomSwitchAndShoot";
-import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
-import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
+import {IGameBehaviours} from "../../../../gameBehaviours/IGameBehaviours";
+import {explosionCollisionResolver} from "../../../../gameBehaviours/exposionCollisionResolver";
+import {IGameLevel, LevelHelp, RoboAstValidator} from "../../../../battleRunner/IGameLevel";
+import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
+import {BattleType} from "../../../../battleRunner/BattleType";
+import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
+import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
+import {createRestrictedBlocksValidator} from "../../../additionalValidators/createRestrictedBlocksValidator";
+import {StatementType} from "../../../../enums/statementType";
+import {Position} from "../../../../models/position";
+import {secondWhileWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondWhileWorld";
+import {randomSwitchAndShootStrategy} from "../../../../predefinedStrategies/randomSwitchAndShoot";
+import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 

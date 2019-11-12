@@ -5,14 +5,14 @@ import {starCollectDiamondsBasicLevel} from "./singleLevels/starCollectDiamondsB
 import {basicRaceLevel} from "./singleLevels/basicRaceLevel";
 import {narrowAlleyPassLevel} from "./singleLevels/narrowAlleyPassLevel";
 import {starWithDiamondsLevel} from "./singleLevels/starWithDiamondsLevel";
-import {flyLeftShootLevel} from "./singleLevels/introductoryLevels/FlyLeftShootLevel";
-import {turnPickUpLevel} from "./singleLevels/introductoryLevels/TurnPickUpLevel";
-import {firstChallengeLevel} from "./singleLevels/introductoryLevels/firstChallengeLevel";
-import {firstRepeatLevel} from "./singleLevels/introductoryLevels/firstRepeatLevel";
-import {firstWhileLevel} from "./singleLevels/introductoryLevels/firstWhileLevel";
-import {secondWhileLevel} from "./singleLevels/introductoryLevels/secondWhileLevel";
-import {firstIfsLevel} from "./singleLevels/introductoryLevels/firstIfsLevel";
-import {secondIfsLevel} from "./singleLevels/introductoryLevels/secondIfsLevel";
+import {flyLeftShootLevel} from "./singleLevels/introductoryLevels/basicConcepts/FlyLeftShootLevel";
+import {turnPickUpLevel} from "./singleLevels/introductoryLevels/basicConcepts/TurnPickUpLevel";
+import {firstChallengeLevel} from "./singleLevels/introductoryLevels/basicConcepts/firstChallengeLevel";
+import {firstRepeatLevel} from "./singleLevels/introductoryLevels/basicConcepts/firstRepeatLevel";
+import {firstWhileLevel} from "./singleLevels/introductoryLevels/basicConcepts/firstWhileLevel";
+import {secondWhileLevel} from "./singleLevels/introductoryLevels/basicConcepts/secondWhileLevel";
+import {firstIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/firstIfsLevel";
+import {secondIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/secondIfsLevel";
 import {translate} from "../../../localization";
 
 const introductoryLevels = [

@@ -1,8 +1,8 @@
-import {convertReadableMapToWorld} from "../../utils/convertReadableMapToWorld";
-import {World} from "../../../models/world";
-import {Ship, ShipColor} from "../../../models/ship";
-import {Direction} from "../../../enums/direction";
-import {Position} from "../../../models/position";
+import {convertReadableMapToWorld} from "../../../utils/convertReadableMapToWorld";
+import {World} from "../../../../models/world";
+import {Ship, ShipColor} from "../../../../models/ship";
+import {Direction} from "../../../../enums/direction";
+import {Position} from "../../../../models/position";
 
 
 const map = [

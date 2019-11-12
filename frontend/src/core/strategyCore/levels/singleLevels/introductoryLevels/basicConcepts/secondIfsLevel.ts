@@ -1,16 +1,16 @@
 import {List, Map} from "immutable";
-import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
-import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollisionResolver";
-import {IGameLevel, LevelHelp, RoboAstValidator} from "../../../battleRunner/IGameLevel";
-import {allStrategyCategories, categoryNames, filterCategories} from "../../../constants/strategyToolbox";
-import {BattleType} from "../../../battleRunner/BattleType";
-import {noFunctionsValidator} from "../../additionalValidators/noFunctionsValidator";
-import {createMaxNumberOfBlocksValidator} from "../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
-import {createEmptyAst} from "../../../../../utils/createEmptyAst";
-import {secondIfsWorld} from "../../worlds/intorductoryLevelsWorlds/secondIfsWorld";
-import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
-import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
+import {IGameBehaviours} from "../../../../gameBehaviours/IGameBehaviours";
+import {explosionCollisionResolver} from "../../../../gameBehaviours/exposionCollisionResolver";
+import {IGameLevel, LevelHelp, RoboAstValidator} from "../../../../battleRunner/IGameLevel";
+import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
+import {BattleType} from "../../../../battleRunner/BattleType";
+import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
+import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
+import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
+import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
+import {secondIfsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondIfsWorld";
+import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
+import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
