@@ -10,7 +10,7 @@ import { CHANGE_LOCATION,
          LOGIN_FAILURE,
          LOGIN_SUCCESS,
          SIGNUP_SUCCESS,
-         SIGNUP_FAILURE } from '../action-types';
+         SIGNUP_FAILURE } from '../action-types.ts';
 
 
 const initial = {

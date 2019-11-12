@@ -1,4 +1,4 @@
-import { SWITCH_VIM_MODE } from '../action-types';
+import { SWITCH_VIM_MODE } from '../action-types.ts';
 
 const initialState = {
   vimMode: false,

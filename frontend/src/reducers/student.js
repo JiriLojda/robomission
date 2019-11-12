@@ -1,5 +1,5 @@
 import { FETCH_STUDENT_SUCCESS,
-         FETCH_PRACTICE_OVERVIEW_SUCCESS } from '../action-types';
+         FETCH_PRACTICE_OVERVIEW_SUCCESS } from '../action-types.ts';
 
 
 export default function reduceStudent(state = {}, action) {

@@ -1,4 +1,4 @@
-import { CHANGE_LOCATION, TOGGLE_MENU, TOGGLE_FEEDBACK_MODAL } from '../action-types';
+import { CHANGE_LOCATION, TOGGLE_MENU, TOGGLE_FEEDBACK_MODAL } from '../action-types.ts';
 
 const initialState = {
   open: false,

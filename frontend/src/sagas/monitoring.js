@@ -1,7 +1,7 @@
 import {call, put, takeLatest} from 'redux-saga/effects';
 import * as api from '../api/monitoring';
 import * as actions from '../actions/monitoring';
-import * as actionType from '../action-types';
+import * as actionType from '../action-types.ts';
 
 
 function* fetchMetrics(action) {

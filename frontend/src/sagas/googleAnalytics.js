@@ -3,7 +3,7 @@
 import ReactGA from 'react-ga';
 import { call, select, takeEvery } from 'redux-saga/effects';
 
-import * as actionType from '../action-types';
+import * as actionType from '../action-types.ts';
 import { getTaskId } from '../selectors/taskEnvironment';
 
 

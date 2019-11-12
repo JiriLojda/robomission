@@ -2,7 +2,7 @@ import { delay } from 'redux-saga'
 import { all, call, cancel, fork, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import * as api from '../api';
 import * as actions from '../actions';
-import * as actionType from '../action-types';
+import * as actionType from '../action-types.ts';
 import { getCurrentUserUrl, getWorldUrl } from '../selectors/api';
 import { getStudentUrl,
          getPracticeOverviewUrl,

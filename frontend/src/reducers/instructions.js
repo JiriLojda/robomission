@@ -6,7 +6,7 @@ import {
   SEE_INSTRUCTION_REQUEST,
   SHOW_INSTRUCTIONS,
   CHANGE_LOCATION,
-  } from '../action-types';
+  } from '../action-types.ts';
 
 
 const initial = {

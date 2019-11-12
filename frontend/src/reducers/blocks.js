@@ -1,4 +1,4 @@
-import { FETCH_WORLD_SUCCESS } from '../action-types';
+import { FETCH_WORLD_SUCCESS } from '../action-types.ts';
 
 export default function reduceBlocks(state = {}, action) {
   switch (action.type) {

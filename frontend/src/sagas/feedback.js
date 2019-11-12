@@ -1,6 +1,6 @@
 // Sagas for user feedback processing.
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import * as actionType from '../action-types';
+import * as actionType from '../action-types.ts';
 import * as actions from '../actions';
 import * as api from '../api';
 import { getFeedbackUrl } from '../selectors/api';

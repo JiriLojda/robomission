@@ -1,4 +1,4 @@
-import { FETCH_METRICS_SUCCESS } from '../action-types';
+import { FETCH_METRICS_SUCCESS } from '../action-types.ts';
 
 
 const initialState = {

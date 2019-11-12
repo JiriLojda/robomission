@@ -1,6 +1,6 @@
 import { FETCH_WORLD_SUCCESS,
          FETCH_PRACTICE_OVERVIEW_SUCCESS,
-         SHOW_NEXT_LEVEL_STATUS} from '../action-types';
+         SHOW_NEXT_LEVEL_STATUS} from '../action-types.ts';
 
 export default function reduceProblemSets(state = {}, action) {
   switch (action.type) {

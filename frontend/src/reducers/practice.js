@@ -1,5 +1,5 @@
 import { RUN_PROGRAM_SOLVED_REPORT,
-         SHOW_NEXT_LEVEL_STATUS } from '../action-types';
+         SHOW_NEXT_LEVEL_STATUS } from '../action-types.ts';
 
 const initial = {
   progress: null,

@@ -3,7 +3,7 @@ import {
   CHANGE_NICKNAME,
   CHANGE_CREDENTIALS,
   LOGIN_SUCCESS,
-  LOGIN_FAILURE } from '../action-types';
+  LOGIN_FAILURE } from '../action-types.ts';
 
 
 const emptyCredentials = {

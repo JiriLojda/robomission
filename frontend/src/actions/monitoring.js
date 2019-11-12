@@ -1,4 +1,4 @@
-import * as at from '../action-types';
+import * as at from '../action-types.ts';
 
 
 function action(type, payload = {}) {
@@ -10,4 +10,4 @@ export const fetchMetrics = {
   request: () => action(at.FETCH_METRICS_REQUEST),
   success: (metrics) => action(at.FETCH_METRICS_SUCCESS, {metrics}),
   failure: (error) => action(at.FETCH_METRICS_FAILURE, {error}),
-}
+};

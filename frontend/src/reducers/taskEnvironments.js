@@ -16,7 +16,7 @@ import { CHANGE_LOCATION,
          CHANGE_GAME_PANEL_WIDTH,
          SET_EDITOR_TYPE,
          SET_SPEED,
-         RUN_PROGRAM_SOLVED_REPORT } from '../action-types';
+         RUN_PROGRAM_SOLVED_REPORT } from '../action-types.ts';
 import { parseRoboCode, RoboCodeSyntaxError } from '../core/roboCodeParser';
 import { generateRoboCode } from '../core/roboCodeGenerator';
 import { practicePageTaskEnvironmentId } from '../selectors/taskEnvironment';

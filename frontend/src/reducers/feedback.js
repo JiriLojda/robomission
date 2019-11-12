@@ -3,7 +3,7 @@ import {
   CHANGE_FEEDBACK,
   SUBMIT_FEEDBACK_SUCCESS,
   SUBMIT_FEEDBACK_FAILURE,
-  } from '../action-types';
+  } from '../action-types.ts';
 
 const emptyFieldErrors = {
   comment: null,

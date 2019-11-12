@@ -1,5 +1,5 @@
 import { FETCH_PRACTICE_OVERVIEW_SUCCESS,
-         RUN_PROGRAM_SOLVED_REPORT } from '../action-types';
+         RUN_PROGRAM_SOLVED_REPORT } from '../action-types.ts';
 
 const initial = {
   available: false,
