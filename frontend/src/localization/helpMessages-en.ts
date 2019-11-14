@@ -9,25 +9,25 @@ const firstChallengeMessage = 'Now lets try to defeat an opponent that will figh
     'Otherwise it cannot be pushed and nothing will happen.';
 
 const firstIfsTitle = 'Collect the diamonds';
-const firstifsMessage = 'Now we will try ifs. "if" block will execute its body only if the condition given to it evaluates to true. ' +
+const firstIfsMessage = 'Now we will try ifs. "if" block will execute its body only if the condition given to it evaluates to true. ' +
 'Otherwise the whole is just skipped. The "if-else" block has additional part. This second part (else part) ' +
 'will be executed if the condition in the "if" is evaluated to false. ' +
 'Now in this mission you will have to collect all the diamonds. Your opponent here will do nothing. ' +
+'You will need to use condition, from the "conditions" category. Particularly there is a contains/not contains ' +
+'condition. You can choose for what object do you want to check on the position ' +
+'Another parameter is position. You will find position block in the "values" category. ' +
+'The "position" block will determine one specific position regardless the current position of your ship. ' +
+'While the "position relative" block determines which position relatively to the current position ' +
+'of your ship to pick. So if you want to put there position that will always be one tile above your ship, ' +
+'you might want to put there "position relative" with x=0 (meaning the same column) and y=-1 (meaning one ' +
+'line above). It should probably be also noted, that the upper left corner of the map has coordinates of ' +
+'(x=0, y=0) and y grows going down on the map, while x grows going to the right of the map. ' +
 'You are restricted to the maximum of 7 blocks so you better use a cycle. Also shooting is ineffective.';
 
 const firstRepeatTitle = 'Collect the diamonds';
 const firstRepeatMessage = 'In this level, we will explore repeat cycle. Repeat does what the name suggests. ' +
     'It repeats the commands in its body given number of times. It is supposed to help you ' +
-    'not to repeat yourself. So here you have to collect all the diamonds. while using only 3 blocks. ' +
-    'You will need to use condition, from the "conditions" category. Particularly there is a contains/not contains ' +
-    'condition. You can choose for what object do you want to check on the position ' +
-    'Another parameter is position. You will find position block in the "values" category. ' +
-    'The "position" block will determine one specific position regardless the current position of your ship. ' +
-    'While the "position relative" block determines which position relatively to the current position ' +
-    'of your ship to pick. So if you want to put there position that will always be one tile above your ship, ' +
-    'you might want to put there "position relative" with x=0 (meaning the same column) and y=-1 (meaning one ' +
-    'line above). It should probably be also noted, that the upper left corner of the map has coordinates of ' +
-    '(x=0, y=0) and y grows going down on the map, while x grows going to the right of the map. ';
+    'not to repeat yourself. So here you have to collect all the diamonds. while using only 3 blocks.';
 
 const firstWhileTitle = 'Collect the diamonds';
 const firstWhileMessage = 'Now the "while" cycle. The "while" cycle is quite like the "if" statement. ' +
@@ -120,7 +120,7 @@ const distributedIntroMessage = 'In the following set of levels we will try to c
 export type HelpEntry = { title: string, message: string};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
-    [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstifsMessage}],
+    [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstIfsMessage}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],

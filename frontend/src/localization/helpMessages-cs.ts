@@ -15,12 +15,6 @@ const firstifsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí sv
     'V opačném případě se celé jeho tělo přeskočí. "pokud-jinak" blok má další část. Tato další část (jinak blok) ' +
     'je naopak spuštěna pouze pokud se podmínka vyhodnotí na "nepravda". ' +
     'V této misi musíte posbírat všechny diamanty. Váš protivník nebude nic dělat. ' +
-    'Zároveň jste omezeni pouze na 7 bloků programu (nápověda: pomůže cyklus). Je zbytečné střílet, zbraně jsou vypnuté.';
-
-const firstRepeatTitle = 'Posbírej diamanty';
-const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "opakuj", jak už název napovídá, ' +
-    'opakuje svoje tělo tolikrát, jaké číslo dostane. Tento blok vám pomáhá nevytvářet stejnou věc pořád ' +
-    'dokola. Vaším úkolem je posbírat všechny diamanty s využítím jenom 3 bloků.' +
     'Budete potřebovat podmínku z kategorie "podmínky". Konkrétně podmínku jestli pole obsahuje/neobsahuje ' +
     'specifikovaný objekt. V této podmínce si vyberete který objekt chcete hledat na dané pozici. ' +
     'Další parameter je pozice. Blok pozice najdete v kategorii "hodnoty". ' +
@@ -29,7 +23,13 @@ const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "
     'Takže když například budete chtít vybrat pozici která bude vždy o jedno pole nad vaší lodí, ' +
     'vyberete "relativní pozice" s hodnotami x=0 (znamenající souřadnice x stejná jako x lodě) a y=-1 (znamenající ' +
     'y o jedna menší než y lodě). Ještě by bylo vhodné poznamenat, že levý horní okraj mapy má souřadnice ' +
-    '(x=0, y=0) a y roste směrem dolů, zatímco x roste směrem doprava. ';
+    '(x=0, y=0) a y roste směrem dolů, zatímco x roste směrem doprava. ' +
+    'Zároveň jste omezeni pouze na 7 bloků programu (nápověda: pomůže cyklus). Je zbytečné střílet, zbraně jsou vypnuté.';
+
+const firstRepeatTitle = 'Posbírej diamanty';
+const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "opakuj", jak už název napovídá, ' +
+    'opakuje svoje tělo tolikrát, jaké číslo dostane. Tento blok vám pomáhá nevytvářet stejnou věc pořád ' +
+    'dokola. Vaším úkolem je posbírat všechny diamanty s využítím jenom 3 bloků.';
 
 const firstWhileTitle = 'Posbírej diamanty';
 const firstWhileMessage = 'Teď cyklus "dokud". Cyklus "dokud" je podobný jako blok "pokud". ' +
