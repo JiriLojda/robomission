@@ -22,6 +22,11 @@ p, h1, h2, h3, h4, h5, h6,
   height: 100%;
 }
 
+.strategy-blokly {
+  height: 100%;
+  width: 100%;
+}
+
 .blocklySvg {
   background-color: #37474F;
 }

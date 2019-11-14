@@ -44,77 +44,126 @@ export interface IStandardEditorSidebarCallbackProps {
 
 type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackProps;
 
-export const StandardEditorSidebar = (props: Props) => (
-    <span>
-        {props.shouldShowMinimap &&
-            <SpaceWorld
-              fields={convertWorldToEditorModel(props.world)}
-              width={200}
-            />
+interface IStandardEditorSidebarState {
+    readonly width: number;
+}
+
+const tileSize = 40 as const;
+const minControlsSize = 200 as const;
+const getMapWidth = (world: World) =>
+    world.size.x * tileSize;
+const getMapElementWidth = (world: World, width: number) =>
+    Math.min(getMapWidth(world), width - 20);
+const getMapElementHeight = (world: World, width: number) =>
+    (getMapElementWidth(world, width) / world.size.x) * world.size.y;
+
+const calculateControlsWidth = (world: World, width: number) =>
+    width - getMapWidth(world) - 30 < minControlsSize ?
+        '100%' : `calc(100% - ${getMapWidth(world)}px)`;
+
+export class StandardEditorSidebar extends React.PureComponent<Props, IStandardEditorSidebarState> {
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            width: window.innerWidth,
         }
-        {props.canRunBattle &&
-            <RaisedButton
-              label={translate('editor.runBattle')}
-              disabled={props.validationResult !== InvalidProgramReason.None || !!props.codeError}
-              primary
-              style={{margin: 2, minWidth: 50}}
-              onClick={props.onRunBattle}
-            />
-        }
-        {!!props.onCodeSubmit &&
-            <RaisedButton
-              label={translate('editor.submitCode')}
-              disabled={props.validationResult !== InvalidProgramReason.None || !!props.codeError}
-              primary
-              style={{ margin: 2, minWidth: 50 }}
-              onClick={props.onCodeSubmit}
-            />
-        }
-        <RaisedButton
-            label={'reset'}
-            secondary
-            style={{margin: 2, minWidth: 50}}
-            onClick={props.onReset}
-        />
-        {props.shouldShowExportAst &&
-        <RaisedButton
-          label={'ast to console'}
-          style={{margin: 2, minWidth: 50}}
-          onClick={() => console.log(JSON.stringify(props.roboAst))}
-        />
-        }
-        <RaisedButton
-            label={translate('editor.showHelp')}
-            style={{margin: 2, minWidth: 50}}
-            onClick={props.onShowHelp}
-        />
-                    <Toggle
-                        toggled={props.isCodeEditorShown}
-                        label={translate('editor.useCodeEditor')}
-                        labelStyle={{color: 'black'}}
-                        onToggle={props.isCodeEditorShown ? props.onHideCodeEditor : props.onShowCodeEditor}
+    }
+
+    updateDimensions = () => {
+        if (this.state.width === window.innerWidth)
+            return;
+
+        this.setState({ width: window.innerWidth });
+    };
+    componentDidMount() {
+        window.addEventListener('resize', this.updateDimensions);
+    }
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions);
+    }
+
+    render() {
+        return (
+            <div style={{width: '100%', padding: '5px', display: 'flex', flexWrap: 'wrap'}}>
+                <div style={{
+                    float: 'left',
+                    width: `${getMapElementWidth(this.props.world, this.state.width)}px`,
+                    height: `${getMapElementHeight(this.props.world, this.state.width)}px`,
+                    flexShrink: 0,
+                }}>
+                    <SpaceWorld
+                        fields={convertWorldToEditorModel(this.props.world)}
+                        width={getMapElementWidth(this.props.world, this.state.width)}
                     />
-                        <RaisedButton
-                            label={translate('editor.showMap')}
-                            secondary
-                            style={{margin: 2, minWidth: 50}}
-                            onClick={props.onShowMap}
+                </div>
+                <div style={{width: calculateControlsWidth(this.props.world, this.state.width), paddingLeft: '5px'}}>
+                    {this.props.canRunBattle &&
+                    <RaisedButton
+                      label={translate('editor.runBattle')}
+                      disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
+                      primary
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={this.props.onRunBattle}
+                    />
+                    }
+                    {!!this.props.onCodeSubmit &&
+                    <RaisedButton
+                      label={translate('editor.submitCode')}
+                      disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
+                      primary
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={this.props.onCodeSubmit}
+                    />
+                    }
+                    <RaisedButton
+                        label={'reset'}
+                        secondary
+                        style={{margin: 2, minWidth: 50}}
+                        onClick={this.props.onReset}
+                    />
+                    {this.props.shouldShowExportAst &&
+                    <RaisedButton
+                      label={'ast to console'}
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={() => console.log(JSON.stringify(this.props.roboAst))}
+                    />
+                    }
+                    <RaisedButton
+                        label={translate('editor.showHelp')}
+                        style={{margin: 2, minWidth: 50}}
+                        onClick={this.props.onShowHelp}
+                    />
+                    <RaisedButton
+                        label={translate('editor.showMap')}
+                        secondary
+                        style={{margin: 2, minWidth: 50}}
+                        onClick={this.props.onShowMap}
+                    />
+                    <div style={{width: '200px'}}>
+                        <Toggle
+                            toggled={this.props.isCodeEditorShown}
+                            label={translate('editor.useCodeEditor')}
+                            onToggle={this.props.isCodeEditorShown ? this.props.onHideCodeEditor : this.props.onShowCodeEditor}
                         />
+                    </div>
                     <ErrorMessage>
-                        {getUserProgramErrorDisplayName(props.runtimeError)}
+                        {getUserProgramErrorDisplayName(this.props.runtimeError)}
                     </ErrorMessage>
                     <ErrorMessage>
                         {
-                            props.validationResult !== InvalidProgramReason.None ?
-                                getInvalidProgramReasonDisplayName(props.validationResult) :
+                            this.props.validationResult !== InvalidProgramReason.None ?
+                                getInvalidProgramReasonDisplayName(this.props.validationResult) :
                                 undefined
                         }
                     </ErrorMessage>
                     <ErrorMessage>
-                        {props.codeError || undefined}
+                        {this.props.codeError || undefined}
                     </ErrorMessage>
-                    <ResultMessage type={getMessageTypeForResult(props.battleResult || undefined, props.isDecisiveWin)}>
-                        {getBattleResultMessage(props.battleResult || undefined, props.isDecisiveWin)}
+                    <ResultMessage type={getMessageTypeForResult(this.props.battleResult || undefined, this.props.isDecisiveWin)}>
+                        {getBattleResultMessage(this.props.battleResult || undefined, this.props.isDecisiveWin)}
                     </ResultMessage>
-                </span>
-);
+                </div>
+            </div>
+        );
+    }
+}

@@ -1,7 +1,7 @@
 import {
     INewEditorCallbackProps,
     INewEditorDataProps,
-    StrategyInnerEditor as NewEditorComponent
+    StrategyInnerEditor as StrategyInnerEditorComponent
 } from '../../components/editor/StrategyInnerEditor';
 import {IStore} from "../../reducers/IStore";
 import {BlocklyToolbox} from "../../core/strategyCore/constants/strategyToolbox";
@@ -21,6 +21,7 @@ interface IOwnProps {
     readonly showCodeEditor: boolean;
     readonly toolbox: BlocklyToolbox;
     readonly additionalValidators: List<RoboAstValidator>;
+    readonly height: number;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProps => ({
@@ -28,13 +29,17 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProp
     showCodeEditor: ownProps.showCodeEditor,
     additionalValidators: ownProps.additionalValidators,
     toolbox: ownProps.toolbox,
+    height: ownProps.height,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IStore>): INewEditorCallbackProps => ({
+const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): INewEditorCallbackProps => ({
     onCodeErrorRaised: error => dispatch(codeErrorRaised(error)),
     onCodeErrorCleared: () => dispatch(codeErrorCleared()),
     onRoboAstChanged: roboAst => dispatch(roboAstChanged(roboAst)),
     onSyntaxErrorRaised: error => dispatch(syntaxErrorRaised(error)),
 });
 
-export const StrategyInnerEditor: React.ComponentType<IOwnProps> = connect(mapStateToProps, mapDispatchToProps)(NewEditorComponent);
+export const StrategyInnerEditor: React.ComponentType<IOwnProps> = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(StrategyInnerEditorComponent);

@@ -13,6 +13,8 @@ import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPri
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {MapOverlay} from "./MapOverlay";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
+import {BlocklyEditor} from "react-blockly-component";
+import RaisedButton from "material-ui/RaisedButton";
 
 export interface INewEditingDataProps {
     readonly level: IGameLevel;
@@ -38,15 +40,19 @@ type Props = INewEditingDataProps & INewEditingCallbackProps;
 interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     useCodeEditor: boolean;
+    editorHeight: number;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
+const minimumEditorSize = 400 as const;
+const changeSizeNumber = 100 as const;
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
         super(props);
         this.state = {
             useCodeEditor: false,
+            editorHeight: 400,
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -106,6 +112,15 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this._drawHistory(result.history.reverse());
     };
 
+    private _enlargeTheEditor = () =>
+        this.setState(prevState => ({editorHeight: prevState.editorHeight + changeSizeNumber}));
+
+    private _makeEditorSmaller = () => {
+        if (this.state.editorHeight - changeSizeNumber < minimumEditorSize)
+            return;
+        this.setState(prevState => ({editorHeight: prevState.editorHeight - changeSizeNumber}))
+    };
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         if (this.props.isMapShown)
             return <span>
@@ -122,18 +137,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 />
         </span>;
 
-        return <span>
-            <SplitPane
-                split="vertical"
-                minSize={200}
-                maxSize={-400}
-                size={200}
-                resizerStyle={{
-                    backgroundColor: '#aaa',
-                    width: 4,
-                    cursor: 'col-resize',
-                }}
-            >
+        return <div>
                 <StandardEditorSidebar
                     onCodeSubmit={this.props.onCodeSubmit}
                     canRunBattle={this.props.canRunBattle}
@@ -149,14 +153,26 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                     additionalValidators={this.props.level.additionalValidators}
                     showCodeEditor={this.state.useCodeEditor}
                     toolbox={this.props.level.toolbox}
+                    height={this.state.editorHeight}
                 />
-            </SplitPane>
-            <HelpModal
-                title={this.props.level.help.title}
-                message={this.props.level.help.text}
-                isOpened={this.props.isHelpShown}
-                onClose={this.props.onHelpClosed}
+            <RaisedButton
+                label="enlarge the editor"
+                secondary
+                style={{margin: 2, minWidth: 50}}
+                onClick={this._enlargeTheEditor}
             />
-        </span>
+            <RaisedButton
+                label="make the editor smaller"
+                secondary
+                style={{margin: 2, minWidth: 50}}
+                onClick={this._makeEditorSmaller}
+            />
+            {/*<HelpModal*/}
+            {/*    title={this.props.level.help.title}*/}
+            {/*    message={this.props.level.help.text}*/}
+            {/*    isOpened={this.props.isHelpShown}*/}
+            {/*    onClose={this.props.onHelpClosed}*/}
+            {/*/>*/}
+        </div>
     }
 }

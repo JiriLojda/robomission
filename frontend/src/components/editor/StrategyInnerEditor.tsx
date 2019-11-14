@@ -1,7 +1,6 @@
 import CodeEditor from "./CodeEditor";
 import StrategyRoboCodeHighlighter from "../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter";
 import * as ReactBlocklyComponent from "react-blockly-component";
-import {BlocklyEditor} from "react-blockly-component";
 import {generateBlocklyXml} from "../../core/strategyCore/codeEditor/xmlGenerator/blocklyXmlGenerator";
 import React from "react";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
@@ -14,12 +13,14 @@ import {List} from "immutable";
 import {RoboAstValidator} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {blocklyXmlToRoboAst} from "../../core/blockly";
 import {BlocklyToolbox} from "../../core/strategyCore/constants/strategyToolbox";
+import {BlocklyEditor} from "react-blockly-component";
 
 export interface INewEditorDataProps {
     readonly showCodeEditor: boolean;
     readonly roboAst: IRoboAst;
     readonly additionalValidators: List<RoboAstValidator>;
     readonly toolbox: BlocklyToolbox;
+    readonly height: number;
 }
 
 export interface INewEditorCallbackProps {
@@ -44,11 +45,16 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
     }
 
     componentWillReceiveProps(nextProps: Readonly<Props>): void {
-        if (!nextProps.showCodeEditor || this.props.showCodeEditor) {
-            return;
+        if (nextProps.showCodeEditor && !this.props.showCodeEditor) {
+            const newCode = generateStrategyRoboCode(this.props.roboAst);
+            this._onCodeChange(newCode);
         }
-        const newCode = generateStrategyRoboCode(this.props.roboAst);
-        this._onCodeChange(newCode);
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>): void {
+        if (prevProps.height !== this.props.height && this.blocklyEditor) {
+            this.blocklyEditor.resize();
+        }
     }
 
     private blocklyEditor: BlocklyEditor | null = null;
@@ -93,22 +99,26 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
     };
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        return this.props.showCodeEditor ? (<CodeEditor
-                code={this.state.code || ''}
-                onChange={this._onCodeChange}
-                highlighter={new StrategyRoboCodeHighlighter()}
-            />
-        ) : (
-            <ReactBlocklyComponent.BlocklyEditor
-                ref={(ref: BlocklyEditor) => {
-                    this.blocklyEditor = ref;
-                }}
-                workspaceConfiguration={{trashcan: true, collapse: true}}
-                toolboxCategories={this.props.toolbox}
-                initialXml={generateBlocklyXml(this.props.roboAst)}
-                xmlDidChange={this._onXmlChange}
-                wrapperDivClassName="flocs-blockly"
-            />)
+        return <div style={{width: '100%', height: `${this.props.height}px`}}>
+            {
+                this.props.showCodeEditor ? (<CodeEditor
+                        code={this.state.code || ''}
+                        onChange={this._onCodeChange}
+                        highlighter={new StrategyRoboCodeHighlighter()}
+                    />
+                ) : (
+                    <ReactBlocklyComponent.BlocklyEditor
+                        ref={ref => {
+                            this.blocklyEditor = ref;
+                        }}
+                        workspaceConfiguration={{trashcan: true, collapse: true}}
+                        toolboxCategories={this.props.toolbox}
+                        initialXml={generateBlocklyXml(this.props.roboAst)}
+                        xmlDidChange={this._onXmlChange}
+                        wrapperDivClassName="strategy-blokly"
+                    />)
+            }
+        </div>
     }
 }
 
