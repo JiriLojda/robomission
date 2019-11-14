@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
@@ -35,6 +35,7 @@ export const narrowAlleyPassLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions)},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], narrowAlleySweeper]]),
+    teams: createOnTheirOwnGroups(shipIds),
     world: narrowPathWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),

@@ -1,7 +1,7 @@
 import {BattleType} from "./BattleType";
-import {isEnterablePosition, isPositionInWorld, World} from "../models/world";
+import {isEnterablePosition, World} from "../models/world";
 import {IBattleEndParams} from "./hasBattleEnded";
-import {List, Map} from "immutable";
+import {fromJS, List, Map} from "immutable";
 import {ShipId} from "../models/ship";
 import {IRoboAst} from "../models/programTypes";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
@@ -23,11 +23,32 @@ export interface IGameLevel {
     readonly battleParams: IBattleEndParams;
     readonly turnsOrder: List<ShipId>;
     readonly shipsAsts: Map<ShipId, IRoboAst>;
+    readonly teams: List<List<List<ShipId>>>;
     readonly gameBehaviours: IGameBehaviours;
     readonly toolbox: BlocklyToolbox;
     readonly help: LevelHelp;
     readonly additionalValidators: List<RoboAstValidator>;
 }
+
+export const findGroupsWithoutAst = (level: IGameLevel): List<List<ShipId>> => {
+    const astDefinedFor = level.shipsAsts.keySeq().toSet();
+
+    return findAllGroups(level)
+        .filter(group => group.every(id => !astDefinedFor.has(id)));
+};
+
+const findAllGroups = (level: IGameLevel): List<List<ShipId>> =>
+    level.teams
+        .flatten(1)
+        .toList();
+
+export const createOnTheirOwnGroups = (shipIds: ReadonlyArray<ShipId>): List<List<List<ShipId>>> =>
+    fromJS(shipIds.map(id => [[id]]));
+
+export const defineAstForGroups = (groupsAsts: Map<List<ShipId>, IRoboAst>, level: IGameLevel): Map<ShipId, IRoboAst> =>
+    groupsAsts
+        .flatMap((ast, group) => group.map(id => [id, ast]))
+        .reduce((result, ast, id) => result.set(id, ast), level.shipsAsts);
 
 export const isGameLevelValid = (level: IGameLevel): boolean =>
     doesShipsMatchTurnOrder(level) &&

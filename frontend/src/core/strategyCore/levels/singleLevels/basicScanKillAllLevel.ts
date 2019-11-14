@@ -1,7 +1,7 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
 import {basicScanStrategy} from "../../predefinedStrategies/basicScanStrategy";
-import {IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {basicKillAllWorld} from "../worlds/basicKillAllWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
@@ -27,6 +27,7 @@ export const basicScanKillAllLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 40},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], basicScanStrategy]]),
+    teams: createOnTheirOwnGroups(shipIds),
     world: basicKillAllWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),

@@ -1,7 +1,7 @@
 import {List, Map} from "immutable";
 import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollisionResolver";
 import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
-import {IGameLevel, LevelHelp} from "../../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../../battleRunner/IGameLevel";
 import {BattleType} from "../../../battleRunner/BattleType";
 import {empty77World} from "../../worlds/empty77World";
 import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShotResolver";
@@ -26,6 +26,7 @@ export const emptyWorldDuel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 100},
     turnsOrder: List(shipIds),
     shipsAsts: Map(),
+    teams: createOnTheirOwnGroups(shipIds),
     world: empty77World,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),

@@ -7,13 +7,13 @@ import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
 import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
-import {List} from "immutable";
+import {List, Map} from "immutable";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
 import {BattleResult, BattleResultType} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
-import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {MapOverlay} from "./MapOverlay";
 import {createEmptyAst} from "../../utils/createEmptyAst";
 import {HelpModal} from "../uiComponents/HelpModal";
@@ -122,9 +122,11 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
     _runBattle = (): void => {
         this.setState(() => ({isMapOverlayShown: true}));
         const level = this.props.level;
-        const allAsts = level.shipsAsts
-            .set("first", this.state.roboAsts.first)
-            .set("second", this.state.roboAsts.second);
+        const groupsWithoutAsts = findGroupsWithoutAst(this.props.level);
+        const allAsts = defineAstForGroups(Map([
+            [groupsWithoutAsts.get(0)!, this.state.roboAsts.first],
+            [groupsWithoutAsts.get(1)!, this.state.roboAsts.second],
+        ]), this.props.level);
         const result = runBattle({
             world: this.state.world,
             battleParams: level.battleParams,

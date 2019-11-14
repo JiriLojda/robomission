@@ -1,10 +1,10 @@
 import React from "react";
-import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
 import {BattleResult} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
-import {List} from "immutable";
+import {List, Map} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
 import SplitPane from "react-split-pane";
 import {StandardEditorSidebar} from "../../containers/strategyEditor/StandardEditorSidebar";
@@ -12,6 +12,7 @@ import {StrategyInnerEditor} from "../../containers/strategyEditor/StrategyInner
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {MapOverlay} from "./MapOverlay";
+import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 
 export interface INewEditingDataProps {
     readonly level: IGameLevel;
@@ -46,6 +47,10 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         super(props);
         this.state = {
             useCodeEditor: false,
+        };
+
+        if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
+            throw invalidProgramError('StrategyEditor can run only levels with one ast to define.');
         }
     }
 
@@ -85,14 +90,15 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         }
         this.props.toggleMap();
         const level = this.props.level;
-        const userShipId = level.turnsOrder.find(id => !level.shipsAsts.has(id)) || 'userShip';
-        const allAsts = level.shipsAsts.set(userShipId, this.props.roboAst);
+        const groups = defineAstForGroups(Map([
+            [findGroupsWithoutAst(this.props.level).get(0)!, this.props.roboAst],
+        ]), this.props.level);
         const result = runBattle({
             world: this.props.level.world,
             battleParams: level.battleParams,
             battleType: level.battleType,
             shipsOrder: level.turnsOrder,
-            roboAsts: level.turnsOrder.map(id => allAsts.get(id)!).toList(),
+            roboAsts: level.turnsOrder.map(id => groups.get(id)!).toList(),
             behaviours: level.gameBehaviours,
         });
         this.props.battleResultChanged(result);
