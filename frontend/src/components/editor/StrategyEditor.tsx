@@ -94,6 +94,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             console.warn('This should not be called when cannotRunBattle.');
             return;
         }
+        this._reset();
         this.props.toggleMap();
         const level = this.props.level;
         const groups = defineAstForGroups(Map([

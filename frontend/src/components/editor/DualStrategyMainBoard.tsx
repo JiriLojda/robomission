@@ -120,6 +120,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
     };
 
     _runBattle = (): void => {
+        this._reset();
         this.setState(() => ({isMapOverlayShown: true}));
         const level = this.props.level;
         const groupsWithoutAsts = findGroupsWithoutAst(this.props.level);
