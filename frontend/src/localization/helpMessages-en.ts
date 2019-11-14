@@ -109,6 +109,14 @@ const emptyWorldDuelMessage = 'This is a simple duel level. Try to shoot your op
 'Either of you can edit your code through the "edit first/second player code" buttons. ' +
 'Once you are satisfied with you code submit it and run the battle.';
 
+const distributedIntroTitle = 'Get them there';
+const distributedIntroMessage = 'In the following set of levels we will try to create one program for multiple ships ' +
+    'and try to accomplish a goal that will require them to cooperate. ' +
+    'Now in this particular level you have to get both of the ships to their respective tiles. ' +
+    'Red ship to the red tile and green ship to the green tile. The program you create will be executed on both ' +
+    'ships simultaneously. So for example if you will have a program with just a shoot command, and run it. ' +
+    'Both of you ships will shoot.';
+
 export type HelpEntry = { title: string, message: string};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -125,4 +133,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.StarCollectDiamondsBasic, {title: starCollectDiamondsBasicTitle, message: starCollectDiamondsBasicMessage}],
     [HelpTranslationKey.StarWithDiamonds, {title: starWithDiamondsTitle, message: starWithDiamondsMessage}],
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
+    [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
 ]);

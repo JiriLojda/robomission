@@ -143,6 +143,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                     onReset={this._reset}
                     onRunBattle={this._runBattle}
                     shouldShowMinimap={shouldShowMinimap(this.props.level.world)}
+                    isDecisiveWin={this.props.level.isDecisiveWin}
                 />
                 <StrategyInnerEditor
                     additionalValidators={this.props.level.additionalValidators}

@@ -2,7 +2,13 @@ import {List, Map} from "immutable";
 import {IGameBehaviours} from "../../../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../../../gameBehaviours/exposionCollisionResolver";
 import {destroyFirstShotResolver} from "../../../../gameBehaviours/destroyFirstShotResolver";
-import {createOnTheirOwnGroups, IGameLevel, LevelHelp, RoboAstValidator} from "../../../../battleRunner/IGameLevel";
+import {
+    createOnTheirOwnGroups,
+    createOnTheirOwnTeams,
+    IGameLevel,
+    LevelHelp,
+    RoboAstValidator
+} from "../../../../battleRunner/IGameLevel";
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
 import {BattleType} from "../../../../battleRunner/BattleType";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
@@ -34,11 +40,13 @@ export const flyLeftShootLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 100},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], createEmptyAst()]]),
-    teams: createOnTheirOwnGroups(shipIds),
+    teams: createOnTheirOwnTeams(shipIds),
+    sameAstGroups: createOnTheirOwnGroups(shipIds),
     world: smallGetOutWorld,
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands]),
     help,
     additionalValidators,
+    isDecisiveWin: winner => winner === 'playerShip',
 };
 

@@ -19,7 +19,7 @@ const firstifsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí sv
 
 const firstRepeatTitle = 'Posbírej diamanty';
 const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "opakuj", jak už název napovídá, ' +
-    'opakuje svoje tělo tolikrát, jaké číslo dostane. Tento blok vám pomáhá nevytvářet stojnou věc pořád ' +
+    'opakuje svoje tělo tolikrát, jaké číslo dostane. Tento blok vám pomáhá nevytvářet stejnou věc pořád ' +
     'dokola. Vaším úkolem je posbírat všechny diamanty s využítím jenom 3 bloků.' +
     'Budete potřebovat podmínku z kategorie "podmínky". Konkrétně podmínku jestli pole obsahuje/neobsahuje ' +
     'specifikovaný objekt. V této podmínce si vyberete který objekt chcete hledat na dané pozici. ' +
@@ -111,6 +111,14 @@ const emptyWorldDuelMessage = 'V tomto jednoduchém duelu se pokusíte setřelit
     'Každý z vás může editovat svůj kód pomocí tlačítka "edit first/second player code". ' +
     'Jakmile jste se svým kódem spokojeni. Potvďte ho tlačítkem "Potvrdit kód" a sposťte bitvu.';
 
+const distributedIntroTitle = 'Dostaň je do cíle';
+const distributedIntroMessage = 'V následující sadě úrovní se pokusíme vytvářet programy pro několik lodí najednou. ' +
+    'Lodě pak budou muset splnit zadaný úkol jako tým. ' +
+    'V této úrovni je vaším úkolem dostat obě lodě na jejich cílové pozice. ' +
+    'Červenou loď na červené pole a zelenou na zelené. Program který vytvoříte bude spuštěn na obou raketkách ' +
+    'současně. Takže když například budete mít program obsahující pouze povel vystřel as pustíte ho. ' +
+    'Obě vaše lodě vystřelí.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstifsMessage}],
@@ -126,4 +134,5 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.StarCollectDiamondsBasic, {title: starCollectDiamondsBasicTitle, message: starCollectDiamondsBasicMessage}],
     [HelpTranslationKey.StarWithDiamonds, {title: starWithDiamondsTitle, message: starWithDiamondsMessage}],
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
+    [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
 ]);

@@ -407,6 +407,7 @@ const messages: {[index: string]: string} = {
   'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
 
   'level.category.introduction': 'Úvod',
+  'level.category.distributed': 'Úvod do distribuovaného programování',
   'level.category.others': 'Ostatní',
   'level.category.justOthers': 'Jen ostatní',
 
@@ -430,6 +431,7 @@ const levelNames: [HelpTranslationKey, string][] = [
   [HelpTranslationKey.NarrowAlleyPass, 'Úzký průchod'],
   [HelpTranslationKey.StarCollectDiamondsBasic, `Jednoduché sbírání hvězdy`],
   [HelpTranslationKey.StarWithDiamonds, 'Hvězda s diamanty'],
+  [HelpTranslationKey.DistributedIntro, 'Tvůj první distribuovaný program'],
 ];
 
 const registerLevelNames = () => {

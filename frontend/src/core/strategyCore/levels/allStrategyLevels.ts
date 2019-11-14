@@ -14,6 +14,7 @@ import {secondWhileLevel} from "./singleLevels/introductoryLevels/basicConcepts/
 import {firstIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/firstIfsLevel";
 import {secondIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/secondIfsLevel";
 import {translate} from "../../../localization";
+import {distributedIntroLevel} from "./singleLevels/distributedLevels/distributedIntroLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -26,6 +27,10 @@ const introductoryLevels = [
     secondWhileLevel,
 ];
 
+const distributedLevels = [
+    distributedIntroLevel,
+];
+
 const otherLevels = [
     basicScanKillAllLevel,
     starCollectDiamondsBasicLevel,
@@ -36,10 +41,12 @@ const otherLevels = [
 
 export const strategyLevelsCategories: List<[string, List<IGameLevel>]> = List([
     [translate('level.category.introduction'), List(introductoryLevels)],
+    [translate('level.category.distributed'), List(distributedLevels)],
     [translate('level.category.others'), List(otherLevels)],
 ]);
 
 export const allStrategyLevels: List<IGameLevel> = List([
     ...introductoryLevels,
+    ...distributedLevels,
     ...otherLevels,
 ]);

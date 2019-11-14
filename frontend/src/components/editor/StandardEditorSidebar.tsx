@@ -39,6 +39,7 @@ export interface IStandardEditorSidebarCallbackProps {
     readonly onHideCodeEditor: () => void;
     readonly onShowMap: () => void;
     readonly onCodeSubmit: (() => void) | undefined;
+    readonly isDecisiveWin: (winner: string) => boolean;
 }
 
 type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackProps;
@@ -112,8 +113,8 @@ export const StandardEditorSidebar = (props: Props) => (
                     <ErrorMessage>
                         {props.codeError || undefined}
                     </ErrorMessage>
-                    <ResultMessage type={getMessageTypeForResult(props.battleResult || undefined)}>
-                        {getBattleResultMessage(props.battleResult || undefined)}
+                    <ResultMessage type={getMessageTypeForResult(props.battleResult || undefined, props.isDecisiveWin)}>
+                        {getBattleResultMessage(props.battleResult || undefined, props.isDecisiveWin)}
                     </ResultMessage>
                 </span>
 );

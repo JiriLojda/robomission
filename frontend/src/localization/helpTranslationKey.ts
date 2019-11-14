@@ -13,4 +13,5 @@ export enum HelpTranslationKey {
     StarCollectDiamondsBasic = 'StarCollectDiamondsBasic',
     StarWithDiamonds = 'StarWithDiamonds',
     EmptyWorldDuel = 'EmptyWorldDuel',
+    DistributedIntro = 'DistributedIntro',
 }

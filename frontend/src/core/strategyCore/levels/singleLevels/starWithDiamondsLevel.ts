@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
@@ -27,11 +27,13 @@ export const starWithDiamondsLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 100},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], starWithDiamondsStrategy]]),
-    teams: createOnTheirOwnGroups(shipIds),
+    teams: createOnTheirOwnTeams(shipIds),
+    sameAstGroups: createOnTheirOwnGroups(shipIds),
     world: starWithDiamondsWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
     additionalValidators: List(),
+    isDecisiveWin: winner => winner === 'playerShip',
 };
 

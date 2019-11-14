@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {centralDiamondsBasicStrategy} from "../../predefinedStrategies/centralDiamondsBasicStrategy";
 import {diamondStarWorld} from "../worlds/diamondStarWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
@@ -27,10 +27,12 @@ export const starCollectDiamondsBasicLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 40},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], centralDiamondsBasicStrategy]]),
-    teams: createOnTheirOwnGroups(shipIds),
+    teams: createOnTheirOwnTeams(shipIds),
+    sameAstGroups: createOnTheirOwnGroups(shipIds),
     world: diamondStarWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
     additionalValidators: List(),
+    isDecisiveWin: winner => winner === 'playerShip',
 };

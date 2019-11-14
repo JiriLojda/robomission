@@ -35,14 +35,15 @@ export enum BattleResultType {
     InProgress = 'inProgress',
 }
 
+type IsDecisiveWinCallback = (winner: string) => boolean;
 //TODO: just temporary (hardcoded id...)
-const isSuccess = (result?: BattleResult): boolean =>
-    !!result && result.type === BattleResultType.Decisive && result.winner === 'playerShip';
+const isSuccess = (result: BattleResult | undefined, isDecisiveWin: IsDecisiveWinCallback): boolean =>
+    !!result && result.type === BattleResultType.Decisive && isDecisiveWin(result.winner);
 
-export const getBattleResultMessage = (result?: BattleResult): string | undefined => {
+export const getBattleResultMessage = (result: BattleResult | undefined, isDecisiveWin: IsDecisiveWinCallback): string | undefined => {
     if (!result)
         return undefined;
-    if (isSuccess(result))
+    if (isSuccess(result, isDecisiveWin))
         return translate('BattleResult.Win');
     if (result.type === BattleResultType.Draw)
         return `${translate('BattleResult.Draw')} ${result.between.join(', ')}.`;
@@ -53,10 +54,10 @@ export const getBattleResultMessage = (result?: BattleResult): string | undefine
     throw invalidProgramError(`This should not happen. type: ${result.type}.`, 'getBattleResultMessage');
 };
 
-export const getMessageTypeForResult = (result?: BattleResult): ResultMessageType => {
+export const getMessageTypeForResult = (result: BattleResult | undefined, isDecisiveWin: IsDecisiveWinCallback): ResultMessageType => {
     if (!result)
         return ResultMessageType.Success;
-    if (isSuccess(result))
+    if (isSuccess(result, isDecisiveWin))
         return ResultMessageType.Success;
 
     switch (result.type) {

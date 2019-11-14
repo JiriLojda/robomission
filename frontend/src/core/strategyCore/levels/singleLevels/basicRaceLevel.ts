@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {createOnTheirOwnGroups, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
@@ -34,11 +34,13 @@ export const basicRaceLevel: IGameLevel = {
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions)},
     turnsOrder: List(shipIds),
     shipsAsts: Map([[shipIds[0], basicRaceStrategy]]),
-    teams: createOnTheirOwnGroups(shipIds),
+    teams: createOnTheirOwnTeams(shipIds),
+    sameAstGroups: createOnTheirOwnGroups(shipIds),
     world: raceBasicWorld,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
     additionalValidators: List(),
+    isDecisiveWin: winner => winner === 'playerShip',
 };
 
