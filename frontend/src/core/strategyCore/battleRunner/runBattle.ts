@@ -1,4 +1,4 @@
-import {World} from "../models/world";
+import {removeLaserAndExplosionObjects, World} from "../models/world";
 import {IRoboAst, IRuntimeContext} from "../models/programTypes";
 import {List} from "immutable";
 import {BattleResult, BattleResultType} from "./BattleResult";
@@ -59,6 +59,8 @@ export const runBattle = (params: IRunBattleParams): BattleResult => {
         currentIndex = (currentIndex + 1) % params.shipsOrder.size;
         turnsRan++;
     }
+
+    history.push(removeLaserAndExplosionObjects(currentWorld));
 
     return getBattleResult({
         world: currentWorld,
