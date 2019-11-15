@@ -349,7 +349,7 @@ function getBody(block, name = 'body') {
   if (bodyNode == null) {
     return [];
   }
-  const firstBlock = bodyNode.childNodes[0];
+  const firstBlock = bodyNode.children[0];
   return getSequence(firstBlock);
 }
 
@@ -377,22 +377,22 @@ function getFieldValue(block, name) {
 
 
 function getField(block, name) {
-  return block.querySelector(`field[name="${name}"]`);
+  return block.querySelector(`:scope > field[name="${name}"]`);
 }
 
 
 function getStatement(block, name) {
-  return block.querySelector(`statement[name="${name}"]`);
+  return block.querySelector(`:scope > statement[name="${name}"]`);
 }
 
 
 function getValueBlock(block, name) {
-  return block.querySelector(`value[name="${name}"] > block`);
+  return block.querySelector(`:scope > value[name="${name}"] > block`);
 }
 
 
 function getNextBlock(block) {
-  return block.querySelector(`next > block`);
+  return block.querySelector(`:scope > next > block`);
 }
 
 
