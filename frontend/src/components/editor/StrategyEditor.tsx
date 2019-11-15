@@ -6,14 +6,11 @@ import {BattleResult} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {List, Map} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
-import SplitPane from "react-split-pane";
 import {StandardEditorSidebar} from "../../containers/strategyEditor/StandardEditorSidebar";
 import {StrategyInnerEditor} from "../../containers/strategyEditor/StrategyInnerEditor";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
-import {MapOverlay} from "./MapOverlay";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
-import {BlocklyEditor} from "react-blockly-component";
 import RaisedButton from "material-ui/RaisedButton";
 
 export interface INewEditingDataProps {
@@ -95,7 +92,6 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             return;
         }
         this._reset();
-        this.props.toggleMap();
         const level = this.props.level;
         const groups = defineAstForGroups(Map([
             [findGroupsWithoutAst(this.props.level).get(0)!, this.props.roboAst],
@@ -122,40 +118,25 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.setState(prevState => ({editorHeight: prevState.editorHeight - changeSizeNumber}))
     };
 
-    render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        if (this.props.isMapShown)
-            return <span>
-                <HelpModal
-                    title={this.props.level.help.title}
-                    message={this.props.level.help.text}
-                    isOpened={this.props.isHelpShown}
-                    onClose={this.props.onHelpClosed}
-                />
-                <MapOverlay
-                    world={this.props.currentWorld}
-                    onLeave={this.props.toggleMap}
-                    columnSize={40}
-                />
-        </span>;
-
+    render() {
         return <div>
-                <StandardEditorSidebar
-                    onCodeSubmit={this.props.onCodeSubmit}
-                    canRunBattle={this.props.canRunBattle}
-                    isCodeEditorShown={this.state.useCodeEditor}
-                    onHideCodeEditor={this._hideCodeEditor}
-                    onShowCodeEditor={this._showCodeEditor}
-                    onReset={this._reset}
-                    onRunBattle={this._runBattle}
-                    shouldShowMinimap={shouldShowMinimap(this.props.level.world)}
-                    isDecisiveWin={this.props.level.isDecisiveWin}
-                />
-                <StrategyInnerEditor
-                    additionalValidators={this.props.level.additionalValidators}
-                    showCodeEditor={this.state.useCodeEditor}
-                    toolbox={this.props.level.toolbox}
-                    height={this.state.editorHeight}
-                />
+            <StandardEditorSidebar
+                onCodeSubmit={this.props.onCodeSubmit}
+                canRunBattle={this.props.canRunBattle}
+                isCodeEditorShown={this.state.useCodeEditor}
+                onHideCodeEditor={this._hideCodeEditor}
+                onShowCodeEditor={this._showCodeEditor}
+                onReset={this._reset}
+                onRunBattle={this._runBattle}
+                shouldShowMinimap={shouldShowMinimap(this.props.level.world)}
+                isDecisiveWin={this.props.level.isDecisiveWin}
+            />
+            <StrategyInnerEditor
+                additionalValidators={this.props.level.additionalValidators}
+                showCodeEditor={this.state.useCodeEditor}
+                toolbox={this.props.level.toolbox}
+                height={this.state.editorHeight}
+            />
             <RaisedButton
                 label="enlarge the editor"
                 secondary
@@ -168,12 +149,12 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 style={{margin: 2, minWidth: 50}}
                 onClick={this._makeEditorSmaller}
             />
-            {/*<HelpModal*/}
-            {/*    title={this.props.level.help.title}*/}
-            {/*    message={this.props.level.help.text}*/}
-            {/*    isOpened={this.props.isHelpShown}*/}
-            {/*    onClose={this.props.onHelpClosed}*/}
-            {/*/>*/}
+            <HelpModal
+                title={this.props.level.help.title}
+                message={this.props.level.help.text}
+                isOpened={this.props.isHelpShown}
+                onClose={this.props.onHelpClosed}
+            />
         </div>
     }
 }

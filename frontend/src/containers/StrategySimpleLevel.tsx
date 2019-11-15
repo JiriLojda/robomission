@@ -19,7 +19,7 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditingProps =
         level,
         canRunBattle: true,
         onCodeSubmit: undefined,
-        showMapAndHelpOnMount: false,
+        showMapAndHelpOnMount: true,
         initialRoboAst: undefined,
     };
 };

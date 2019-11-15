@@ -14,7 +14,6 @@ import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
-import {MapOverlay} from "./MapOverlay";
 import {createEmptyAst} from "../../utils/createEmptyAst";
 import {HelpModal} from "../uiComponents/HelpModal";
 import {StrategyEditor} from "../../containers/strategyEditor/StrategyEditor";
@@ -70,7 +69,6 @@ interface IState {
     userProgramError: UserProgramError;
     battleResult?: BattleResult;
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
-    isMapOverlayShown: boolean;
     showEditorFor: Player;
     isHelpModalShown: boolean;
 }
@@ -85,7 +83,6 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             runtimeContext: getEmptyRuntimeContext(),
             world: props.level.world,
             userProgramError: UserProgramError.None,
-            isMapOverlayShown: false,
             showEditorFor: "none",
             isHelpModalShown: true,
         };
@@ -121,7 +118,6 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
 
     _runBattle = (): void => {
         this._reset();
-        this.setState(() => ({isMapOverlayShown: true}));
         const level = this.props.level;
         const groupsWithoutAsts = findGroupsWithoutAst(this.props.level);
         const allAsts = defineAstForGroups(Map([
@@ -154,12 +150,6 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
     };
 
     render() {
-        if (this.state.isMapOverlayShown)
-            return <MapOverlay
-                world={this.state.world}
-                onLeave={() => this.setState(() => ({isMapOverlayShown: false}))}
-                columnSize={40}
-            />;
         if (this.state.showEditorFor === "first") {
             return <StrategyEditor
                 level={this.props.level}
@@ -203,12 +193,6 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 secondary
                 style={{margin: 2, minWidth: 50}}
                 onClick={() => this.setState({showEditorFor: "second"})}
-            />
-            <RaisedButton
-                label={'Show map'}
-                secondary
-                style={{margin: 2, minWidth: 50}}
-                onClick={() => this.setState(() => ({isMapOverlayShown: true}))}
             />
             <RaisedButton
                 label={'show help'}

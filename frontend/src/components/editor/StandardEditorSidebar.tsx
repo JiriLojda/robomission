@@ -133,12 +133,6 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                         style={{margin: 2, minWidth: 50}}
                         onClick={this.props.onShowHelp}
                     />
-                    <RaisedButton
-                        label={translate('editor.showMap')}
-                        secondary
-                        style={{margin: 2, minWidth: 50}}
-                        onClick={this.props.onShowMap}
-                    />
                     <div style={{width: '200px'}}>
                         <Toggle
                             toggled={this.props.isCodeEditorShown}
