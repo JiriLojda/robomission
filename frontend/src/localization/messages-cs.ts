@@ -420,6 +420,11 @@ const messages: {[index: string]: string} = {
 
   'winModal.title': 'Vítězství',
   'winModal.nextLevelLink': 'další úroveň',
+
+  'time.seconds': 'vteřin',
+  'time.minutes': 'minut',
+  'time.hours': 'hodin',
+  'time.itTookYou': 'Trvalo ti to',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

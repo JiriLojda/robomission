@@ -228,6 +228,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 message={this.props.level.winModal.message}
                 isOpened={this.state.isWinModalShown}
                 onClose={this._hideWinModal}
+                durationSeconds={0}
             />
         </span>
     }

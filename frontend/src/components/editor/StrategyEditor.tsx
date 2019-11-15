@@ -44,6 +44,7 @@ interface IState {
     useCodeEditor: boolean;
     editorHeight: number;
     showWinModal: boolean;
+    startTime: number;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
@@ -60,6 +61,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             useCodeEditor: false,
             editorHeight: 400,
             showWinModal: false,
+            startTime: Date.now(),
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -75,6 +77,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         if (prevProps.location !== this.props.location) {
             this.props.initializeStore(this.props.level);
             this._hideWinModal();
+            this.setState({startTime: Date.now()})
         }
     }
 
@@ -186,6 +189,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 onClose={this._hideWinModal}
                 message={winModal.message}
                 nextLevel={createNextLevelForWinModal(winModal.nextLevelLink, winModal.nextLevelName)}
+                durationSeconds={Math.floor((Date.now() - this.state.startTime) / 1000)}
             />
         </div>
     }

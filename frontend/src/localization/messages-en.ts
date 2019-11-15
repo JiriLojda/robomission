@@ -420,6 +420,11 @@ const messages: {[index: string]: string} = {
 
   'winModal.title': 'Congratulation, you won',
   'winModal.nextLevelLink': 'next level',
+
+  'time.seconds': 'seconds',
+  'time.minutes': 'minutes',
+  'time.hours': 'hours',
+  'time.itTookYou': 'It took you',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [
