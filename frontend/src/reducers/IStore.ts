@@ -12,7 +12,7 @@ export interface IStore {
     readonly duelStrategyLevels: List<IGameLevel>;
 }
 
-interface IStrategyEditor {
+export interface IStrategyEditor {
     readonly isMapOverlayShown: boolean;
     readonly isHelpModalShown: boolean;
     readonly runtimeError: UserProgramError;
@@ -21,4 +21,5 @@ interface IStrategyEditor {
     readonly currentWorld: World;
     readonly codeError: string | null;
     readonly battleResult: BattleResult | null;
+    readonly drawingSpeed: number;
 }

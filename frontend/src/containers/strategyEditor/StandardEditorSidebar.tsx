@@ -5,7 +5,7 @@ import {
 } from '../../components/editor/StandardEditorSidebar';
 import {IStore} from "../../reducers/IStore";
 import {Dispatch} from "redux";
-import {helpShowToggled, mapShowToggled} from "../../actions/strategy/editorActions";
+import {drawingSpeedChanged, helpShowToggled, mapShowToggled} from "../../actions/strategy/editorActions";
 import {connect} from "react-redux";
 import React from "react";
 
@@ -31,7 +31,8 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): IStandardEditorSid
     battleResult: state.strategyEditor.battleResult,
     canRunBattle: ownProps.canRunBattle,
     isCodeEditorShown: ownProps.isCodeEditorShown,
-    shouldShowMinimap: ownProps.shouldShowMinimap
+    shouldShowMinimap: ownProps.shouldShowMinimap,
+    drawingSpeed: state.strategyEditor.drawingSpeed,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): IStandardEditorSidebarCallbackProps => ({
@@ -43,6 +44,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): IS
     onShowHelp: () => dispatch(helpShowToggled()),
     onShowMap: () => dispatch(mapShowToggled()),
     isDecisiveWin: ownProps.isDecisiveWin,
+    onDrawingSpeedChanged: speed => dispatch(drawingSpeedChanged(speed))
 });
 
 export const StandardEditorSidebar: React.ComponentType<IOwnProps> = connect(mapStateToProps, mapDispatchToProps)(StandardEditorSidebarComponent);

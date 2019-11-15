@@ -5,7 +5,7 @@ import {
     getInvalidProgramReasonDisplayName,
     InvalidProgramReason
 } from "../../core/strategyCore/enums/invalidProgramReason";
-import {Toggle} from "material-ui";
+import {Toggle, Slider} from "material-ui";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
 import {ResultMessage} from "../uiComponents/ResultMessage";
@@ -29,6 +29,7 @@ export interface IStandardEditorSidebarDataProps {
     readonly isCodeEditorShown: boolean;
     readonly battleResult: BattleResult | null;
     readonly canRunBattle: boolean;
+    readonly drawingSpeed: number;
 }
 
 export interface IStandardEditorSidebarCallbackProps {
@@ -40,6 +41,7 @@ export interface IStandardEditorSidebarCallbackProps {
     readonly onShowMap: () => void;
     readonly onCodeSubmit: (() => void) | undefined;
     readonly isDecisiveWin: (winner: string) => boolean;
+    readonly onDrawingSpeedChanged: (speed: number) => void;
 }
 
 type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackProps;
@@ -48,8 +50,10 @@ interface IStandardEditorSidebarState {
     readonly width: number;
 }
 
-const tileSize = 40 as const;
-const minControlsSize = 200 as const;
+const tileSize = 40;
+const minControlsSize = 200;
+const maxDrawingSpeed = 1000;
+const minDrawingSpeed = 100;
 const getMapWidth = (world: World) =>
     world.size.x * tileSize;
 const getMapElementWidth = (world: World, width: number) =>
@@ -73,14 +77,19 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
         if (this.state.width === window.innerWidth)
             return;
 
-        this.setState({ width: window.innerWidth });
+        this.setState({width: window.innerWidth});
     };
+
     componentDidMount() {
         window.addEventListener('resize', this.updateDimensions);
     }
+
     componentWillUnmount() {
         window.removeEventListener('resize', this.updateDimensions);
     }
+
+    private _onDrawingSpeedChanged = (e: any, speed: number) =>
+        this.props.onDrawingSpeedChanged(maxDrawingSpeed + minDrawingSpeed - speed);
 
     render() {
         return (
@@ -140,6 +149,17 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                             onToggle={this.props.isCodeEditorShown ? this.props.onHideCodeEditor : this.props.onShowCodeEditor}
                         />
                     </div>
+                    <div style={{width: '200px'}}>
+                        <Slider
+                            name="playback speed"
+                            axis="x"
+                            value={maxDrawingSpeed + minDrawingSpeed - this.props.drawingSpeed}
+                            max={maxDrawingSpeed}
+                            min={minDrawingSpeed}
+                            onChange={this._onDrawingSpeedChanged}
+                            step={20}
+                        />
+                    </div>
                     <ErrorMessage>
                         {getUserProgramErrorDisplayName(this.props.runtimeError)}
                     </ErrorMessage>
@@ -153,7 +173,8 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                     <ErrorMessage>
                         {this.props.codeError || undefined}
                     </ErrorMessage>
-                    <ResultMessage type={getMessageTypeForResult(this.props.battleResult || undefined, this.props.isDecisiveWin)}>
+                    <ResultMessage
+                        type={getMessageTypeForResult(this.props.battleResult || undefined, this.props.isDecisiveWin)}>
                         {getBattleResultMessage(this.props.battleResult || undefined, this.props.isDecisiveWin)}
                     </ResultMessage>
                 </div>

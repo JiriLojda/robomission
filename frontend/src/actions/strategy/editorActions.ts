@@ -4,7 +4,7 @@ import {
     CODE_ERROR_RAISED, EDITOR_INITIALIZED, EDITOR_RESETED,
     HELP_SHOW_TOGGLED,
     MAP_SHOW_TOGGLED,
-    ROBOAST_CHANGED,
+    ROBOAST_CHANGED, STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
     SYNTAX_ERROR_RAISED, WORLD_CHANGED
 } from "../../action-types";
 import {InvalidProgramReason} from "../../core/strategyCore/enums/invalidProgramReason";
@@ -73,5 +73,12 @@ export const editorInitialized = (level: IGameLevel, showMap: boolean, showHelp:
         level,
         showMap,
         showHelp,
+    }
+});
+
+export const drawingSpeedChanged = (speed: number): AnyAction => ({
+    type: STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
+    payload: {
+        speed,
     }
 });

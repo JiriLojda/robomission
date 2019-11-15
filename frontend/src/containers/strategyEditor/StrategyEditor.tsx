@@ -34,6 +34,7 @@ const mapStateToProps = (state: IStore, ownProps: INewEditingProps): IStrategyEd
     currentWorld: state.strategyEditor.currentWorld,
     battleResult: state.strategyEditor.battleResult,
     location: window.location.pathname,
+    drawingSpeed: state.strategyEditor.drawingSpeed,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingProps): IStrategyEditorCallbackProps => ({

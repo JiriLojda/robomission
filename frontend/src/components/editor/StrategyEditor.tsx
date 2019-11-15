@@ -24,6 +24,7 @@ export interface IStrategyEditorDataProps {
     readonly currentWorld: World;
     readonly battleResult: BattleResult | null;
     readonly location: string;
+    readonly drawingSpeed: number;
 }
 
 export interface IStrategyEditorCallbackProps {
@@ -92,7 +93,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
     };
 
     private _drawHistory = (history: List<World>): Promise<any> => {
-        const callback = createDrawHistory(this._drawNewWorld, 400);
+        const callback = createDrawHistory(this._drawNewWorld, this.props.drawingSpeed);
 
         const promise = callback(history);
 

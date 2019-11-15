@@ -7,8 +7,10 @@ import {runtimeError} from "./internalReducers/runtimeError";
 import {validationResult} from "./internalReducers/validationResult";
 import {codeError} from "./internalReducers/codeError";
 import {battleResult} from "./internalReducers/battleResult";
+import {drawingSpeed} from "./internalReducers/drawingSpeed";
+import {IStrategyEditor} from "../IStore";
 
-export const strategyEditor = combineReducers({
+export const strategyEditor = combineReducers<IStrategyEditor>({
     currentWorld,
     editedRoboAst,
     isHelpModalShown,
@@ -17,4 +19,5 @@ export const strategyEditor = combineReducers({
     validationResult,
     codeError,
     battleResult,
+    drawingSpeed,
 });
