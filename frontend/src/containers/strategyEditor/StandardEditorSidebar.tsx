@@ -5,7 +5,7 @@ import {
 } from '../../components/editor/StandardEditorSidebar';
 import {IStore} from "../../reducers/IStore";
 import {Dispatch} from "redux";
-import {drawingSpeedChanged, helpShowToggled, mapShowToggled} from "../../actions/strategy/editorActions";
+import {drawingSpeedChanged, helpShowed, mapShowToggled} from "../../actions/strategy/editorActions";
 import {connect} from "react-redux";
 import React from "react";
 
@@ -41,7 +41,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): IS
     onReset: ownProps.onReset,
     onShowCodeEditor: ownProps.onShowCodeEditor,
     onRunBattle: ownProps.onRunBattle,
-    onShowHelp: () => dispatch(helpShowToggled()),
+    onShowHelp: () => dispatch(helpShowed()),
     onShowMap: () => dispatch(mapShowToggled()),
     isDecisiveWin: ownProps.isDecisiveWin,
     onDrawingSpeedChanged: speed => dispatch(drawingSpeedChanged(speed))

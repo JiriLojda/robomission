@@ -1,5 +1,10 @@
 import React from "react";
-import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {
+    defineAstForGroups,
+    findGroupsWithoutAst,
+    IGameLevel,
+    LevelHelp
+} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
 import {BattleResult, getMessageTypeForResult} from "../../core/strategyCore/battleRunner/BattleResult";
@@ -45,6 +50,10 @@ interface IState {
     editorHeight: number;
     showWinModal: boolean;
     startTime: number;
+    nextHelpIndex: number;
+    lastHelpTime: number;
+    lastHelpFailureCount: number;
+    failureCount: number;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
@@ -54,6 +63,12 @@ const changeSizeNumber = 100 as const;
 const createNextLevelForWinModal = (link?: string, name?: string) =>
     link && name ? {name, link} : undefined;
 
+const shouldShowHelp = (failureCount: number, lastHelpFailureCount: number, lastHelpTime: number, nextHelp: LevelHelp): boolean =>
+    (nextHelp.timeoutToShowFailures > 0 &&
+    failureCount - lastHelpFailureCount >= nextHelp.timeoutToShowFailures) ||
+    (nextHelp.timeoutToShowSeconds > 0 &&
+    Date.now() - lastHelpTime >= nextHelp.timeoutToShowSeconds);
+
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
         super(props);
@@ -62,6 +77,10 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             editorHeight: 400,
             showWinModal: false,
             startTime: Date.now(),
+            nextHelpIndex: 0,
+            lastHelpFailureCount: 0,
+            failureCount: 0,
+            lastHelpTime: Date.now(),
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -77,7 +96,12 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         if (prevProps.location !== this.props.location) {
             this.props.initializeStore(this.props.level);
             this._hideWinModal();
-            this.setState({startTime: Date.now()})
+            this.setState({
+                startTime: Date.now(),
+                lastHelpFailureCount: 0,
+                failureCount: 0,
+                lastHelpTime: Date.now(),
+            })
         }
     }
 
@@ -110,6 +134,21 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
 
     private _hideWinModal = () => this.setState({showWinModal: false});
 
+    private _incrementFailureCount = () => {
+        return this.setState(prev => ({failureCount: prev.failureCount + 1}));
+    };
+
+    private _closeHelp = () => {
+        this.props.onHelpClosed();
+        if (this.state.nextHelpIndex < this.props.level.help.count() - 1) {
+            this.setState(prev => ({nextHelpIndex: prev.nextHelpIndex + 1}));
+        }
+        this.setState(prev => ({
+            lastHelpTime: Date.now(),
+            lastHelpFailureCount: prev.failureCount,
+        }))
+    };
+
     private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
             console.warn('This should not be called when cannotRunBattle.');
@@ -132,8 +171,9 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this._drawHistory(result.history.reverse())
             .then(() => this.props.battleResultChanged(result))
             .then(() =>
-                getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success &&
-                this._showWinModal()
+                getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
+                    this._showWinModal() :
+                    this._incrementFailureCount()
             );
     };
 
@@ -179,10 +219,15 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 onClick={this._makeEditorSmaller}
             />
             <HelpModal
-                title={this.props.level.help.title}
-                message={this.props.level.help.text}
-                isOpened={this.props.isHelpShown}
-                onClose={this.props.onHelpClosed}
+                title={this.props.level.help.get(this.state.nextHelpIndex)!.title}
+                message={this.props.level.help.get(this.state.nextHelpIndex)!.text}
+                isOpened={this.props.isHelpShown || shouldShowHelp(
+                    this.state.failureCount,
+                    this.state.lastHelpFailureCount,
+                    this.state.lastHelpTime,
+                    this.props.level.help.get(this.state.nextHelpIndex)!,
+                )}
+                onClose={this._closeHelp}
             />
             <WinModal
                 isOpened={this.state.showWinModal}

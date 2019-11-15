@@ -20,7 +20,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicScanKillAll);
+const help = List([createTranslatedHelp(HelpTranslationKey.BasicScanKillAll)]);
 
 export const basicScanKillAllLevel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.BasicScanKillAll),

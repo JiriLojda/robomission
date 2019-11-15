@@ -27,7 +27,7 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.BasicRace);
+const help = List([createTranslatedHelp(HelpTranslationKey.BasicRace)]);
 
 export const basicRaceLevel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.BasicRace),

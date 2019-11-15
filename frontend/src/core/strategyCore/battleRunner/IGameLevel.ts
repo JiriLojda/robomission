@@ -11,6 +11,8 @@ import {IValidatorResult} from "../validator/programValidator";
 export type LevelHelp = {
     readonly text: string;
     readonly title: string;
+    readonly timeoutToShowSeconds: number;
+    readonly timeoutToShowFailures: number;
 }
 
 export type RoboAstValidator = (roboAst: IRoboAst) => IValidatorResult;
@@ -38,7 +40,7 @@ export interface IGameLevel {
     readonly sameAstGroups: List<Set<ShipId>>;
     readonly gameBehaviours: IGameBehaviours;
     readonly toolbox: BlocklyToolbox;
-    readonly help: LevelHelp;
+    readonly help: List<LevelHelp>;
     readonly winModal: IWinModal;
     readonly additionalValidators: List<RoboAstValidator>;
     readonly isDecisiveWin: (winner: string) => boolean;

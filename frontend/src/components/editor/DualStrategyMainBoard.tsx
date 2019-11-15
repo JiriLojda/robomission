@@ -219,8 +219,8 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 width={200}
             />
             <HelpModal
-                title={this.props.level.help.title}
-                message={this.props.level.help.text}
+                title={this.props.level.help.get(0)!.title}
+                message={this.props.level.help.get(0)!.text}
                 isOpened={this.state.isHelpModalShown}
                 onClose={() => this.setState(() => ({isHelpModalShown: false}))}
             />

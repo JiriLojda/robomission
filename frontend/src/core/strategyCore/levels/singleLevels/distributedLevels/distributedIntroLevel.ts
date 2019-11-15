@@ -26,7 +26,7 @@ const finalPositions = [
 const shipIds = ['playerShip1', 'playerShip2'] as const;
 const teams = List([{name: 'player', members: List(shipIds)}]);
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.DistributedIntro);
+const help = List([createTranslatedHelp(HelpTranslationKey.DistributedIntro)]);
 
 export const distributedIntroLevel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.DistributedIntro),

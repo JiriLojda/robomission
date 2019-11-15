@@ -28,7 +28,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.SecondIfs);
+const help = List([createTranslatedHelp(HelpTranslationKey.SecondIfs)]);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

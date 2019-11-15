@@ -28,7 +28,7 @@ const finalPositions = [
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass);
+const help = List([createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass)]);
 
 export const narrowAlleyPassLevel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.NarrowAlleyPass),

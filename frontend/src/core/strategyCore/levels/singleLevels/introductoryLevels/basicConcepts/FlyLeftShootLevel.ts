@@ -28,7 +28,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.FlyLeftShoot);
+const help = List([createTranslatedHelp(HelpTranslationKey.FlyLeftShoot)]);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

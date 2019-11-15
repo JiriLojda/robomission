@@ -8,9 +8,11 @@ const findTranslatedHelpTitle = (key: HelpTranslationKey): string =>
 const findTranslatedHelpMessage = (key: HelpTranslationKey): string =>
     translate(`help.${key}.message`);
 
-export const createTranslatedHelp = (key: HelpTranslationKey): LevelHelp => ({
+export const createTranslatedHelp = (key: HelpTranslationKey, timeoutSeconds: number = 0, timeoutFailures: number = 0): LevelHelp => ({
     title: findTranslatedHelpTitle(key),
     text: findTranslatedHelpMessage(key),
+    timeoutToShowSeconds: timeoutSeconds,
+    timeoutToShowFailures: timeoutFailures,
 });
 
 export const findTranslatedName = (key: HelpTranslationKey): string =>

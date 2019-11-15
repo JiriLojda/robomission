@@ -19,7 +19,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.StarCollectDiamondsBasic);
+const help = List([createTranslatedHelp(HelpTranslationKey.StarCollectDiamondsBasic)]);
 
 export const starCollectDiamondsBasicLevel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.StarCollectDiamondsBasic),

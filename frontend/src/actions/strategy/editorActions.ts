@@ -1,11 +1,16 @@
 import {AnyAction} from "redux";
 import {
-    BATTLE_RESULT_CHANGED, CODE_ERROR_CLEARED,
-    CODE_ERROR_RAISED, EDITOR_INITIALIZED, EDITOR_RESETED,
-    HELP_SHOW_TOGGLED,
+    BATTLE_RESULT_CHANGED,
+    CODE_ERROR_CLEARED,
+    CODE_ERROR_RAISED,
+    EDITOR_INITIALIZED,
+    EDITOR_RESETED, HELP_HIDDEN,
+    HELP_SHOWED,
     MAP_SHOW_TOGGLED,
-    ROBOAST_CHANGED, STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
-    SYNTAX_ERROR_RAISED, WORLD_CHANGED
+    ROBOAST_CHANGED,
+    STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
+    SYNTAX_ERROR_RAISED,
+    WORLD_CHANGED
 } from "../../action-types";
 import {InvalidProgramReason} from "../../core/strategyCore/enums/invalidProgramReason";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
@@ -17,8 +22,12 @@ export const mapShowToggled = (): AnyAction => ({
     type: MAP_SHOW_TOGGLED,
 });
 
-export const helpShowToggled = (): AnyAction => ({
-    type: HELP_SHOW_TOGGLED,
+export const helpShowed = (): AnyAction => ({
+    type: HELP_SHOWED,
+});
+
+export const helpHidden = ():AnyAction => ({
+    type: HELP_HIDDEN,
 });
 
 export const codeErrorRaised = (error: string): AnyAction => ({

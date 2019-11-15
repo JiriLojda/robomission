@@ -29,7 +29,7 @@ const behaviours: IGameBehaviours = {
     shipCollisionResolver: pushCollisionResolver,
     shotResolver: createSelectiveShotResolver(shipIds, shipRepresentingObjects),
 };
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.FirstChallenge);
+const help = List([createTranslatedHelp(HelpTranslationKey.FirstChallenge)]);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

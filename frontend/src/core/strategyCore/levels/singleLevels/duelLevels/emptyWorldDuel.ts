@@ -18,7 +18,7 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['first', 'second'] as const;
 
-const help: LevelHelp = createTranslatedHelp(HelpTranslationKey.EmptyWorldDuel);
+const help = List([createTranslatedHelp(HelpTranslationKey.EmptyWorldDuel)]);
 
 export const emptyWorldDuel: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.EmptyWorldDuel),

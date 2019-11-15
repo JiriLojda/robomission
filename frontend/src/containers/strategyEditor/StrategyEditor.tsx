@@ -7,10 +7,12 @@ import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IStore} from "../../reducers/IStore";
 import {Dispatch} from "redux";
 import {
-    battleResultChanged, editorInitialized,
+    battleResultChanged,
+    editorInitialized,
     editorReseted,
-    helpShowToggled,
-    mapShowToggled, roboAstChanged,
+    helpHidden,
+    mapShowToggled,
+    roboAstChanged,
     worldChanged
 } from "../../actions/strategy/editorActions";
 import {connect} from "react-redux";
@@ -39,7 +41,7 @@ const mapStateToProps = (state: IStore, ownProps: INewEditingProps): IStrategyEd
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingProps): IStrategyEditorCallbackProps => ({
     toggleMap: () => dispatch(mapShowToggled()),
-    onHelpClosed: () => dispatch(helpShowToggled()),
+    onHelpClosed: () => dispatch(helpHidden()),
     onCodeSubmit: ownProps.onCodeSubmit,
     worldChanged: newWorld => dispatch(worldChanged(newWorld)),
     battleResultChanged: newBattleResult => dispatch(battleResultChanged(newBattleResult)),
