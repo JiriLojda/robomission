@@ -50,7 +50,7 @@ const minimumEditorSize = 400 as const;
 const changeSizeNumber = 100 as const;
 
 const createNextLevelForWinModal = (link?: string, name?: string) =>
-    link && name ? { name, link } : undefined;
+    link && name ? {name, link} : undefined;
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
@@ -91,20 +91,18 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.props.worldChanged(newWorld);
     };
 
-    private _drawHistory = (history: List<World>) => {
+    private _drawHistory = (history: List<World>): Promise<any> => {
         const callback = createDrawHistory(this._drawNewWorld, 400);
 
         const promise = callback(history);
 
         this.setState(() => ({drawingPromise: promise}));
 
-        promise
-            .then(h => !h ? this._showWinModal() : this._drawHistory(h))
+        return promise
+            .then(h => !h || this._drawHistory(h))
     };
 
-    private _showWinModal = () =>
-        getMessageTypeForResult(this.props.battleResult || undefined, this.props.level.isDecisiveWin) === ResultMessageType.Success &&
-        this.setState({showWinModal: true});
+    private _showWinModal = () => this.setState({showWinModal: true});
 
     private _hideWinModal = () => this.setState({showWinModal: false});
 
@@ -126,9 +124,13 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             roboAsts: level.turnsOrder.map(id => groups.get(id)!).toList(),
             behaviours: level.gameBehaviours,
         });
-        this.props.battleResultChanged(result);
 
-        this._drawHistory(result.history.reverse());
+        this._drawHistory(result.history.reverse())
+            .then(() => this.props.battleResultChanged(result))
+            .then(() =>
+                getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success &&
+                this._showWinModal()
+            );
     };
 
     private _enlargeTheEditor = () =>
