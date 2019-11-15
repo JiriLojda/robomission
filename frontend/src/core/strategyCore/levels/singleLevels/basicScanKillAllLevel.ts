@@ -9,6 +9,8 @@ import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotRes
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../utils/createWinModal";
+import {basicRaceLevel} from "./basicRaceLevel";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -33,6 +35,7 @@ export const basicScanKillAllLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(basicRaceLevel),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'playerShip',
 };

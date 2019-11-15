@@ -10,6 +10,7 @@ import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey
 import {BattleType} from "../../../battleRunner/BattleType";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
 import {distributedIntroLevelWorld} from "../../worlds/distributedLevelsWorlds/distributedIntroLevelWorld";
+import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -40,6 +41,7 @@ export const distributedIntroLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'player',
 };

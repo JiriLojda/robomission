@@ -18,6 +18,8 @@ import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
 import {firstRepeatWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {firstIfsLevel} from "./firstIfsLevel";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -47,6 +49,7 @@ export const firstRepeatLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands, categoryNames.cycles]),
     help,
+    winModal: createWinModalWithStandardMessage(firstIfsLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

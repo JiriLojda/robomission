@@ -20,6 +20,12 @@ export type Team = {
     readonly members: List<ShipId>;
 }
 
+export interface IWinModal {
+    readonly message: string;
+    readonly nextLevelLink: string | undefined;
+    readonly nextLevelName: string | undefined;
+}
+
 export interface IGameLevel {
     readonly name: string;
     readonly urlSlug: string;
@@ -33,6 +39,7 @@ export interface IGameLevel {
     readonly gameBehaviours: IGameBehaviours;
     readonly toolbox: BlocklyToolbox;
     readonly help: LevelHelp;
+    readonly winModal: IWinModal;
     readonly additionalValidators: List<RoboAstValidator>;
     readonly isDecisiveWin: (winner: string) => boolean;
 }

@@ -1,6 +1,6 @@
 import {
-    INewEditingCallbackProps,
-    INewEditingDataProps,
+    IStrategyEditorCallbackProps,
+    IStrategyEditorDataProps,
     StrategyEditor as NewEditingComponent
 } from '../../components/editor/StrategyEditor';
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
@@ -25,16 +25,18 @@ export interface INewEditingProps {
     readonly initialRoboAst: IRoboAst | undefined;
 }
 
-const mapStateToProps = (state: IStore, ownProps: INewEditingProps): INewEditingDataProps => ({
+const mapStateToProps = (state: IStore, ownProps: INewEditingProps): IStrategyEditorDataProps => ({
     isHelpShown: state.strategyEditor.isHelpModalShown,
     isMapShown: state.strategyEditor.isMapOverlayShown,
     roboAst: state.strategyEditor.editedRoboAst,
     canRunBattle: ownProps.canRunBattle,
     level: ownProps.level,
     currentWorld: state.strategyEditor.currentWorld,
+    battleResult: state.strategyEditor.battleResult,
+    location: window.location.pathname,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingProps): INewEditingCallbackProps => ({
+const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingProps): IStrategyEditorCallbackProps => ({
     toggleMap: () => dispatch(mapShowToggled()),
     onHelpClosed: () => dispatch(helpShowToggled()),
     onCodeSubmit: ownProps.onCodeSubmit,

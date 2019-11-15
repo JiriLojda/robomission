@@ -9,6 +9,7 @@ import {starWithDiamondsWorld} from "../worlds/starWithDiamondsWorld";
 import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamondsStrategy";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -33,6 +34,7 @@ export const starWithDiamondsLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'playerShip',
 };

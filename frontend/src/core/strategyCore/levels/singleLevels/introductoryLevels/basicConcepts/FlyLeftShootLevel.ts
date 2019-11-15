@@ -17,6 +17,8 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {turnPickUpLevel} from "./TurnPickUpLevel";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -46,6 +48,7 @@ export const flyLeftShootLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands]),
     help,
+    winModal: createWinModalWithStandardMessage(turnPickUpLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

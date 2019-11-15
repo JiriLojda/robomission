@@ -19,6 +19,8 @@ import {shipRepresentingObjects} from "../../../../enums/worldObjectType";
 import {justShootingStrategy} from "../../../../predefinedStrategies/justShootingStrategy";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {firstRepeatLevel} from "./firstRepeatLevel";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -47,6 +49,7 @@ export const firstChallengeLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands]),
     help,
+    winModal: createWinModalWithStandardMessage(firstRepeatLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

@@ -17,6 +17,7 @@ import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/s
 import {createEmptyAst} from "../../utils/createEmptyAst";
 import {HelpModal} from "../uiComponents/HelpModal";
 import {StrategyEditor} from "../../containers/strategyEditor/StrategyEditor";
+import {WinModal} from "../uiComponents/WinModal";
 
 
 //TODO: just temporary (hardcoded id...)
@@ -71,6 +72,7 @@ interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     showEditorFor: Player;
     isHelpModalShown: boolean;
+    isWinModalShown: boolean;
 }
 
 export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorProps, IState> {
@@ -85,6 +87,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             userProgramError: UserProgramError.None,
             showEditorFor: "none",
             isHelpModalShown: true,
+            isWinModalShown: false,
         };
     }
 
@@ -113,8 +116,14 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
         this.setState(() => ({drawingPromise: promise}));
 
         promise
-            .then(h => !h || this._drawHistory(h))
+            .then(h => !h ? this._showWinModal() : this._drawHistory(h))
     };
+
+    private _showWinModal = () =>
+        getMessageTypeForResult(this.state.battleResult) === ResultMessageType.Success &&
+        this.setState({isWinModalShown: true});
+
+    private _hideWinModal = () => this.setState({isWinModalShown: false});
 
     _runBattle = (): void => {
         this._reset();
@@ -214,6 +223,11 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
                 message={this.props.level.help.text}
                 isOpened={this.state.isHelpModalShown}
                 onClose={() => this.setState(() => ({isHelpModalShown: false}))}
+            />
+            <WinModal
+                message={this.props.level.winModal.message}
+                isOpened={this.state.isWinModalShown}
+                onClose={this._hideWinModal}
             />
         </span>
     }

@@ -36,6 +36,17 @@ interface IState {
     readonly code: string;
 }
 
+const getBlocklyWorkspace = (editor: BlocklyEditor) =>
+    editor.refs.workspace.state.workspace;
+
+const blockIdRegex = /"blockId":"[^"]+"/g;
+const areSameExcludingIds = (firstAst: IRoboAst, secondAst: IRoboAst): boolean => {
+    const firstSerialized = JSON.stringify(firstAst).replace(blockIdRegex, '');
+    const secondSerialized = JSON.stringify(secondAst).replace(blockIdRegex, '');
+
+    return firstSerialized === secondSerialized;
+};
+
 export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
         super(props);
@@ -44,24 +55,37 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
         }
     }
 
-    componentWillReceiveProps(nextProps: Readonly<Props>): void {
-        if (nextProps.showCodeEditor && !this.props.showCodeEditor) {
-            const newCode = generateStrategyRoboCode(this.props.roboAst);
-            this._onCodeChange(newCode);
-        }
-    }
-
     componentDidUpdate(prevProps: Readonly<Props>): void {
         if (prevProps.height !== this.props.height && this.blocklyEditor) {
             this.blocklyEditor.resize();
+        }
+        if (!areSameExcludingIds(prevProps.roboAst, this.props.roboAst) || prevProps.showCodeEditor !== this.props.showCodeEditor) {
+            if (this.props.showCodeEditor) {
+                this.setState({code: generateStrategyRoboCode(this.props.roboAst)});
+            } else {
+                this._updateBlockly(this.props.roboAst);
+            }
         }
     }
 
     private blocklyEditor: BlocklyEditor | null = null;
 
+    private _updateBlockly(roboAst: IRoboAst) {
+        if (!this.blocklyEditor) {
+            return;
+        }
+
+        const xml = generateBlocklyXml(roboAst);
+        getBlocklyWorkspace(this.blocklyEditor).clear();
+        this.blocklyEditor.importFromXml(xml);
+    }
+
     private _onValidationFinished = (validationResult: IValidatorResult, newAst: IRoboAst): void => {
         this.props.onSyntaxErrorRaised(validationResult.reason);
-        this.props.onRoboAstChanged(newAst);
+
+        if (!areSameExcludingIds(newAst, this.props.roboAst)) {
+            this.props.onRoboAstChanged(newAst);
+        }
     };
 
     private _onXmlChange = (e: unknown) => {

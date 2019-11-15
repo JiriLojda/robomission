@@ -2,7 +2,7 @@ import React from "react";
 import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
-import {BattleResult} from "../../core/strategyCore/battleRunner/BattleResult";
+import {BattleResult, getMessageTypeForResult} from "../../core/strategyCore/battleRunner/BattleResult";
 import {ICancelablePromise} from "../../utils/cancelablePromise";
 import {List, Map} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
@@ -12,17 +12,21 @@ import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPri
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import RaisedButton from "material-ui/RaisedButton";
+import {WinModal} from "../uiComponents/WinModal";
+import {ResultMessageType} from "../uiComponents/ResultMessage";
 
-export interface INewEditingDataProps {
+export interface IStrategyEditorDataProps {
     readonly level: IGameLevel;
     readonly canRunBattle: boolean;
     readonly roboAst: IRoboAst;
     readonly isMapShown: boolean;
     readonly isHelpShown: boolean;
     readonly currentWorld: World;
+    readonly battleResult: BattleResult | null;
+    readonly location: string;
 }
 
-export interface INewEditingCallbackProps {
+export interface IStrategyEditorCallbackProps {
     readonly onCodeSubmit: (() => void) | undefined;
     readonly onHelpClosed: () => void;
     readonly worldChanged: (newWorld: World) => void;
@@ -32,17 +36,21 @@ export interface INewEditingCallbackProps {
     readonly initializeStore: (level: IGameLevel) => void;
 }
 
-type Props = INewEditingDataProps & INewEditingCallbackProps;
+type Props = IStrategyEditorDataProps & IStrategyEditorCallbackProps;
 
 interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     useCodeEditor: boolean;
     editorHeight: number;
+    showWinModal: boolean;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
 const minimumEditorSize = 400 as const;
 const changeSizeNumber = 100 as const;
+
+const createNextLevelForWinModal = (link?: string, name?: string) =>
+    link && name ? { name, link } : undefined;
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
@@ -50,6 +58,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.state = {
             useCodeEditor: false,
             editorHeight: 400,
+            showWinModal: false,
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -59,6 +68,13 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
 
     componentWillMount(): void {
         this.props.initializeStore(this.props.level);
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>): void {
+        if (prevProps.location !== this.props.location) {
+            this.props.initializeStore(this.props.level);
+            this._hideWinModal();
+        }
     }
 
     private _showCodeEditor = () => this.setState({useCodeEditor: true});
@@ -83,8 +99,14 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.setState(() => ({drawingPromise: promise}));
 
         promise
-            .then(h => !h || this._drawHistory(h))
+            .then(h => !h ? this._showWinModal() : this._drawHistory(h))
     };
+
+    private _showWinModal = () =>
+        getMessageTypeForResult(this.props.battleResult || undefined, this.props.level.isDecisiveWin) === ResultMessageType.Success &&
+        this.setState({showWinModal: true});
+
+    private _hideWinModal = () => this.setState({showWinModal: false});
 
     private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
@@ -119,6 +141,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
     };
 
     render() {
+        const winModal = this.props.level.winModal;
         return <div>
             <StandardEditorSidebar
                 onCodeSubmit={this.props.onCodeSubmit}
@@ -154,6 +177,12 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 message={this.props.level.help.text}
                 isOpened={this.props.isHelpShown}
                 onClose={this.props.onHelpClosed}
+            />
+            <WinModal
+                isOpened={this.state.showWinModal}
+                onClose={this._hideWinModal}
+                message={winModal.message}
+                nextLevel={createNextLevelForWinModal(winModal.nextLevelLink, winModal.nextLevelName)}
             />
         </div>
     }

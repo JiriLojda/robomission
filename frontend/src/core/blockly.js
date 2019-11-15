@@ -29,12 +29,8 @@ export function blocklyXmlToRoboAst(blocklyXml) {
   return blocklyDomToRoboAst(blocklyDom);
 }
 
-const emptyAst = JSON.parse('[{"head":"start","body":[],"location":{"blockId":"^5MM01Yg?^qbCK28(0^f"}}]');
-
 function blocklyDomToRoboAst(dom) {
   const startBlock = dom.querySelector('block[type="start"]');
-  if (!getLocation(startBlock).blockId)
-    return emptyAst;
   const mainFunction = blockToAst(startBlock);
 
   const otherFunctionDefinitions = dom.querySelectorAll('block[type="function_definition"]');
@@ -381,26 +377,22 @@ function getFieldValue(block, name) {
 
 
 function getField(block, name) {
-  const id = block.getAttribute('id');
-  return block.querySelector(`block[id="${id}"] > field[name="${name}"]`);
+  return block.querySelector(`field[name="${name}"]`);
 }
 
 
 function getStatement(block, name) {
-  const id = block.getAttribute('id');
-  return block.querySelector(`block[id="${id}"] > statement[name="${name}"]`);
+  return block.querySelector(`statement[name="${name}"]`);
 }
 
 
 function getValueBlock(block, name) {
-  const id = block.getAttribute('id');
-  return block.querySelector(`block[id="${id}"] > value[name="${name}"] > block`);
+  return block.querySelector(`value[name="${name}"] > block`);
 }
 
 
 function getNextBlock(block) {
-  const id = block.getAttribute('id');
-  return block.querySelector(`block[id="${id}"] > next > block`);
+  return block.querySelector(`next > block`);
 }
 
 

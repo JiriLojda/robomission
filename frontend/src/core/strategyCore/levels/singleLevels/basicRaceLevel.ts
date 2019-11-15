@@ -11,6 +11,8 @@ import {destroyFirstShotResolver} from "../../gameBehaviours/destroyFirstShotRes
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../utils/createWinModal";
+import {narrowAlleyPassLevel} from "./narrowAlleyPassLevel";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -40,6 +42,7 @@ export const basicRaceLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(narrowAlleyPassLevel),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'playerShip',
 };

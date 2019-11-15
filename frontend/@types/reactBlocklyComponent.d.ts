@@ -12,6 +12,8 @@ declare module 'react-blockly-component' {
 
     export class BlocklyEditor extends React.Component<IProps> {
         public resize: () => void;
+        public importFromXml: (xml: string) => void;
+        public refs: any;
     }
 }
 

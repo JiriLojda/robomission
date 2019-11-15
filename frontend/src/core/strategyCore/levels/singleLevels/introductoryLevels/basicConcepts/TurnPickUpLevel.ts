@@ -18,6 +18,8 @@ import {turnDiamondsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicC
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {firstChallengeLevel} from "./firstChallengeLevel";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -49,6 +51,7 @@ export const turnPickUpLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands]),
     help,
+    winModal: createWinModalWithStandardMessage(firstChallengeLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

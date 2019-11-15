@@ -414,6 +414,12 @@ const messages: {[index: string]: string} = {
   'battleType.shoot': 'střílej',
   'battleType.collect': 'sbírej',
   'battleType.race': 'závod',
+
+  'editor.standardWinModalMessageContinued': 'Gratulujeme, právě si vyhrál. Je čas oslavovat další úrovní. ;)',
+  'editor.standardWinModalMessageFinal': 'Skvělé, právě jsi vyhrál závěrečnou úroveň. Podívej se do hlavní nabídky na další výzvy.',
+
+  'winModal.title': 'Vítězství',
+  'winModal.nextLevelLink': 'další úroveň',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

@@ -17,6 +17,8 @@ import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
 import {secondIfsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondIfsWorld";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {firstWhileLevel} from "./firstWhileLevel";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -53,6 +55,7 @@ export const secondIfsLevel: IGameLevel = {
         categoryNames.branching,
     ]),
     help,
+    winModal: createWinModalWithStandardMessage(firstWhileLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

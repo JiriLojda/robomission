@@ -19,6 +19,7 @@ import {secondWhileWorld} from "../../../worlds/intorductoryLevelsWorlds/basicCo
 import {randomSwitchAndShootStrategy} from "../../../../predefinedStrategies/randomSwitchAndShoot";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
@@ -58,6 +59,7 @@ export const secondWhileLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, allowedCategories),
     help,
+    winModal: createWinModalWithStandardMessage(),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };

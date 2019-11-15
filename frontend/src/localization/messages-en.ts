@@ -414,6 +414,12 @@ const messages: {[index: string]: string} = {
   'battleType.shoot': 'shoot',
   'battleType.collect': 'collect',
   'battleType.race': 'race',
+
+  'editor.standardWinModalMessageContinued': 'Congratulation, you won. It is time to celebrate with another level. ;)',
+  'editor.standardWinModalMessageFinal': 'Great, you just won the final round. Take a look into the menu for another challenge.',
+
+  'winModal.title': 'Congratulation, you won',
+  'winModal.nextLevelLink': 'next level',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

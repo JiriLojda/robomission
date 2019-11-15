@@ -11,6 +11,8 @@ import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveS
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../utils/createWinModal";
+import {starWithDiamondsLevel} from "./starWithDiamondsLevel";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -41,6 +43,7 @@ export const narrowAlleyPassLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(starWithDiamondsLevel),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'playerShip',
 };

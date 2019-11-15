@@ -8,6 +8,7 @@ import {destroyFirstShotResolver} from "../../../gameBehaviours/destroyFirstShot
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -32,6 +33,7 @@ export const emptyWorldDuel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
+    winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
     isDecisiveWin: () => true,
 };

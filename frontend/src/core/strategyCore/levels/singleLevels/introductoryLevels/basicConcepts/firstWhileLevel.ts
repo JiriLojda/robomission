@@ -19,6 +19,8 @@ import {createRestrictedBlocksValidator} from "../../../additionalValidators/cre
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
+import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
+import {secondWhileLevel} from "./secondWhileLevel";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
@@ -57,6 +59,7 @@ export const firstWhileLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, allowedCategories),
     help,
+    winModal: createWinModalWithStandardMessage(secondWhileLevel),
     additionalValidators,
     isDecisiveWin: winner => winner === 'playerShip',
 };
