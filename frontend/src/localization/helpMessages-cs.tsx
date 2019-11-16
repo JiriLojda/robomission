@@ -11,6 +11,11 @@ const firstChallengeMessage = 'Teď se pokusíme porazit protivníka, který se 
     've směru letu raketky je volné místo. Pokud není, nic se nestane. Raketka i asteroid zůstávají ' +
     'na stejném místě.';
 
+const firstChallengeMessage2 = <span>
+    Vědeli jste, že na této úrovni se loď při nárazu do asteroidu nerozbije, ale posune ho?<br/>
+    <Image imageId="help/firstChallenge/pushAsteroid.gif" style={{}} height={246} />
+</span>;
+
 const firstIfsTitle = 'Posbírej diamanty';
 const firstifsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí svoje tělo jenom v případě, že se ' +
     'jemu daná podmínka vyhodnotí na "pravda". ' +
@@ -32,6 +37,11 @@ const firstRepeatTitle = 'Posbírej diamanty';
 const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "opakuj", jak už název napovídá, ' +
     'opakuje svoje tělo tolikrát, jaké číslo dostane. Tento blok vám pomáhá nevytvářet stejnou věc pořád ' +
     'dokola. Vaším úkolem je posbírat všechny diamanty s využítím jenom 3 bloků.';
+
+const firstRepeatMessage2 = <span>
+    Věděli jste, že do těla bloku se vejde víc než jeden další blok?<br/>
+    <Image imageId="help/firstRepeat/cs_insideRepeat" style={{}} height={323} />
+</span>;
 
 const firstWhileTitle = 'Posbírej diamanty';
 const firstWhileMessage = 'Teď cyklus "dokud". Cyklus "dokud" je podobný jako blok "pokud". ' +
@@ -90,6 +100,11 @@ const turnPickUpMessage = 'Teď se naučíme zbytek povelů, které můžete lod
     'Pro zvednutí diamantu použijte povel "vezmi diamant". Budete se také muset otáčet. ' +
     'Pro otočení použijte povel "otoč se vpravo" nebo "otoč se vlevo".';
 
+const turnPickUpMessage2 = <span>
+    Věděl jsi, že můžeš použít povel "otoč se" pro otočení lodi a povel "zvedni diamant" pro zvednutí diamantu? <br/>
+    <Image imageId={'help/turnPickup/cs_turnPickup'} style={{}} height={603} />
+</span>;
+
 const basicRaceTitle = 'Závod.';
 const basicRaceMessage = 'V této misi vyhrává nejrychlejší raketka, která se dostane na jedno z barevně vyznačených polí ' +
     'na druhé straně mapy. Zároveň narážením objekty posouváte. ' +
@@ -130,14 +145,17 @@ const distributedIntroMessage = 'V následující sadě úrovní se pokusíme vy
 
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
+    [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
     [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstifsMessage}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
+    [HelpTranslationKey.FirstRepeat2, {title: firstRepeatTitle, message: firstRepeatMessage2}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
+    [HelpTranslationKey.TurnPickUp2, {title: turnPickUpTitle, message: turnPickUpMessage2}],
     [HelpTranslationKey.BasicRace, {title: basicRaceTitle, message: basicRaceMessage}],
     [HelpTranslationKey.BasicScanKillAll, {title: basicScanKillAllTitle, message: basicScanKillAllMessage}],
     [HelpTranslationKey.NarrowAlleyPass, {title: narrowAlleyPassTitle, message: narrowAlleyPassMessage}],

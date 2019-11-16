@@ -29,7 +29,10 @@ const behaviours: IGameBehaviours = {
 
 const shipIds = ['aiShip', 'playerShip'] as const;
 
-const help = List([createTranslatedHelp(HelpTranslationKey.TurnPickUp)]);
+const help = List([
+    createTranslatedHelp(HelpTranslationKey.TurnPickUp),
+    createTranslatedHelp(HelpTranslationKey.TurnPickUp2, 8 * 60, 3),
+]);
 
 const additionalValidators: List<RoboAstValidator> = List([
     noFunctionsValidator,

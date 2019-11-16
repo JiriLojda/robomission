@@ -10,6 +10,11 @@ const firstChallengeMessage = 'Now lets try to defeat an opponent that will figh
     'There is only one condition. There has to be a free space behind the asteroid to push it to. ' +
     'Otherwise it cannot be pushed and nothing will happen.';
 
+const firstChallengeMessage2 = <span>
+    Did you know in this level your ship will not get wrecked upon hitting an asteroid? See<br/>
+    <Image imageId="help/firstChallenge/pushAsteroid.gif" style={{}} height={246} />
+</span>;
+
 const firstIfsTitle = 'Collect the diamonds';
 const firstIfsMessage = 'Now we will try ifs. "if" block will execute its body only if the condition given to it evaluates to true. ' +
 'Otherwise the whole is just skipped. The "if-else" block has additional part. This second part (else part) ' +
@@ -30,6 +35,11 @@ const firstRepeatTitle = 'Collect the diamonds';
 const firstRepeatMessage = 'In this level, we will explore repeat cycle. Repeat does what the name suggests. ' +
     'It repeats the commands in its body given number of times. It is supposed to help you ' +
     'not to repeat yourself. So here you have to collect all the diamonds. while using only 3 blocks.';
+
+const firstRepeatMessage2 = <span>
+    Did you know, there can be multiple commands inside a block body? See<br/>
+    <Image imageId="help/firstRepeat/en_insideRepeat" style={{}} height={323} />
+</span>;
 
 const firstWhileTitle = 'Collect the diamonds';
 const firstWhileMessage = 'Now the "while" cycle. The "while" cycle is quite like the "if" statement. ' +
@@ -88,6 +98,12 @@ const turnPickUpMessage = 'Now lets learn the rest of the commands you can give 
 'To pick up a diamond use the "pick up diamond" command. You will also have to turn around. ' +
 'To turn your ship use the "turn left" or "turn right" command.';
 
+const turnPickUpMessage2 = <span>
+    Did you know, you can use the "turn" command to turn you ship and the "pick up diamond" command the pick up
+    a diamond? <br/>
+    <Image imageId={'help/turnPickup/en_turnPickup'} style={{}} height={603} />
+</span>;
+
 const basicRaceTitle = 'Race to for the win.';
 const basicRaceMessage = 'In this level you have to be the fastest rocket and get to one of the colored tiles ' +
 'on the other side of the map. Also hitting an object does not result in a crash. ' +
@@ -129,14 +145,17 @@ const distributedIntroMessage = 'In the following set of levels we will try to c
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
+    [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
     [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstIfsMessage}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
+    [HelpTranslationKey.FirstRepeat2, {title: firstRepeatTitle, message: firstRepeatMessage2}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
+    [HelpTranslationKey.TurnPickUp2, {title: turnPickUpTitle, message: turnPickUpMessage2}],
     [HelpTranslationKey.BasicRace, {title: basicRaceTitle, message: basicRaceMessage}],
     [HelpTranslationKey.BasicScanKillAll, {title: basicScanKillAllTitle, message: basicScanKillAllMessage}],
     [HelpTranslationKey.NarrowAlleyPass, {title: narrowAlleyPassTitle, message: narrowAlleyPassMessage}],
