@@ -30,7 +30,7 @@ const shipIds = ['aiShip', 'playerShip'] as const;
 
 const help = List([
     createTranslatedHelp(HelpTranslationKey.FlyLeftShoot),
-    createTranslatedHelp(HelpTranslationKey.FlyLeftShoot2, 20, 5),
+    createTranslatedHelp(HelpTranslationKey.FlyLeftShoot2, 10 * 60, 5),
 ]);
 
 const additionalValidators: List<RoboAstValidator> = List([
