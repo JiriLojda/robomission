@@ -14,6 +14,7 @@ import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramE
 import RaisedButton from "material-ui/RaisedButton";
 import {WinModal} from "../uiComponents/WinModal";
 import {ResultMessageType} from "../uiComponents/ResultMessage";
+import {translate} from "../../localization";
 
 export interface IStrategyEditorDataProps {
     readonly level: IGameLevel;
@@ -260,13 +261,13 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 height={this.state.editorHeight}
             />
             <RaisedButton
-                label="enlarge the editor"
+                label={translate('editor.enlargeEditorArea')}
                 secondary
                 style={{margin: 2, minWidth: 50}}
                 onClick={this._enlargeTheEditor}
             />
             <RaisedButton
-                label="make the editor smaller"
+                label={translate('editor.shrinkEditorArea')}
                 secondary
                 style={{margin: 2, minWidth: 50}}
                 onClick={this._makeEditorSmaller}

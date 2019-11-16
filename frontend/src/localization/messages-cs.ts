@@ -417,6 +417,8 @@ const messages: {[index: string]: JSX.Element | string} = {
 
   'editor.standardWinModalMessageContinued': 'Gratulujeme, právě si vyhrál. Je čas oslavovat další úrovní. ;)',
   'editor.standardWinModalMessageFinal': 'Skvělé, právě jsi vyhrál závěrečnou úroveň. Podívej se do hlavní nabídky na další výzvy.',
+  'editor.enlargeEditorArea': 'Zvětšit editor',
+  'editor.shrinkEditorArea': 'Zmenšit editor',
 
   'winModal.title': 'Vítězství',
   'winModal.nextLevelLink': 'další úroveň',

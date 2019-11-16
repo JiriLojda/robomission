@@ -417,6 +417,8 @@ const messages: {[index: string]: JSX.Element | string} = {
 
   'editor.standardWinModalMessageContinued': 'Congratulation, you won. It is time to celebrate with another level. ;)',
   'editor.standardWinModalMessageFinal': 'Great, you just won the final round. Take a look into the menu for another challenge.',
+  'editor.enlargeEditorArea': 'Enlarge the editor',
+  'editor.shrinkEditorArea': 'Shrink the editor',
 
   'winModal.title': 'Congratulation, you won',
   'winModal.nextLevelLink': 'next level',
