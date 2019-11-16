@@ -1,6 +1,8 @@
 import {Map} from 'immutable';
 import {HelpEntry} from "./helpMessages-en";
 import {HelpTranslationKey} from "./helpTranslationKey";
+import Image from "../components/Image";
+import React from "react";
 
 const firstChallengeTitle = 'Znič protivníka';
 const firstChallengeMessage = 'Teď se pokusíme porazit protivníka, který se bude trochu bránit. ' +
@@ -53,6 +55,13 @@ const flyLeftShootMessage = 'Vítej v robomisi. V této misi si vyzkoušíte lé
     'Můžete letět rovně povelem "leť" z categorie "povely". Na povel "vpravo" nebo "vlevo" poletí loď ' +
     'diagonálně dopředu a doprava nebo doleva. Její orientace se nezmění (neotočí se). ' +
     'Střílet můžete pomocí povelu "vystřel".';
+
+const flyLeftShootMessage2 = <span>
+    Připrav povely pro svoji loď. Všechny povely které pro tuto úroveň potřebuješ najdeš v kategorii povely.<br/>
+    <Image imageId="help/flyLeftShoot/cs_commandsCategory" style={{margin: '2%'}}/>
+    <Image imageId="help/flyLeftShoot/cs_clicked" style={{margin: '2%'}}/>
+    <Image imageId="help/flyLeftShoot/cs_firstBlockAdded" style={{margin: '2%'}}/>
+</span>;
 
 const secondIfsTitle = 'Posbírej diamanty';
 const secondIfsMessage = 'Tato úroveň je podobná předchozí, pouze tady několik diamantů chybí. ' +
@@ -125,6 +134,7 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
+    [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],

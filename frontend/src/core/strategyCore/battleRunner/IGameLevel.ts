@@ -9,7 +9,7 @@ import {BlocklyToolbox} from "../constants/strategyToolbox";
 import {IValidatorResult} from "../validator/programValidator";
 
 export type LevelHelp = {
-    readonly text: string;
+    readonly text: string | JSX.Element;
     readonly title: string;
     readonly timeoutToShowSeconds: number;
     readonly timeoutToShowFailures: number;

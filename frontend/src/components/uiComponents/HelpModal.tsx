@@ -5,7 +5,7 @@ import {translate} from "../../localization";
 
 interface IHelpModalProps {
     readonly title: string;
-    readonly message: string;
+    readonly message: string | JSX.Element;
     readonly isOpened: boolean;
     readonly onClose: () => void;
 }

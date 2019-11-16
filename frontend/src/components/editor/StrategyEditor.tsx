@@ -1,14 +1,9 @@
 import React from "react";
-import {
-    defineAstForGroups,
-    findGroupsWithoutAst,
-    IGameLevel,
-    LevelHelp
-} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
 import {BattleResult, getMessageTypeForResult} from "../../core/strategyCore/battleRunner/BattleResult";
-import {ICancelablePromise} from "../../utils/cancelablePromise";
+import {delay, ICancelablePromise} from "../../utils/cancelablePromise";
 import {List, Map} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
 import {StandardEditorSidebar} from "../../containers/strategyEditor/StandardEditorSidebar";
@@ -50,10 +45,11 @@ interface IState {
     editorHeight: number;
     showWinModal: boolean;
     startTime: number;
-    nextHelpIndex: number;
-    lastHelpTime: number;
-    lastHelpFailureCount: number;
+    nextExtraHelpIndex: number;
+    extraHelpTimePromise?: ICancelablePromise;
+    lastExtraHelpFailureCount: number;
     failureCount: number;
+    showExtraHelp: boolean;
 }
 
 const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
@@ -63,11 +59,13 @@ const changeSizeNumber = 100 as const;
 const createNextLevelForWinModal = (link?: string, name?: string) =>
     link && name ? {name, link} : undefined;
 
-const shouldShowHelp = (failureCount: number, lastHelpFailureCount: number, lastHelpTime: number, nextHelp: LevelHelp): boolean =>
-    (nextHelp.timeoutToShowFailures > 0 &&
-    failureCount - lastHelpFailureCount >= nextHelp.timeoutToShowFailures) ||
-    (nextHelp.timeoutToShowSeconds > 0 &&
-    Date.now() - lastHelpTime >= nextHelp.timeoutToShowSeconds);
+const createScheduleNextExtraHelp = (level: IGameLevel, nextHelpIndex: number, showHelpCallback: () => void) => {
+    const nextHelp = level.help.get(nextHelpIndex)!;
+    return nextHelp.timeoutToShowSeconds > 0 ?
+        delay(nextHelp.timeoutToShowSeconds * 1000)
+            .then(showHelpCallback) :
+        undefined;
+};
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
@@ -77,10 +75,15 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             editorHeight: 400,
             showWinModal: false,
             startTime: Date.now(),
-            nextHelpIndex: 0,
-            lastHelpFailureCount: 0,
+            lastExtraHelpFailureCount: 0,
             failureCount: 0,
-            lastHelpTime: Date.now(),
+            extraHelpTimePromise: createScheduleNextExtraHelp(
+                this.props.level,
+                this.props.level.help.count() > 1 ? 1 : 0,
+                this._showExtraHelp,
+            ),
+            nextExtraHelpIndex: this.props.level.help.count() > 1 ? 1 : 0,
+            showExtraHelp: false,
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -96,11 +99,17 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         if (prevProps.location !== this.props.location) {
             this.props.initializeStore(this.props.level);
             this._hideWinModal();
+            this._hideExtraHelp();
             this.setState({
                 startTime: Date.now(),
-                lastHelpFailureCount: 0,
+                lastExtraHelpFailureCount: 0,
                 failureCount: 0,
-                lastHelpTime: Date.now(),
+                extraHelpTimePromise: createScheduleNextExtraHelp(
+                    this.props.level,
+                    this.props.level.help.count() > 1 ? 1 : 0,
+                    this._showExtraHelp,
+                ),
+                nextExtraHelpIndex: this.props.level.help.count() > 1 ? 1 : 0,
             })
         }
     }
@@ -119,6 +128,8 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.props.worldChanged(newWorld);
     };
 
+    private _cleanUpDrawingPromise = () => this.setState({drawingPromise: undefined});
+
     private _drawHistory = (history: List<World>): Promise<any> => {
         const callback = createDrawHistory(this._drawNewWorld, this.props.drawingSpeed);
 
@@ -130,24 +141,65 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             .then(h => !h || this._drawHistory(h))
     };
 
-    private _showWinModal = () => this.setState({showWinModal: true});
+    private _showWinModal = () => {
+        if (this.state.extraHelpTimePromise)
+            this.state.extraHelpTimePromise.cancel();
+        return this.setState({showWinModal: true});
+    };
 
     private _hideWinModal = () => this.setState({showWinModal: false});
 
-    private _incrementFailureCount = () => {
-        return this.setState(prev => ({failureCount: prev.failureCount + 1}));
+    private _showExtraHelp = () => {
+        if (this.state.extraHelpTimePromise)
+            this.state.extraHelpTimePromise.cancel();
+
+        if (!this.props.isHelpShown && !this.state.drawingPromise) {
+            this.setState(({showExtraHelp: true}));
+        } else {
+            const extraHelpTimePromise = createScheduleNextExtraHelp(
+                this.props.level,
+                this.state.nextExtraHelpIndex,
+                this._showExtraHelp,
+            );
+            this.setState({extraHelpTimePromise});
+        }
     };
 
-    private _closeHelp = () => {
-        this.props.onHelpClosed();
-        if (this.state.nextHelpIndex < this.props.level.help.count() - 1) {
-            this.setState(prev => ({nextHelpIndex: prev.nextHelpIndex + 1}));
+    private _hideExtraHelp = () => {
+        if (this.state.nextExtraHelpIndex + 1 >= this.props.level.help.count()) {
+            this.setState({showExtraHelp: false, nextExtraHelpIndex: 0});
+            return;
         }
-        this.setState(prev => ({
-            lastHelpTime: Date.now(),
-            lastHelpFailureCount: prev.failureCount,
-        }))
+
+        const extraHelpTimePromise = createScheduleNextExtraHelp(
+            this.props.level,
+            this.state.nextExtraHelpIndex + 1,
+            this._showExtraHelp,
+        );
+
+        this.setState(prevState => ({
+            showExtraHelp: false,
+            nextExtraHelpIndex: prevState.nextExtraHelpIndex + 1,
+            lastExtraHelpFailureCount: prevState.failureCount,
+            extraHelpTimePromise,
+        }));
     };
+
+    private _isEnoughFailuresToShowExtraHelp = () =>
+        this.state.nextExtraHelpIndex > 0 &&
+        this.props.level.help.get(this.state.nextExtraHelpIndex) &&
+        this.props.level.help.get(this.state.nextExtraHelpIndex)!.timeoutToShowFailures > 0 &&
+        this.state.failureCount + 1 >= this.props.level.help.get(this.state.nextExtraHelpIndex)!.timeoutToShowFailures;
+
+    private _incrementFailureCount = () => {
+        if (this._isEnoughFailuresToShowExtraHelp()) {
+            this._showExtraHelp();
+        }
+
+        this.setState(prev => ({failureCount: prev.failureCount + 1}));
+    };
+
+    private _closeHelp = () => this.props.onHelpClosed();
 
     private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
@@ -169,6 +221,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         });
 
         this._drawHistory(result.history.reverse())
+            .then(this._cleanUpDrawingPromise)
             .then(() => this.props.battleResultChanged(result))
             .then(() =>
                 getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
@@ -219,15 +272,16 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 onClick={this._makeEditorSmaller}
             />
             <HelpModal
-                title={this.props.level.help.get(this.state.nextHelpIndex)!.title}
-                message={this.props.level.help.get(this.state.nextHelpIndex)!.text}
-                isOpened={this.props.isHelpShown || shouldShowHelp(
-                    this.state.failureCount,
-                    this.state.lastHelpFailureCount,
-                    this.state.lastHelpTime,
-                    this.props.level.help.get(this.state.nextHelpIndex)!,
-                )}
+                title={this.props.level.help.get(0)!.title}
+                message={this.props.level.help.get(0)!.text}
+                isOpened={this.props.isHelpShown}
                 onClose={this._closeHelp}
+            />
+            <HelpModal
+                title={this.props.level.help.get(this.state.nextExtraHelpIndex)!.title}
+                message={this.props.level.help.get(this.state.nextExtraHelpIndex)!.text}
+                isOpened={this.state.showExtraHelp}
+                onClose={this._hideExtraHelp}
             />
             <WinModal
                 isOpened={this.state.showWinModal}

@@ -2,7 +2,7 @@
 import {allEnHelpMessages} from "./helpMessages-en";
 import {HelpTranslationKey} from "./helpTranslationKey";
 
-const messages: {[index: string]: string} = {
+const messages: {[index: string]: JSX.Element | string} = {
   'Close': 'Close',
   'I understand': 'I understand',
   'Intro': 'Intro',

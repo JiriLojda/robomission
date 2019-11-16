@@ -1,5 +1,7 @@
 import {Map} from "immutable";
 import {HelpTranslationKey} from "./helpTranslationKey";
+import React from "react";
+import Image from "../components/Image.jsx";
 
 const firstChallengeTitle = 'Destroy your opponent';
 const firstChallengeMessage = 'Now lets try to defeat an opponent that will fight back a bit. ' +
@@ -44,13 +46,20 @@ const firstWhileMessage = 'Now the "while" cycle. The "while" cycle is quite lik
 const flyLeftShootTitle = 'Destroy your opponent';
 const flyLeftShootMessage = 'Welcome to robomission. In this level you will try to make you ship move and shoot. ' +
 'Your objective is to destroy the other ship. Your ship is red, while the opponent\'s is blue. ' +
-'In this level there are standard rules. You can destroy other objects with you gun. ' +
+'In this level there are standard rules. You can destroy other objects with your gun. ' +
 'Only the first object is destroyed. To destroy more objects in a row, you have to shoot ' +
 'multiple times. If you hit other objects or fly out of the map, you ship will be destroyed. ' +
 'These are the standard rules. Those can change in other levels. But lets get to your mission. ' +
 'You can fly forward using the "fly" command in the commands section. "Right" and "Left" will fly ' +
 'diagonally forward to the left or right respectively while maintaining same direction of the ship. ' +
 'You can shoot using the "shoot" command.';
+
+const flyLeftShootMessage2 = <span>
+    Prepare commands for your ship. You can find all the commands you need for this level in the commands category.<br/>
+    <Image imageId="help/flyLeftShoot/commandsCategory" style={{margin: '2%'}} />
+    <Image imageId="help/flyLeftShoot/clicked" style={{margin: '2%'}} />
+    <Image imageId="help/flyLeftShoot/firstBlockAdded" style={{margin: '2%'}} />
+</span>;
 
 const secondIfsTitle = 'Collect the diamonds';
 const secondIfsMessage = 'This is similar to the previous level, except here some diamonds are missing. ' +
@@ -117,13 +126,14 @@ const distributedIntroMessage = 'In the following set of levels we will try to c
     'ships simultaneously. So for example if you will have a program with just a shoot command, and run it. ' +
     'Both of you ships will shoot.';
 
-export type HelpEntry = { title: string, message: string};
+export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstIfsMessage}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
+    [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
