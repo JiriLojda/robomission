@@ -58,9 +58,9 @@ const flyLeftShootMessage = 'Vítej v robomisi. V této misi si vyzkoušíte lé
 
 const flyLeftShootMessage2 = <span>
     Připrav povely pro svoji loď. Všechny povely které pro tuto úroveň potřebuješ najdeš v kategorii povely.<br/>
-    <Image imageId="help/flyLeftShoot/cs_commandsCategory" style={{margin: '2%'}}/>
-    <Image imageId="help/flyLeftShoot/cs_clicked" style={{margin: '2%'}}/>
-    <Image imageId="help/flyLeftShoot/cs_firstBlockAdded" style={{margin: '2%'}}/>
+    <Image imageId="help/flyLeftShoot/cs_commandsCategory" style={{margin: '2%'}} height={136}/>
+    <Image imageId="help/flyLeftShoot/cs_clicked" style={{margin: '2%'}} height={331}/>
+    <Image imageId="help/flyLeftShoot/cs_firstBlockAdded" style={{margin: '2%'}} height={129}/>
 </span>;
 
 const secondIfsTitle = 'Posbírej diamanty';

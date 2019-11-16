@@ -56,9 +56,9 @@ const flyLeftShootMessage = 'Welcome to robomission. In this level you will try 
 
 const flyLeftShootMessage2 = <span>
     Prepare commands for your ship. You can find all the commands you need for this level in the commands category.<br/>
-    <Image imageId="help/flyLeftShoot/commandsCategory" style={{margin: '2%'}} />
-    <Image imageId="help/flyLeftShoot/clicked" style={{margin: '2%'}} />
-    <Image imageId="help/flyLeftShoot/firstBlockAdded" style={{margin: '2%'}} />
+    <Image imageId="help/flyLeftShoot/en_commandsCategory" style={{margin: '2%'}} height={144} />
+    <Image imageId="help/flyLeftShoot/en_clicked" style={{margin: '2%'}} height={321} />
+    <Image imageId="help/flyLeftShoot/en_firstBlockAdded" style={{margin: '2%'}} height={127} />
 </span>;
 
 const secondIfsTitle = 'Collect the diamonds';
