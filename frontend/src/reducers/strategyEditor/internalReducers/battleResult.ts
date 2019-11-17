@@ -1,12 +1,12 @@
 import {BattleResult} from "../../../core/strategyCore/battleRunner/BattleResult";
 import {AnyAction} from "redux";
-import {BATTLE_RESULT_CHANGED, EDITOR_INITIALIZED, EDITOR_RESETED} from "../../../action-types";
+import {EDITOR_INITIALIZED, EDITOR_RESETED, STRATEGY_EDITOR_GAME_RUN_FINISHED} from "../../../action-types";
 
 const defaultState = null;
 
 export const battleResult = (state: BattleResult | null = defaultState, action: AnyAction): BattleResult | null => {
     switch (action.type) {
-        case BATTLE_RESULT_CHANGED:
+        case STRATEGY_EDITOR_GAME_RUN_FINISHED:
             return action.payload.battleResult;
         case EDITOR_RESETED:
         case EDITOR_INITIALIZED:

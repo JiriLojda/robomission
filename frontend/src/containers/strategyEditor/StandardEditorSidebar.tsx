@@ -11,7 +11,6 @@ import React from "react";
 
 interface IOwnProps {
     readonly isCodeEditorShown: boolean;
-    readonly shouldShowMinimap: boolean;
     readonly canRunBattle: boolean;
     readonly onCodeSubmit: (() => void) | undefined;
     readonly onReset: () => void;
@@ -31,7 +30,6 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): IStandardEditorSid
     battleResult: state.strategyEditor.battleResult,
     canRunBattle: ownProps.canRunBattle,
     isCodeEditorShown: ownProps.isCodeEditorShown,
-    shouldShowMinimap: ownProps.shouldShowMinimap,
     drawingSpeed: state.strategyEditor.drawingSpeed,
 });
 

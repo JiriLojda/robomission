@@ -21,6 +21,7 @@ export interface INewEditorDataProps {
     readonly additionalValidators: List<RoboAstValidator>;
     readonly toolbox: BlocklyToolbox;
     readonly height: number;
+    readonly isReadOnly: boolean;
 }
 
 export interface INewEditorCallbackProps {
@@ -129,13 +130,15 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
                         code={this.state.code || ''}
                         onChange={this._onCodeChange}
                         highlighter={new StrategyRoboCodeHighlighter()}
+                        isReadOnly={this.props.isReadOnly}
                     />
                 ) : (
                     <ReactBlocklyComponent.BlocklyEditor
+                        key={`${this.props.isReadOnly}`}
                         ref={ref => {
                             this.blocklyEditor = ref;
                         }}
-                        workspaceConfiguration={{trashcan: true, collapse: true}}
+                        workspaceConfiguration={{trashcan: true, collapse: true, readOnly: this.props.isReadOnly}}
                         toolboxCategories={this.props.toolbox}
                         initialXml={generateBlocklyXml(this.props.roboAst)}
                         xmlDidChange={this._onXmlChange}

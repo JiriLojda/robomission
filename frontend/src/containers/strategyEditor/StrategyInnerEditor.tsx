@@ -30,9 +30,10 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProp
     additionalValidators: ownProps.additionalValidators,
     toolbox: ownProps.toolbox,
     height: ownProps.height,
+    isReadOnly: state.strategyEditor.isGameRunning,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): INewEditorCallbackProps => ({
+const mapDispatchToProps = (dispatch: Dispatch<IStore>): INewEditorCallbackProps => ({
     onCodeErrorRaised: error => dispatch(codeErrorRaised(error)),
     onCodeErrorCleared: () => dispatch(codeErrorCleared()),
     onRoboAstChanged: roboAst => dispatch(roboAstChanged(roboAst)),

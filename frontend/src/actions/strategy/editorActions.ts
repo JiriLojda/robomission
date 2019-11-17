@@ -1,14 +1,16 @@
 import {AnyAction} from "redux";
 import {
-    BATTLE_RESULT_CHANGED,
     CODE_ERROR_CLEARED,
     CODE_ERROR_RAISED,
     EDITOR_INITIALIZED,
-    EDITOR_RESETED, HELP_HIDDEN,
+    EDITOR_RESETED,
+    HELP_HIDDEN,
     HELP_SHOWED,
     MAP_SHOW_TOGGLED,
     ROBOAST_CHANGED,
     STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
+    STRATEGY_EDITOR_GAME_RUN_FINISHED,
+    STRATEGY_EDITOR_GAME_RUN_STARTED,
     SYNTAX_ERROR_RAISED,
     WORLD_CHANGED
 } from "../../action-types";
@@ -62,13 +64,6 @@ export const worldChanged = (world: World): AnyAction => ({
     }
 });
 
-export const battleResultChanged = (battleResult: BattleResult): AnyAction => ({
-    type: BATTLE_RESULT_CHANGED,
-    payload: {
-        battleResult,
-    }
-});
-
 export const editorReseted = (originalWorld: World): AnyAction => ({
     type: EDITOR_RESETED,
     payload: {
@@ -89,5 +84,16 @@ export const drawingSpeedChanged = (speed: number): AnyAction => ({
     type: STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
     payload: {
         speed,
+    }
+});
+
+export const gameRunStarted = (): AnyAction => ({
+    type: STRATEGY_EDITOR_GAME_RUN_STARTED,
+});
+
+export const gameRunFinished = (battleResult: BattleResult): AnyAction => ({
+    type: STRATEGY_EDITOR_GAME_RUN_FINISHED,
+    payload: {
+        battleResult,
     }
 });

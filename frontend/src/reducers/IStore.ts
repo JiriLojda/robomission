@@ -22,4 +22,5 @@ export interface IStrategyEditor {
     readonly codeError: string | null;
     readonly battleResult: BattleResult | null;
     readonly drawingSpeed: number;
+    readonly isGameRunning: boolean;
 }

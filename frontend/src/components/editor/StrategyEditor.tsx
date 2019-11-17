@@ -33,9 +33,10 @@ export interface IStrategyEditorCallbackProps {
     readonly onHelpClosed: () => void;
     readonly worldChanged: (newWorld: World) => void;
     readonly reset: (originalWorld: World) => void;
-    readonly battleResultChanged: (newBattleResult: BattleResult) => void;
     readonly toggleMap: () => void;
     readonly initializeStore: (level: IGameLevel) => void;
+    readonly onBattleRunFinished: (newBattleResult: BattleResult) => void;
+    readonly onBattleRunStarted: () => void;
 }
 
 type Props = IStrategyEditorDataProps & IStrategyEditorCallbackProps;
@@ -53,7 +54,6 @@ interface IState {
     showExtraHelp: boolean;
 }
 
-const shouldShowMinimap = (world: World) => world.size.x <= 5 && world.size.y <= 10;
 const minimumEditorSize = 400 as const;
 const changeSizeNumber = 100 as const;
 
@@ -96,8 +96,14 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         this.props.initializeStore(this.props.level);
     }
 
+    componentWillUnmount(): void {
+        this._cancelStatePromises();
+        this.props.initializeStore(this.props.level);
+    }
+
     componentDidUpdate(prevProps: Readonly<Props>): void {
         if (prevProps.location !== this.props.location) {
+            this._cancelStatePromises();
             this.props.initializeStore(this.props.level);
             this._hideWinModal();
             this._hideExtraHelp();
@@ -114,6 +120,15 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             })
         }
     }
+
+    private _cancelStatePromises = () => {
+        if (this.state.drawingPromise) {
+            this.state.drawingPromise.cancel();
+        }
+        if (this.state.extraHelpTimePromise) {
+            this.state.extraHelpTimePromise.cancel();
+        }
+    };
 
     private _showCodeEditor = () => this.setState({useCodeEditor: true});
     private _hideCodeEditor = () => this.setState({useCodeEditor: false});
@@ -210,6 +225,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             return;
         }
         this._reset();
+        this.props.onBattleRunStarted();
         const level = this.props.level;
         const groups = defineAstForGroups(Map([
             [findGroupsWithoutAst(this.props.level).get(0)!, this.props.roboAst],
@@ -225,7 +241,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
 
         this._drawHistory(result.history.reverse())
             .then(this._cleanUpDrawingPromise)
-            .then(() => this.props.battleResultChanged(result))
+            .then(() => this.props.onBattleRunFinished(result))
             .then(() =>
                 getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
                     this._showWinModal() :
@@ -253,7 +269,6 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 onShowCodeEditor={this._showCodeEditor}
                 onReset={this._reset}
                 onRunBattle={this._runBattle}
-                shouldShowMinimap={shouldShowMinimap(this.props.level.world)}
                 isDecisiveWin={this.props.level.isDecisiveWin}
             />
             <StrategyInnerEditor

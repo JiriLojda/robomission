@@ -20,7 +20,6 @@ import {
 
 export interface IStandardEditorSidebarDataProps {
     readonly world: World;
-    readonly shouldShowMinimap: boolean;
     readonly validationResult: InvalidProgramReason;
     readonly runtimeError: UserProgramError;
     readonly shouldShowExportAst: boolean;

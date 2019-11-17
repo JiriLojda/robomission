@@ -7,9 +7,10 @@ import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IStore} from "../../reducers/IStore";
 import {Dispatch} from "redux";
 import {
-    battleResultChanged,
     editorInitialized,
     editorReseted,
+    gameRunFinished,
+    gameRunStarted,
     helpHidden,
     mapShowToggled,
     roboAstChanged,
@@ -44,7 +45,8 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingPro
     onHelpClosed: () => dispatch(helpHidden()),
     onCodeSubmit: ownProps.onCodeSubmit,
     worldChanged: newWorld => dispatch(worldChanged(newWorld)),
-    battleResultChanged: newBattleResult => dispatch(battleResultChanged(newBattleResult)),
+    onBattleRunFinished: newBattleResult => dispatch(gameRunFinished(newBattleResult)),
+    onBattleRunStarted: () => dispatch(gameRunStarted()),
     reset: originalWorld => dispatch(editorReseted(originalWorld)),
     initializeStore: level => {
         dispatch(editorInitialized(level, ownProps.showMapAndHelpOnMount, ownProps.showMapAndHelpOnMount));

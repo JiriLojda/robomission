@@ -30,6 +30,7 @@ export default class CodeEditor extends React.Component {
         width="100%"
         height="100%"
         style={{ display: 'inline-block', marginBottom: '-5px' }}
+        readOnly={this.props.isReadOnly}
       />
     );
   }
@@ -39,9 +40,11 @@ CodeEditor.propTypes = {
   code: PropTypes.string,
   onChange: PropTypes.func,
   highlighter: PropTypes.object.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
 };
 
 CodeEditor.defaultProps = {
   code: '',
   onChange: null,
+  isReadOnly: false,
 };
