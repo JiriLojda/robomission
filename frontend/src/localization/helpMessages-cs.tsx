@@ -6,13 +6,13 @@ import React from "react";
 
 const firstChallengeTitle = 'Znič protivníka';
 const firstChallengeMessage = 'Teď se pokusíme porazit protivníka, který se bude trochu bránit. ' +
-    'Tento level má svoje specialní pravidla. Asteroid teď není možne zničit, ale při nárazu ' +
-    'je místo toho asteroid tlačen dopředu před raketkou. To ovšem za podmínky, že za asteroidem ' +
+    'Tento level má svoje specialní asteroidy. Tyto zelené asteroid je možné tlačit před raketkou. ' +
+    'To ovšem za podmínky, že za asteroidem ' +
     've směru letu raketky je volné místo. Pokud není, nic se nestane. Raketka i asteroid zůstávají ' +
     'na stejném místě.';
 
 const firstChallengeMessage2 = <span>
-    Vědeli jste, že na této úrovni se loď při nárazu do asteroidu nerozbije, ale posune ho?<br/>
+    Vědeli jste, že při nárazu do zeleného asteroidu svoji loď nezničíte, ale posune asteroid?<br/>
     <Image imageId="help/firstChallenge/pushAsteroid.gif" style={{}} height={246} />
 </span>;
 
@@ -58,9 +58,10 @@ const firstWhileMessage = 'Teď cyklus "dokud". Cyklus "dokud" je podobný jako 
 const flyLeftShootTitle = 'Znič svého protivníka';
 const flyLeftShootMessage = 'Vítej v robomisi. V této misi si vyzkoušíte létání a střílení s lodí. ' +
     'Vaším úkolem je zničit nepřátelskou loď. Vaše loď je červená a nepřítel má modrou.. ' +
-    'V této misi platí standardní pravidla. Můžete ničit ostatní předměty střelou do nich. ' +
+    'V této misi platí standardní pravidla. Můžete ničit ostatní lodě a malé meteory střelou do nich. ' +
     'Vždy se zničí jen první předmět na trase střely. Ke zničení několika objektů v řadě musíte vystřelit ' +
-    'několikrát. Pokud s lodí narazíte do jiného objektu nebo vyletíte mimo mapu, vaše loď se zničí. ' +
+    'několikrát. Velké asteroidy není možné zničit. Pokud s lodí narazíte do jiného objektu nebo' +
+    ' vyletíte mimo mapu, vaše loď se zničí. ' +
     'Tyto standardní pravidla se v pozdějších úrovních mohou měnit, pozorně čtěte nápovědu. Teď se podíváme na příkazy. ' +
     'Můžete letět rovně povelem "leť" z categorie "povely". Na povel "vpravo" nebo "vlevo" poletí loď ' +
     'diagonálně dopředu a doprava nebo doleva. Její orientace se nezmění (neotočí se). ' +
@@ -107,8 +108,9 @@ const turnPickUpMessage2 = <span>
 
 const basicRaceTitle = 'Závod.';
 const basicRaceMessage = 'V této misi vyhrává nejrychlejší raketka, která se dostane na jedno z barevně vyznačených polí ' +
-    'na druhé straně mapy. Zároveň narážením objekty posouváte. ' +
-    'Při pohybu na obsazené pole se stane jedna ze dvou možností. 1) Ve směru pohybu je volné pole. ' +
+    'na druhé straně mapy. Zároveň narážením do zeleného asteroidu nebo lodě dané předměty posouváte. ' +
+    'Při pohybu na pole obsazené jedním z takových předmětů se stane jedna ze dvou možností. ' +
+    '1) Ve směru pohybu je volné pole. ' +
     'Pak se loď i objekt před ní pohnou ve směru pohybu. Tedy loď tlačí objekt před sebou. ' +
     '2) Pole ve směru pohybu lodě buď obsazený nebo mimo mapu. ' +
     'Potom se nestane nic. Loď se nemůže pohnout.';

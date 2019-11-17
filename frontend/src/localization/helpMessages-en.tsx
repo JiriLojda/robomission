@@ -5,13 +5,13 @@ import Image from "../components/Image.jsx";
 
 const firstChallengeTitle = 'Destroy your opponent';
 const firstChallengeMessage = 'Now lets try to defeat an opponent that will fight back a bit. ' +
-    'Watch out for there are special rules here. The asteroids cannot be destroyed, but ' +
-    'they can be pushed. Meaning upon hitting them you ship will not crush, but push the asteroid. ' +
+    'Watch out for there are special asteroids here. These green asteroids ' +
+    'can be pushed. Meaning upon hitting them you ship will not crush, but push the asteroid. ' +
     'There is only one condition. There has to be a free space behind the asteroid to push it to. ' +
     'Otherwise it cannot be pushed and nothing will happen.';
 
 const firstChallengeMessage2 = <span>
-    Did you know in this level your ship will not get wrecked upon hitting an asteroid? See<br/>
+    Did you know hitting the green asteroid will not destroy your ship, but push the asteroid? See<br/>
     <Image imageId="help/firstChallenge/pushAsteroid.gif" style={{}} height={246} />
 </span>;
 
@@ -56,9 +56,10 @@ const firstWhileMessage = 'Now the "while" cycle. The "while" cycle is quite lik
 const flyLeftShootTitle = 'Destroy your opponent';
 const flyLeftShootMessage = 'Welcome to robomission. In this level you will try to make you ship move and shoot. ' +
 'Your objective is to destroy the other ship. Your ship is red, while the opponent\'s is blue. ' +
-'In this level there are standard rules. You can destroy other objects with your gun. ' +
+'In this level there are standard rules. You can destroy other ships and the small meteoroids with your gun. ' +
 'Only the first object is destroyed. To destroy more objects in a row, you have to shoot ' +
-'multiple times. If you hit other objects or fly out of the map, you ship will be destroyed. ' +
+'multiple times. The big asteroids cannot be destroyed. If you hit other objects or ' +
+'fly out of the map, your ship will be destroyed. ' +
 'These are the standard rules. Those can change in other levels. But lets get to your mission. ' +
 'You can fly forward using the "fly" command in the commands section. "Right" and "Left" will fly ' +
 'diagonally forward to the left or right respectively while maintaining same direction of the ship. ' +
@@ -99,22 +100,22 @@ const turnPickUpMessage = 'Now lets learn the rest of the commands you can give 
 'To turn your ship use the "turn left" or "turn right" command.';
 
 const turnPickUpMessage2 = <span>
-    Did you know, you can use the "turn" command to turn you ship and the "pick up diamond" command the pick up
+    Did you know, you can use the "turn" command to turn your ship and the "pick up diamond" command the pick up
     a diamond? <br/>
     <Image imageId={'help/turnPickup/en_turnPickup'} style={{}} height={603} />
 </span>;
 
 const basicRaceTitle = 'Race to for the win.';
 const basicRaceMessage = 'In this level you have to be the fastest rocket and get to one of the colored tiles ' +
-'on the other side of the map. Also hitting an object does not result in a crash. ' +
-'Upon moving to an occupied tile one of two happens. 1) There is a free tile in the ' +
+'on the other side of the map. Also hitting the green asteroids or other ship does not result in a crash. ' +
+'Upon hitting one of there objects one of two happens. 1) There is a free tile in the ' +
 'direction the ship is moving, then both, hitting object and hit objects move in this direction ' +
 'effectively pushing the hit object. 2) The tile in the direction the ship is moving is ' +
 'either occupied or out of the map. Then nothing happens, the ship just can\'t move.';
 
 const basicScanKillAllTitle = 'Simple shooting contest';
 const basicScanKillAllMessage = 'This is very simple shooting contest. ' +
-    'Your only goal here is to shoot the oponent\'s ship.';
+    'Your only goal here is to shoot the opponent\'s ship.';
 
 const narrowAlleyPassTitle = 'Pass the guard';
 const narrowAlleyPassMessage = 'This is a special round. Your goal is to get to one of the green tiles.' +
