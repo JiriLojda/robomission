@@ -17,7 +17,7 @@ const firstChallengeMessage2 = <span>
 </span>;
 
 const firstIfsTitle = 'Posbírej diamanty';
-const firstifsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí svoje tělo jenom v případě, že se ' +
+const firstIfsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí svoje tělo jenom v případě, že se ' +
     'jemu daná podmínka vyhodnotí na "pravda". ' +
     'V opačném případě se celé jeho tělo přeskočí. "pokud-jinak" blok má další část. Tato další část (jinak blok) ' +
     'je naopak spuštěna pouze pokud se podmínka vyhodnotí na "nepravda". ' +
@@ -32,6 +32,19 @@ const firstifsMessage = 'Teď si vyzkoušíme podmínky. "pokud" blok spustí sv
     'y o jedna menší než y lodě). Ještě by bylo vhodné poznamenat, že levý horní okraj mapy má souřadnice ' +
     '(x=0, y=0) a y roste směrem dolů, zatímco x roste směrem doprava. ' +
     'Zároveň jste omezeni pouze na 7 bloků programu (nápověda: pomůže cyklus). Je zbytečné střílet, zbraně jsou vypnuté.';
+
+const firstIfsMessage2 = <span>
+    Tip: Do některých bloků je nutné vložit jiné bloky. Zkus přenést jeden blok nad jiný a vyzkoušet
+    jestli do něj pasuje. Například následující bloky vyžadují aby do nich byla vložena podmínka
+    (blok který vrací pravda/nepravda) <br />
+    <Image imageId="help/firstIfs/cs_BlocksWithConditions" style={{}} height={379} /> <br/>
+    Většina podmínek taky vyžaduje vložení nějakého bloku(obvykle hodnotu nebo konstantu).<br/>
+    <Image imageId="help/firstIfs/cs_conditions" style={{}} height={595} /> <br/>
+    Níže můžete vidět ukázkový program. Program raketce říká, aby se podívala na první pole nad svojí
+    aktuální pozicí (relativní pozice s x=0 and y=-1) a pokud to pole obsahuje diamant leť rovně a
+    vezmi diamant. Jinak leť doprava a vystřel.
+    <Image imageId="help/firstIfs/cs_ifElseExample" style={{}} height={394} />
+</span>;
 
 const firstRepeatTitle = 'Posbírej diamanty';
 const firstRepeatMessage = 'Na této úrovni se podíváme na "opakuj" cyklus. "opakuj", jak už název napovídá, ' +
@@ -153,7 +166,8 @@ const distributedIntroMessage = 'V následující sadě úrovní se pokusíme vy
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
-    [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstifsMessage}],
+    [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstIfsMessage}],
+    [HelpTranslationKey.FirstIfs2, {title: firstIfsTitle, message: firstIfsMessage2}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
     [HelpTranslationKey.FirstRepeat2, {title: firstRepeatTitle, message: firstRepeatMessage2}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],

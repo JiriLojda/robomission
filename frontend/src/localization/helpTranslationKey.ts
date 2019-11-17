@@ -2,6 +2,7 @@ export enum HelpTranslationKey {
     FirstChallenge = 'FirstChallenge',
     FirstChallenge2 = 'FirstChallenge2',
     FirstIfs = 'FirstIfs',
+    FirstIfs2 = 'FirstIfs2',
     FirstRepeat = 'FirstRepeat',
     FirstRepeat2 = 'FirstRepeat2',
     FirstWhile = 'FirstWhile',

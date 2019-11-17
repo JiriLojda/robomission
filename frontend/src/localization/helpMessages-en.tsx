@@ -31,6 +31,19 @@ const firstIfsMessage = 'Now we will try ifs. "if" block will execute its body o
 '(x=0, y=0) and y grows going down on the map, while x grows going to the right of the map. ' +
 'You are restricted to the maximum of 7 blocks so you better use a cycle. Also shooting is ineffective.';
 
+const firstIfsMessage2 = <span>
+    Tip: Some blocks require other blocks to be put into them. Try hovering with one block over the other to
+    see whether the block fits there. For example following blocks require condition blocks (that returns
+    boolean) <br />
+    <Image imageId="help/firstIfs/en_BlocksWithConditions" style={{}} height={371} /> <br/>
+    Many conditions also require another blocks (usually some values or constants) to be put in. See<br/>
+    <Image imageId="help/firstIfs/en_conditions" style={{}} height={595} /> <br/>
+    Bellow you can see an example of a program. The program tells the ship to look one tile above it's
+    current position (relative position with x=0 and y=-1) and if there is a diamond fly ahead and pick
+    up the diamond. Otherwise go right and take a shot.
+    <Image imageId="help/firstIfs/en_ifElseExample" style={{}} height={403} />
+</span>;
+
 const firstRepeatTitle = 'Collect the diamonds';
 const firstRepeatMessage = 'In this level, we will explore repeat cycle. Repeat does what the name suggests. ' +
     'It repeats the commands in its body given number of times. It is supposed to help you ' +
@@ -153,6 +166,7 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
     [HelpTranslationKey.FirstIfs, {title: firstIfsTitle, message: firstIfsMessage}],
+    [HelpTranslationKey.FirstIfs2, {title: firstIfsTitle, message: firstIfsMessage2}],
     [HelpTranslationKey.FirstRepeat, {title: firstRepeatTitle, message: firstRepeatMessage}],
     [HelpTranslationKey.FirstRepeat2, {title: firstRepeatTitle, message: firstRepeatMessage2}],
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
