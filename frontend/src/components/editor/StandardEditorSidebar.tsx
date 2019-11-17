@@ -141,23 +141,24 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                         style={{margin: 2, minWidth: 50}}
                         onClick={this.props.onShowHelp}
                     />
-                    <div style={{width: '200px'}}>
-                        <Toggle
-                            toggled={this.props.isCodeEditorShown}
-                            label={translate('editor.useCodeEditor')}
-                            disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
-                            onToggle={this.props.isCodeEditorShown ? this.props.onHideCodeEditor : this.props.onShowCodeEditor}
-                        />
-                    </div>
-                    <div style={{width: '200px'}}>
+                    <div style={{width: '200px', color: "white", marginBottom: '-20px'}}>
+                        {translate('editor.battleSpeed')}
                         <Slider
-                            name="playback speed"
+                            name={translate('editor.battleSpeed')}
                             axis="x"
                             value={maxDrawingSpeed + minDrawingSpeed - this.props.drawingSpeed}
                             max={maxDrawingSpeed}
                             min={minDrawingSpeed}
                             onChange={this._onDrawingSpeedChanged}
                             step={20}
+                        />
+                    </div>
+                    <div style={{width: '200px'}}>
+                        <Toggle
+                            toggled={this.props.isCodeEditorShown}
+                            label={translate('editor.useCodeEditor')}
+                            disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
+                            onToggle={this.props.isCodeEditorShown ? this.props.onHideCodeEditor : this.props.onShowCodeEditor}
                         />
                     </div>
                     <ErrorMessage>

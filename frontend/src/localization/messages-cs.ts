@@ -419,6 +419,7 @@ const messages: {[index: string]: JSX.Element | string} = {
   'editor.standardWinModalMessageFinal': 'Skvělé, právě jsi vyhrál závěrečnou úroveň. Podívej se do hlavní nabídky na další výzvy.',
   'editor.enlargeEditorArea': 'Zvětšit editor',
   'editor.shrinkEditorArea': 'Zmenšit editor',
+  'editor.battleSpeed': 'rychlost bitvy',
 
   'winModal.title': 'Vítězství',
   'winModal.nextLevelLink': 'další úroveň',
