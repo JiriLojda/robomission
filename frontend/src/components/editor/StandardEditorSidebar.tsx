@@ -146,6 +146,7 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                         <Toggle
                             toggled={this.props.isCodeEditorShown}
                             label={translate('editor.useCodeEditor')}
+                            disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
                             onToggle={this.props.isCodeEditorShown ? this.props.onHideCodeEditor : this.props.onShowCodeEditor}
                         />
                     </div>
