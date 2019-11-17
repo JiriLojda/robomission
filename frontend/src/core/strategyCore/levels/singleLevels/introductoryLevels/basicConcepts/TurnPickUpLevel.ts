@@ -1,12 +1,10 @@
 import {List, Map} from "immutable";
 import {IGameBehaviours} from "../../../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../../../gameBehaviours/exposionCollisionResolver";
-import {destroyFirstShotResolver} from "../../../../gameBehaviours/destroyFirstShotResolver";
 import {
     createOnTheirOwnGroups,
     createOnTheirOwnTeams,
     IGameLevel,
-    LevelHelp,
     RoboAstValidator
 } from "../../../../battleRunner/IGameLevel";
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
@@ -20,14 +18,16 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstChallengeLevel} from "./firstChallengeLevel";
+import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
+import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
+
+const shipIds = ['aiShip', 'playerShip'] as const;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: explosionCollisionResolver,
-    shotResolver: destroyFirstShotResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
+    shotResolver: createSelectiveShotResolver(shipIds),
 };
-
-const shipIds = ['aiShip', 'playerShip'] as const;
 
 const help = List([
     createTranslatedHelp(HelpTranslationKey.TurnPickUp),

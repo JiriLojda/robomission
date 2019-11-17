@@ -1,6 +1,6 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
@@ -10,10 +10,11 @@ import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamo
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
+import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: explosionCollisionResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
     shotResolver: createSelectiveShotResolver([]),
 };
 

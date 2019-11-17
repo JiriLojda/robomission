@@ -5,7 +5,6 @@ import {
     createOnTheirOwnGroups,
     createOnTheirOwnTeams,
     IGameLevel,
-    LevelHelp,
     RoboAstValidator
 } from "../../../../battleRunner/IGameLevel";
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
@@ -13,7 +12,6 @@ import {BattleType} from "../../../../battleRunner/BattleType";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {firstChallengeWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstChallengeWorld";
-import {pushCollisionResolver} from "../../../../gameBehaviours/pushCollisionResolver";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {shipRepresentingObjects} from "../../../../enums/worldObjectType";
 import {justShootingStrategy} from "../../../../predefinedStrategies/justShootingStrategy";
@@ -21,12 +19,13 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstRepeatLevel} from "./firstRepeatLevel";
+import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: pushCollisionResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
     shotResolver: createSelectiveShotResolver(shipIds, shipRepresentingObjects),
 };
 const help = List([

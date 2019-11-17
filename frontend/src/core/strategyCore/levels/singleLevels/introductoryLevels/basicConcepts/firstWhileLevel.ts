@@ -5,7 +5,6 @@ import {
     createOnTheirOwnGroups,
     createOnTheirOwnTeams,
     IGameLevel,
-    LevelHelp,
     RoboAstValidator
 } from "../../../../battleRunner/IGameLevel";
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
@@ -21,12 +20,13 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {secondWhileLevel} from "./secondWhileLevel";
+import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: explosionCollisionResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
     shotResolver: createSelectiveShotResolver([]),
 };
 

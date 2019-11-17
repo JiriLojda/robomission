@@ -9,8 +9,8 @@ const map = [
     ['k-', 'k-', 'k-', 'k-A', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-', 'k-', 'kA', 'k-', 'k-'],
-    ['k-', 'kA', 'kA', 'kA', 'k-'],
-    ['k-', 'kA', 'k-P', 'kA', 'k-'],
+    ['k-', 'kA', 'kM', 'kM', 'k-'],
+    ['k-', 'kA', 'k-P', 'kM', 'k-'],
 ];
 
 const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
@@ -21,4 +21,4 @@ const ships = {
     A: aiShip,
 };
 
-export const smallGetOutWorld: World = convertReadableMapToWorld(map, ships);
+export const flyLeftShootWorld: World = convertReadableMapToWorld(map, ships);

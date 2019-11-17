@@ -6,13 +6,13 @@ import {Position} from "../../../../models/position";
 
 
 const map = [
-    ['k-', 'k-', 'k-A', 'kA', 'k-'],
-    ['k-', 'kA', 'k-', 'kA', 'k-'],
-    ['k-', 'kA', 'k-', 'kA', 'k-'],
-    ['k-', 'kA', 'k-', 'kA', 'k-'],
-    ['k-', 'kA', 'k-', 'kA', 'k-'],
-    ['k-', 'kA', 'k-', 'k-', 'k-'],
-    ['k-', 'kA', 'k-P', 'kA', 'k-'],
+    ['k-', 'k-', 'k-A', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'k-', 'k-'],
+    ['k-', 'kG', 'k-P', 'kG', 'k-'],
 ];
 
 const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});

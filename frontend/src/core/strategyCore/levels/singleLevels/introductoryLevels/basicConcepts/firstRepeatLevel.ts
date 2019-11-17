@@ -5,14 +5,12 @@ import {
     createOnTheirOwnGroups,
     createOnTheirOwnTeams,
     IGameLevel,
-    LevelHelp,
     RoboAstValidator
 } from "../../../../battleRunner/IGameLevel";
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
 import {BattleType} from "../../../../battleRunner/BattleType";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {pushCollisionResolver} from "../../../../gameBehaviours/pushCollisionResolver";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
 import {firstRepeatWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
@@ -20,12 +18,13 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstIfsLevel} from "./firstIfsLevel";
+import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
 const shipIds = ['playerShip', 'aiShip'] as const;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: pushCollisionResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
     shotResolver: createSelectiveShotResolver([]),
 };
 

@@ -6,7 +6,7 @@ import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
 
 const map = [
     ['k-', 'k-', 'k-', 'k-', 'k-P'],
-    ['kA', 'kA', 'kA', 'kA', 'kA'],
+    ['kF', 'kF', 'kF', 'kF', 'kF'],
     ['k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-A', 'k-', 'k-', 'k-', 'k-'],

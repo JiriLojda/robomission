@@ -8,9 +8,9 @@ import {Position} from "../../../../models/position";
 const map = [
     ['k-', 'k-', 'k-', 'kDA', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-'],
-    ['k-', 'k-', 'kA', 'k-', 'k-'],
-    ['k-', 'kA', 'kA', 'kA', 'k-'],
-    ['kD', 'kA', 'k-P', 'kA', 'kD'],
+    ['k-', 'k-', 'kM', 'k-', 'k-'],
+    ['k-', 'kA', 'kM', 'kA', 'k-'],
+    ['kD', 'kM', 'k-P', 'kM', 'kD'],
 ];
 
 const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});

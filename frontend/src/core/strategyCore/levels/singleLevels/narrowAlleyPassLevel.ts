@@ -1,10 +1,9 @@
 import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
-import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel, LevelHelp} from "../../battleRunner/IGameLevel";
+import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../battleRunner/IGameLevel";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
-import {pushCollisionResolver} from "../../gameBehaviours/pushCollisionResolver";
 import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper";
 import {narrowPathWorld} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
@@ -13,10 +12,11 @@ import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedH
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {starWithDiamondsLevel} from "./starWithDiamondsLevel";
+import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
-    shipCollisionResolver: pushCollisionResolver,
+    shipCollisionResolver: createStandardObjectCollisionResolver(),
     shotResolver: createSelectiveShotResolver(['aiShip']),
 };
 
