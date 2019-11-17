@@ -7,6 +7,7 @@ export enum HelpTranslationKey {
     FirstWhile = 'FirstWhile',
     FlyLeftShoot = 'FlyLeftShoot',
     FlyLeftShoot2 = 'FlyLeftShoot2',
+    FlyLeftShoot3 = 'FlyLeftShoot3',
     SecondIfs = 'SecondIfs',
     SecondWhile = 'SecondWhile',
     TurnPickUp = 'TurnPickUp',

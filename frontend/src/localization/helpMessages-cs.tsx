@@ -74,6 +74,11 @@ const flyLeftShootMessage2 = <span>
     <Image imageId="help/flyLeftShoot/cs_firstBlockAdded" style={{margin: '2%'}} height={129}/>
 </span>;
 
+const flyLeftShootMessage3 = <span>
+    Věděl jsi, že si svůj program můžeš vyzkoušet kliknutím na tlačítko "spusť bitvu"?
+    <Image imageId="help/flyLeftShoot/cs_runBattle" style={{margin: '2%'}} height={120} />
+</span>;
+
 const secondIfsTitle = 'Posbírej diamanty';
 const secondIfsMessage = 'Tato úroveň je podobná předchozí, pouze tady několik diamantů chybí. ' +
     'Pokuste se je všechny posbírat a vyhněte se ostatním objektům. ' +
@@ -154,6 +159,7 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
+    [HelpTranslationKey.FlyLeftShoot3, {title: flyLeftShootTitle, message: flyLeftShootMessage3}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],

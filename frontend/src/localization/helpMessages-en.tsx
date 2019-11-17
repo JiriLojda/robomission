@@ -72,6 +72,11 @@ const flyLeftShootMessage2 = <span>
     <Image imageId="help/flyLeftShoot/en_firstBlockAdded" style={{margin: '2%'}} height={127} />
 </span>;
 
+const flyLeftShootMessage3 = <span>
+    Did you know you can try you program using the "run battle" button?
+    <Image imageId="help/flyLeftShoot/en_runBattle" style={{margin: '2%'}} height={127} />
+</span>;
+
 const secondIfsTitle = 'Collect the diamonds';
 const secondIfsMessage = 'This is similar to the previous level, except here some diamonds are missing. ' +
 'Try to collect them all without hitting into anything. ' +
@@ -153,6 +158,7 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstWhile, {title: firstWhileTitle, message: firstWhileMessage}],
     [HelpTranslationKey.FlyLeftShoot, {title: flyLeftShootTitle, message: flyLeftShootMessage}],
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
+    [HelpTranslationKey.FlyLeftShoot3, {title: flyLeftShootTitle, message: flyLeftShootMessage3}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
