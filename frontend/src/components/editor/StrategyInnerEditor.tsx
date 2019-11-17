@@ -35,12 +35,13 @@ type Props = INewEditorDataProps & INewEditorCallbackProps;
 
 interface IState {
     readonly code: string;
+    readonly editedAst: IRoboAst;
 }
 
 const getBlocklyWorkspace = (editor: BlocklyEditor) =>
     editor.refs.workspace.state.workspace;
 
-const blockIdRegex = /"blockId":"[^"]+"/g;
+const blockIdRegex = /"blockId":"[^"]+"|"blockId":null/g;
 const areSameExcludingIds = (firstAst: IRoboAst, secondAst: IRoboAst): boolean => {
     const firstSerialized = JSON.stringify(firstAst).replace(blockIdRegex, '');
     const secondSerialized = JSON.stringify(secondAst).replace(blockIdRegex, '');
@@ -53,6 +54,7 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
         super(props);
         this.state = {
             code: props.showCodeEditor ? generateStrategyRoboCode(props.roboAst) : '',
+            editedAst: props.roboAst,
         }
     }
 
@@ -60,9 +62,15 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
         if (prevProps.height !== this.props.height && this.blocklyEditor) {
             this.blocklyEditor.resize();
         }
-        if (!areSameExcludingIds(prevProps.roboAst, this.props.roboAst) || prevProps.showCodeEditor !== this.props.showCodeEditor) {
+        if (prevProps.showCodeEditor !== this.props.showCodeEditor) {
+            this.setState({code: generateStrategyRoboCode(this.props.roboAst)});
+        }
+        if (
+            !areSameExcludingIds(this.state.editedAst, this.props.roboAst) &&
+            !areSameExcludingIds(prevProps.roboAst, this.props.roboAst)
+        ) {
             if (this.props.showCodeEditor) {
-                this.setState({code: generateStrategyRoboCode(this.props.roboAst)});
+                this.setState({code: generateStrategyRoboCode(this.props.roboAst), editedAst: this.props.roboAst});
             } else {
                 this._updateBlockly(this.props.roboAst);
             }
@@ -76,6 +84,7 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
             return;
         }
 
+        this.setState({editedAst: roboAst});
         const xml = generateBlocklyXml(roboAst);
         getBlocklyWorkspace(this.blocklyEditor).clear();
         this.blocklyEditor.importFromXml(xml);
@@ -85,6 +94,7 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
         this.props.onSyntaxErrorRaised(validationResult.reason);
 
         if (!areSameExcludingIds(newAst, this.props.roboAst)) {
+            this.setState({editedAst: newAst});
             this.props.onRoboAstChanged(newAst);
         }
     };
