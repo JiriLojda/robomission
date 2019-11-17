@@ -97,6 +97,20 @@ const secondIfsMessage = 'Tato úroveň je podobná předchozí, pouze tady něk
     'Pokuste se je všechny posbírat a vyhněte se ostatním objektům. ' +
     'Opět jste limitováni na 7 bloků. Tak je využívejte opatrně.';
 
+const secondIfsMessage2 = <span>
+    Tip: Pokud chcete něco vykonat v obou větvích "pokud-jinak" bloku, můžete společnou část obou větví
+    dát až za "pokud-jinak" blok. Například oba program které vidíme a obrázcích níže dělají totéž,
+    zatímco ten druhý je o jeden blok kratší. <br/>
+    <Image imageId="help/secondIfs/cs_duplicatedIfElse" style={{}} height={407} />
+    <Image imageId="help/secondIfs/cs_normalizedIfElse" style={{}} height={363} />
+</span>;
+
+const secondIfsMessage3 = <span>
+    Pokud vaše loď potřebuje reagovat na více než dvě různé situace, můžete použít více "pokud" podmínek za sebou.
+    Ale opatrně, akce vykonané v prvním "pokud" bloku mohou ovlivnit výsledek podmínky v druhém.
+    <Image imageId="help/secondIfs/cs_switch" style={{}} height={531} />
+</span>;
+
 const secondWhileTitle = 'Dostaň se na zelené pole';
 const secondWhileMessage = 'Nyní si "dokud" procvičíme trošku víc. Váš úkol je dostat se na zelené pole. ' +
     'Váš soupeř se vás pokusí zničit, ale vy nemůžete střílet. Vaší jedinou naději je vyhnout se jeho střelám. ' +
@@ -175,6 +189,8 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.FlyLeftShoot3, {title: flyLeftShootTitle, message: flyLeftShootMessage3}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
+    [HelpTranslationKey.SecondIfs2, {title: secondIfsTitle, message: secondIfsMessage2}],
+    [HelpTranslationKey.SecondIfs3, {title: secondIfsTitle, message: secondIfsMessage3}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
     [HelpTranslationKey.TurnPickUp2, {title: turnPickUpTitle, message: turnPickUpMessage2}],

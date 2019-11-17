@@ -186,11 +186,13 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         }));
     };
 
-    private _isEnoughFailuresToShowExtraHelp = () =>
-        this.state.nextExtraHelpIndex > 0 &&
-        this.props.level.help.get(this.state.nextExtraHelpIndex) &&
-        this.props.level.help.get(this.state.nextExtraHelpIndex)!.timeoutToShowFailures > 0 &&
-        this.state.failureCount + 1 >= this.props.level.help.get(this.state.nextExtraHelpIndex)!.timeoutToShowFailures;
+    private _isEnoughFailuresToShowExtraHelp = () => {
+        const nextHelp = this.props.level.help.get(this.state.nextExtraHelpIndex);
+        return this.state.nextExtraHelpIndex > 0 &&
+            nextHelp &&
+            nextHelp.timeoutToShowFailures > 0 &&
+            (this.state.failureCount - this.state.lastExtraHelpFailureCount) + 1 >= nextHelp.timeoutToShowFailures;
+    };
 
     private _incrementFailureCount = () => {
         if (this._isEnoughFailuresToShowExtraHelp()) {

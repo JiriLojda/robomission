@@ -95,6 +95,21 @@ const secondIfsMessage = 'This is similar to the previous level, except here som
 'Try to collect them all without hitting into anything. ' +
 'Again you are limited to 7 blocks, so use them carefully.';
 
+const secondIfsMessage2 = <span>
+    Tip: If you want to do something in both branches of an if-else block, you can put the part that is same
+    after the if-else. For example the programs bellow do exactly the same. While the second one is one
+    block shorter. <br/>
+    <Image imageId="help/secondIfs/en_duplicatedIfElse" style={{}} height={412} />
+    <Image imageId="help/secondIfs/en_normalizedIfElse" style={{}} height={361} />
+</span>;
+
+const secondIfsMessage3 = <span>
+    If your ship can be in more than two different situations you want to address in you program.
+    You can use multiple "ifs" in a row, but be careful as actions executed in the first "if" may
+    affect the result of the condition in the second one.
+    <Image imageId="help/secondIfs/en_switch" style={{}} height={526} />
+</span>;
+
 const secondWhileTitle = 'Get on the green tile';
 const secondWhileMessage = 'Lets practice the while a bit more. Your goal now is to get to the green tile. ' +
 'You opponent will try to shoot you down, but your gun is broken. Your only hope is ' +
@@ -174,6 +189,8 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FlyLeftShoot2, {title: flyLeftShootTitle, message: flyLeftShootMessage2}],
     [HelpTranslationKey.FlyLeftShoot3, {title: flyLeftShootTitle, message: flyLeftShootMessage3}],
     [HelpTranslationKey.SecondIfs, {title: secondIfsTitle, message: secondIfsMessage}],
+    [HelpTranslationKey.SecondIfs2, {title: secondIfsTitle, message: secondIfsMessage2}],
+    [HelpTranslationKey.SecondIfs3, {title: secondIfsTitle, message: secondIfsMessage3}],
     [HelpTranslationKey.SecondWhile, {title: secondWhileTitle, message: secondWhileMessage}],
     [HelpTranslationKey.TurnPickUp, {title: turnPickUpTitle, message: turnPickUpMessage}],
     [HelpTranslationKey.TurnPickUp2, {title: turnPickUpTitle, message: turnPickUpMessage2}],

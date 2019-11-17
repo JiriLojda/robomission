@@ -30,7 +30,7 @@ const behaviours: IGameBehaviours = {
 
 const help = List([
     createTranslatedHelp(HelpTranslationKey.FirstIfs),
-    createTranslatedHelp(HelpTranslationKey.FirstIfs2, 10 * 60, 5),
+    createTranslatedHelp(HelpTranslationKey.FirstIfs2, 10 * 60, 4),
 ]);
 
 const additionalValidators: List<RoboAstValidator> = List([
