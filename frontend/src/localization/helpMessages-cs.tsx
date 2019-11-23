@@ -6,7 +6,7 @@ import React from "react";
 
 const firstChallengeTitle = 'Znič protivníka';
 const firstChallengeMessage = 'Teď se pokusíme porazit protivníka, který se bude trochu bránit. ' +
-    'Tento level má svoje specialní asteroidy. Tyto zelené asteroid je možné tlačit před raketkou. ' +
+    'Tento level má svoje specialní asteroidy. Tyto zelené asteroidy je možné tlačit před raketkou. ' +
     'To ovšem za podmínky, že za asteroidem ' +
     've směru letu raketky je volné místo. Pokud není, nic se nestane. Raketka i asteroid zůstávají ' +
     'na stejném místě.';
@@ -58,7 +58,7 @@ const firstRepeatMessage2 = <span>
 
 const firstWhileTitle = 'Posbírej diamanty';
 const firstWhileMessage = 'Teď cyklus "dokud". Cyklus "dokud" je podobný jako blok "pokud". ' +
-    'Kromě toho, že když je dokončeno tělo "doku" cyklu, jeho podmínka se vyhodnotí znova. ' +
+    'Kromě toho, že když je dokončeno tělo "dokud" cyklu, jeho podmínka se vyhodnotí znova. ' +
     'Pokud se podmínka opět vyhodnotí na "pravda", je tělo spuštěno znova.' +
     'A takto je tělo "dokud" cyklu vykonáváno dokola, dokud se podmínka vyhodnocuje na "pravda". ' +
     '"pokud" pomáhá opakovat kusy kódu, u kterých nevíte dopředu, kolikrát je bude potřeba opakovat. Například: ' +
@@ -76,7 +76,7 @@ const flyLeftShootMessage = 'Vítej v robomisi. V této misi si vyzkoušíte lé
     'několikrát. Velké asteroidy není možné zničit. Pokud s lodí narazíte do jiného objektu nebo' +
     ' vyletíte mimo mapu, vaše loď se zničí. ' +
     'Tyto standardní pravidla se v pozdějších úrovních mohou měnit, pozorně čtěte nápovědu. Teď se podíváme na příkazy. ' +
-    'Můžete letět rovně povelem "leť" z categorie "povely". Na povel "vpravo" nebo "vlevo" poletí loď ' +
+    'Můžete letět rovně povelem "leť" z kategorie "povely". Na povel "vpravo" nebo "vlevo" poletí loď ' +
     'diagonálně dopředu a doprava nebo doleva. Její orientace se nezmění (neotočí se). ' +
     'Střílet můžete pomocí povelu "vystřel".';
 

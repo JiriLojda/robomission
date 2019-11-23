@@ -8,7 +8,6 @@ export const validationResult = (state: InvalidProgramReason = defaultState, act
     switch (action.type) {
         case SYNTAX_ERROR_RAISED:
             return action.payload.error;
-        case EDITOR_RESETED:
         case EDITOR_INITIALIZED:
             return defaultState;
         default:
