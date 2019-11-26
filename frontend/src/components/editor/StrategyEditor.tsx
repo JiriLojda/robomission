@@ -107,7 +107,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         super(props);
         this.state = {
             useCodeEditor: false,
-            editorHeight: 400,
+            editorHeight: 600,
             showWinModal: false,
             startTime: Date.now(),
             lastExtraHelpFailureCount: 0,
