@@ -59,6 +59,6 @@ export const turnPickUpLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(firstChallengeLevel),
     additionalValidators,
-    isDecisiveWin: winner => winner === 'playerShip',
+    isDecisiveWin: winner => winner === turnDiamondsWorldShipIds[1],
 };
 

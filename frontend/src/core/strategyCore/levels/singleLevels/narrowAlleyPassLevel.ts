@@ -45,6 +45,6 @@ export const narrowAlleyPassLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(starWithDiamondsLevel),
     additionalValidators: List(),
-    isDecisiveWin: winner => winner === 'playerShip',
+    isDecisiveWin: winner => winner === narrowPathWorldShipIds[1],
 };
 

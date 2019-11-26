@@ -37,6 +37,6 @@ export const starWithDiamondsLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
-    isDecisiveWin: winner => winner === 'playerShip',
+    isDecisiveWin: winner => winner === starWithDiamondsWorldShipIds[1],
 };
 

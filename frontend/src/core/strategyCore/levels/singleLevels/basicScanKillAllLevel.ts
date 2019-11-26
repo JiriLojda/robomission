@@ -38,5 +38,5 @@ export const basicScanKillAllLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(basicRaceLevel),
     additionalValidators: List(),
-    isDecisiveWin: winner => winner === 'playerShip',
+    isDecisiveWin: winner => winner === basicKillAllWorldShipIds[1],
 };
