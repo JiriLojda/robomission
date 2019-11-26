@@ -15,6 +15,7 @@ import {firstIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/fir
 import {secondIfsLevel} from "./singleLevels/introductoryLevels/basicConcepts/secondIfsLevel";
 import {translate} from "../../../localization";
 import {distributedIntroLevel} from "./singleLevels/distributedLevels/distributedIntroLevel";
+import {distributedIntroLevel2} from "./singleLevels/distributedLevels/distributedIntroLevel2";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -29,6 +30,7 @@ const introductoryLevels = [
 
 const distributedLevels = [
     distributedIntroLevel,
+    distributedIntroLevel2,
 ];
 
 const otherLevels = [

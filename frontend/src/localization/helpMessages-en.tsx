@@ -176,6 +176,11 @@ const distributedIntroMessage = 'In the following set of levels we will try to c
     'ships simultaneously. So for example if you will have a program with just a shoot command, and run it. ' +
     'Both of you ships will shoot.';
 
+const distributedIntro2Title = 'Get them there again';
+const distributedIntro2Message = 'Again, you have to get both ships to their respective tiles. ' +
+    'The only difference is that the ships have different paths from each other. ' +
+    'That suggests, you will have to use some branching.';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -201,4 +206,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.StarWithDiamonds, {title: starWithDiamondsTitle, message: starWithDiamondsMessage}],
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
     [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
+    [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
 ]);

@@ -7,10 +7,10 @@ import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslat
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
 import {BattleType} from "../../../battleRunner/BattleType";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
-import {distributedIntroLevelWorld} from "../../worlds/distributedLevelsWorlds/distributedIntroLevelWorld";
 import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {distributedIntroLevel2World} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
 
 const shipIds = ['playerShip1', 'playerShip2'] as const;
 const teams = List([{name: 'player', members: List(shipIds)}]);
@@ -26,18 +26,18 @@ const finalPositions = [
     new Position({x: 4, y: 0}),
 ];
 
-const help = List([createTranslatedHelp(HelpTranslationKey.DistributedIntro)]);
+const help = List([createTranslatedHelp(HelpTranslationKey.DistributedIntroLevel2)]);
 
-export const distributedIntroLevel: IGameLevel = {
+export const distributedIntroLevel2: IGameLevel = {
     name: findTranslatedName(HelpTranslationKey.DistributedIntro),
-    urlSlug: 'your-first-distributed-program',
+    urlSlug: 'your-second-distributed-program',
     battleType: BattleType.TeamGetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions), teams},
     turnsOrder: List(shipIds),
     shipsAsts: Map(),
     teams,
     sameAstGroups: List([Set(shipIds)]),
-    world: distributedIntroLevelWorld,
+    world: distributedIntroLevel2World,
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,

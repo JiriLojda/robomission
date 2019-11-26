@@ -177,6 +177,11 @@ const distributedIntroMessage = 'V následující sadě úrovní se pokusíme vy
     'současně. Takže když například budete mít program obsahující pouze povel vystřel as pustíte ho. ' +
     'Obě vaše lodě vystřelí.';
 
+const distributedIntro2Title = 'Znovu je dostaň do cíle';
+const distributedIntro2Message = 'Zde opět musíte dostat obě lodě na jejich cílové pozice. ' +
+    'Jediný rozdíl s předchozím kolem je, že obě lodě mají rozlišné trasy. ' +
+    'To nám napovídá, že bude potřeba použít nějaké větvení.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
@@ -201,4 +206,5 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.StarWithDiamonds, {title: starWithDiamondsTitle, message: starWithDiamondsMessage}],
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
     [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
+    [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
 ]);
