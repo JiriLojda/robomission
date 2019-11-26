@@ -29,7 +29,7 @@ const finalPositions = [
 const help = List([createTranslatedHelp(HelpTranslationKey.DistributedIntroLevel2)]);
 
 export const distributedIntroLevel2: IGameLevel = {
-    name: findTranslatedName(HelpTranslationKey.DistributedIntro),
+    name: findTranslatedName(HelpTranslationKey.DistributedIntroLevel2),
     urlSlug: 'your-second-distributed-program',
     battleType: BattleType.TeamGetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions), teams},

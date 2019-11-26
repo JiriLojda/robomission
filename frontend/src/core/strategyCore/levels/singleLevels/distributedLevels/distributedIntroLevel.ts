@@ -11,6 +11,7 @@ import {distributedIntroLevelWorld} from "../../worlds/distributedLevelsWorlds/d
 import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {distributedIntroLevel2} from "./distributedIntroLevel2";
 
 const shipIds = ['playerShip1', 'playerShip2'] as const;
 const teams = List([{name: 'player', members: List(shipIds)}]);
@@ -41,7 +42,7 @@ export const distributedIntroLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
-    winModal: createWinModalWithStandardMessage(),
+    winModal: createWinModalWithStandardMessage(distributedIntroLevel2),
     additionalValidators: List(),
     isDecisiveWin: winner => winner === 'player',
 };
