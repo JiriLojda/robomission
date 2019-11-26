@@ -68,6 +68,9 @@ export const allStrategyCategories: BlocklyToolbox = [
                 type: BlockType.Turn,
                 fields: {direction: 'right'},
             },
+            {
+                type: BlockType.Noop,
+            },
         ],
     },
     {
@@ -95,6 +98,7 @@ export const allStrategyCategories: BlocklyToolbox = [
             {type: BlockType.GetShipPosition},
             {type: BlockType.GetPositionCoordinate},
             {type: BlockType.GetDirectionOfShip},
+            {type: BlockType.GetShipId},
         ]
     },
     {

@@ -74,6 +74,8 @@ function generateStatementBlock(node: IBlock, nextNodes: IBlock[]) {
             return generateTurnBlock('left', nextNodes);
         case StatementType.PickUpDiamond:
             return generatePickupDiamondBlock(nextNodes);
+        case StatementType.Noop:
+            return generateNoopBlock(nextNodes);
         case StatementType.SetVariable:
             return generateSetStringVariableBlock(statement, nextNodes);
         case StatementType.SetVariableNumeric:
@@ -113,6 +115,14 @@ function generatePickupDiamondBlock(nextNodes: IBlock[]) {
       ${generateNextBlocksIfPresent(nextNodes)}
     </block>
     `;
+}
+
+function generateNoopBlock(nextNodes: IBlock[]) {
+    return `
+    <block type="noop">
+      ${generateNextBlocksIfPresent(nextNodes)}
+    </block>
+    `
 }
 
 function generateFlyBlock(direction: string, nextNodes: IBlock[]): string {
@@ -375,6 +385,10 @@ const generateValueStatement = (statement?: IStatement): string => {
                         ${generateValueStatement(statement.shipId)}
                     </value>
                 </block>
+            `;
+        case StatementType.GetShipId:
+            return `
+                <block type="${statement.head}"></block>
             `;
         default:
             return '';

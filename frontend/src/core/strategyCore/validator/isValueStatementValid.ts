@@ -96,7 +96,15 @@ export const isValueStatementValid = (statement: IStatement, type?: ValueStateme
                 s => isValueStatementValid(s.shipId as IStatement, ValueStatementType.String),
             ], statement);
         case StatementType.RandomNumber:
-            return hasExactProperties(statement, ['head']);
+            return useValidators([
+                s => hasExactProperties(s, ['head']),
+                s => validateCorrectValueType(s, type),
+            ], statement);
+        case StatementType.GetShipId:
+            return useValidators([
+                s => hasExactProperties(s, ['head']),
+                s => validateCorrectValueType(s, type),
+            ], statement);
         default:
             return getValidatorResult(false, InvalidProgramReason.UnknownStatementType);
     }

@@ -96,10 +96,16 @@ Statement
 
 ActionStatement
   = action:ActionStatementType
-    { return { head: action } }
+    {
+      if (action == "collect-diamond")
+        action = 'pick_up_diamond';
+      if (action == 'do nothing')
+        action = 'noop';
+      return { head: action };
+    }
 
 ActionStatementType
-  = "fly"/"shoot"/"left"/"right"/"pick_up_diamond"/"turn-right"/"turn-left"
+  = "fly"/"shoot"/"left"/"right"/"collect-diamond"/"turn-right"/"turn-left"/"do nothing"
 
 SetStringVariableStatement
   = name:Identifier __ "=" __ value:String
@@ -269,6 +275,7 @@ FunctionCallNumber
 
 String
   = ConstantString
+  / GetShipId
   / GetShipDirection
   / FunctionCallString
   / GetStringVariable
@@ -288,6 +295,10 @@ FunctionCallString
 GetStringVariable
   = name:Identifier
     { return { head: 'getStringVariable', name: name } }
+
+GetShipId
+  = "this ship id"
+    { return { head: 'get_shipId' }; }
 
 /* ----- Function call arguments ----- */
 

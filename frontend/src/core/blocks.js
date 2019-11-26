@@ -819,6 +819,25 @@ const blocks = [
     tooltip: '',
     helpUrl: '',
   },
+  {
+    id: 'noop',
+    message0: `${translate('blockly.noop')}`,
+    args0: [],
+    colour: colors.command,
+    previousStatement: null,
+    nextStatement: null,
+    tooltip: '',
+    helpUrl: '',
+  },
+  {
+    id: 'get_shipId',
+    message0: `${translate('blockly.getShipId')}`,
+    args0: [],
+    output: 'String',
+    colour: colors.position,
+    tooltip: '',
+    helpUrl: '',
+  },
 ];
 
 export function getAllBlocksList() {

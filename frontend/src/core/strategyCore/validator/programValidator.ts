@@ -8,7 +8,7 @@ import {
     isFunctionDefinitionStatementValid,
     isFunctionReturnValid,
     isIfStatementValid,
-    isLeftStatementValid,
+    isLeftStatementValid, isNoopStatementValid,
     isPickUpDiamondStatementValid,
     isRepeatStatementValid,
     isRightStatementValid,
@@ -62,6 +62,8 @@ const isStatementValid = (statement: IStatement): IValidatorResult => {
             return isShootStatementValid(statement);
         case StatementType.PickUpDiamond:
             return isPickUpDiamondStatementValid(statement);
+        case StatementType.Noop:
+            return isNoopStatementValid(statement);
         case StatementType.Start:
             return useValidators(
                 [isStartStatementValid, validateBody],

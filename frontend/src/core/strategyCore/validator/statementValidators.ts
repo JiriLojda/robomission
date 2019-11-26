@@ -29,6 +29,7 @@ export const isLeftStatementValid = getStatementValidator(['head']);
 
 export const isShootStatementValid = getStatementValidator(['head']);
 export const isPickUpDiamondStatementValid = getStatementValidator(['head']);
+export const isNoopStatementValid = getStatementValidator(['head']);
 
 export const isTurnRightStatementValid = getStatementValidator(['head']);
 export const isTurnLeftStatementValid = getStatementValidator(['head']);

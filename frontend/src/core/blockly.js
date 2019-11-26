@@ -121,6 +121,10 @@ function blockToAst(block) {
       return getPositionCoordinateToAst(block);
     case 'get_direction_of_ship':
       return getDirectionOfShipToAst(block);
+    case 'noop':
+      return noopToAst();
+    case 'get_shipId':
+      return getShipIdToAst();
     default:
       throw new Error(`Unknown block type: ${type}`);
   }
@@ -339,8 +343,16 @@ function getDirectionOfShipToAst(block) {
   return {head: 'get_direction_of_ship', shipId};
 }
 
-function randomNumberToAst(block) {
+function randomNumberToAst() {
   return {head: 'random_number'};
+}
+
+function noopToAst() {
+  return {head: 'noop'};
+}
+
+function getShipIdToAst() {
+  return {head: 'get_shipId'};
 }
 
 //helpers

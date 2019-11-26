@@ -6,7 +6,8 @@ import {
     IFunctionCallParameter,
     IFunctionDefinition,
     IFunctionReturn,
-    IGetPositionCoordinateStatement, IGetShipDirectionStatement,
+    IGetPositionCoordinateStatement,
+    IGetShipDirectionStatement,
     IGetShipPositionStatement,
     INumberBinaryStatement,
     IPositionValueStatement,
@@ -100,6 +101,8 @@ function generateStatement(statement: IStatement): string {
             return generateGetCoordinateOfPosition(statement as IGetPositionCoordinateStatement);
         case StatementType.GetDirectionOfShip:
             return generateGetDirectionOfShip(statement as IGetShipDirectionStatement);
+        case StatementType.GetShipId:
+            return generateGetShipId();
         default:
             return generateActionStatement(statement);
     }
@@ -134,10 +137,17 @@ const actionStatements = [
     StatementType.TurnRight,
     StatementType.PickUpDiamond,
     StatementType.Fly,
+    StatementType.Noop,
 ];
 function generateActionStatement({ head }: IStatement): string {
     if (!actionStatements.includes(head))
         throw invalidProgramError(`This is not an action statement: ${head}`);
+
+    if (head === StatementType.PickUpDiamond)
+        return 'collect-diamond';
+
+    if (head === StatementType.Noop)
+        return 'do nothing';
 
     return head;
 }
@@ -274,6 +284,10 @@ function generateGetDirectionOfShip(statement: IGetShipDirectionStatement) {
     const shipId = generateStatement(statement.shipId);
 
     return `direction of ship ${shipId}`;
+}
+
+function generateGetShipId() {
+    return 'this ship id';
 }
 
 function generateLogicBinaryOperation(node: IBinaryLogicCondition): string {

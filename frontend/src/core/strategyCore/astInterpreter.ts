@@ -179,6 +179,8 @@ const evaluateActionStatement = (
     }
 
     switch (statement.head) {
+        case StatementType.Noop:
+            return getUsedEvaluationResult(world);
         case StatementType.Fly:
             return getUsedEvaluationResult(handleMoveStatement(world, ship, MovingDirection.Forward, behaviours));
         case StatementType.Left:

@@ -246,6 +246,13 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
 
             return ship.direction;
         }
+        case StatementType.GetShipId: {
+            const ship = getShip(world, shipId);
+            if (!ship)
+                return UserProgramError.ProvidedShipIdDoesNotExist;
+
+            return ship.id;
+        }
         default:
             throw new Error(`Statement ${statement.head} is not a value statement.`);
     }

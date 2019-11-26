@@ -118,11 +118,10 @@ const secondWhileMessage = 'Nyní si "dokud" procvičíme trošku víc. Váš ú
     'Leťte rovně tak dlouho, dokud na pozici [0,0] nebude loď, tzn nepřítel je před vámi. Potom zatočte doprava, ' +
     'aby jste se mu vyhnuli. Vyčkejte a jakmile na pozici [0,0] loď není, můžete se vrátit do levého pruhu ' +
     'a pokračovat. TIP: použijte "dokud" a do podmínky vložte "pravda"(true), ta se vždy vyhodnotí na "pravda" ' +
-    'a tento cyklus bude vykonáván do nekonečna. ' +
+    'a tento cyklus bude vykonáván do nekonečna. Pro čekání můžete použít povel "nic nedělej".' +
+    'Tento povel vynechá tah (nechá hrát soupeře) a loď zůstane na stejném místě.' +
     'TIP2: jakmile vaše loď doletí na zelené políčko, hra skončí. Takže se nemusíte bát, že vyletíte mimo mapu. ' +
-    'TIP3: pokud chcete přeskočit tah (čekáte až nepřítel odletí) můžete použít povel "vezmi diamant". ' +
-    'I v případě že na dané pozici žádný diamant není, loď provede tah, nikam se nepohne a pokračuje nepřítel. ' +
-    'TIP4: Přestože můžete se při výhýbání nepříteli letět dopředu i v pravém pruhu, riskujete, že netrefíte ' +
+    'TIP3: Přestože můžete se při výhýbání nepříteli letět dopředu i v pravém pruhu, riskujete, že netrefíte ' +
     'cílové políčko, které je jen v levém. Bezpečnější strategie je v pravém pruhu se nehýbat a postupovat jen v levém.';
 
 const turnPickUpTitle = 'Posbírej všechny diamanty';

@@ -116,11 +116,11 @@ const secondWhileMessage = 'Lets practice the while a bit more. Your goal now is
 'to avoid him. He will stay on the x=0 row and will randomly change columns and try to shoot there. ' +
 'Use while to go forward until the tile on [0,0] contains a ship (your enemy). Then go to the right ' +
 'to hide from him. Once the there is no ship on [0,0] go back as he is going to shoot in the other column ' +
-'now. TIP: use "while" with constant "true" instead of condition to repeat something indefinitely. ' +
+'now. You can use "do nothing" command to wait (skip turn). ' +
+'TIP: use "while" with constant "true" instead of condition to repeat something indefinitely. ' +
 'TIP2: once your ship reach the green tile the game is stopped so you can do the algorithm above ' +
 'indefinitely without worrying about you ship flying out from the map. ' +
-'TIP3: you can use "pick up diamond" command to skip a turn. ' +
-'TIP4: while you could fly forward in the second column, you would risk missing the green tile, ' +
+'TIP3: while you could fly forward in the second column, you would risk missing the green tile, ' +
 'which is only in the first column. So a safer strategy is to move only in the first one and stay ' +
 'and wait for the enemy to move in the second.';
 
