@@ -2,9 +2,9 @@ import {removeLaserAndExplosionObjects, World} from "../models/world";
 import {IRoboAst, IRuntimeContext} from "../models/programTypes";
 import {List} from "immutable";
 import {BattleResult, BattleResultType} from "./BattleResult";
-import {getEmptyRuntimeContext} from "../utils/getEmptyRuntimeContext";
+import {createEmptyRuntimeContext} from "../utils/createEmptyRuntimeContext";
 import {isUserProgramError, UserProgramError} from "../enums/userProgramError";
-import {doNextStep} from "../astInterpreter";
+import {doNextStep, getBlocksForPosition} from "../astInterpreter";
 import {invalidProgramError} from "../utils/invalidProgramError";
 import {BattleType} from "./BattleType";
 import {hasBattleEnded, IBattleEndParams} from "./hasBattleEnded";
@@ -23,52 +23,97 @@ export interface IRunBattleParams {
     readonly behaviours: IGameBehaviours;
 }
 
+export interface IDebugStepMade {
+    readonly nextBlockId: string;
+    readonly newWorld: World;
+    readonly nextExecutionIndex: number;
+    readonly modifiedContext: IRuntimeContext;
+}
+
+export interface IDebugContext {
+    readonly world: World;
+    readonly executionIndex: number;
+    readonly turnsRan: number;
+    readonly runtimeContexts: ReadonlyArray<IRuntimeContext>;
+}
+
+export const isBattleResult = (input: BattleResult | IDebugStepMade): input is BattleResult =>
+    input.hasOwnProperty('type') && input.hasOwnProperty('history');
+
 export const runBattle = (params: IRunBattleParams): BattleResult => {
     assertParamsCorrectness(params);
 
-    const runtimeContexts = params.shipsOrder.map(getEmptyRuntimeContext).toArray();
+    const runtimeContexts = params.shipsOrder.map(createEmptyRuntimeContext).toArray();
     let currentIndex = 0;
     let currentWorld = params.world;
     let turnsRan = 0;
     const history: World[] = [params.world];
+    let battleResult: BattleResult | null = null;
 
-    while (!hasBattleEnded(currentWorld, params.battleType, {...params.battleParams, turnsRan}) && hasSomethingToDo(runtimeContexts)) {
+    while (!battleResult) {
+        const debugContext: IDebugContext = {
+            executionIndex: currentIndex,
+            runtimeContexts,
+            turnsRan,
+            world: currentWorld,
+        };
+
+        const stepResult = stepBattle(params, debugContext);
+        if (!isBattleResult(stepResult)) {
+            runtimeContexts[currentIndex] = stepResult.modifiedContext;
+            turnsRan++;
+            if (currentWorld !== stepResult.newWorld) {
+                history.push(stepResult.newWorld);
+                currentWorld = stepResult.newWorld;
+            }
+            currentIndex = stepResult.nextExecutionIndex;
+        } else {
+            battleResult = stepResult;
+        }
+    }
+
+    history.push(removeLaserAndExplosionObjects(currentWorld));
+
+    return {...battleResult, history: List(history)};
+};
+
+export const stepBattle = (params: IRunBattleParams, debugContext: IDebugContext): BattleResult | IDebugStepMade => {
+    assertParamsCorrectness(params);
+
+    if (!hasBattleEnded(debugContext.world, params.battleType, {...params.battleParams, turnsRan: debugContext.turnsRan}) && hasSomethingToDo(debugContext.runtimeContexts)) {
         const result = makeTurn(
             {
-                world: currentWorld,
+                world: debugContext.world,
                 shipsOrder: params.shipsOrder,
                 roboAsts: params.roboAsts,
                 behaviours: params.behaviours
             },
-            runtimeContexts[currentIndex],
-            currentIndex
+            debugContext.runtimeContexts[debugContext.executionIndex],
+            debugContext.executionIndex
         );
 
         if (isUserProgramError(result))
             return {
                 error: result,
                 type: BattleResultType.ProgramError,
-                blame: params.shipsOrder.get(currentIndex)!,
-                history: List(history),
+                blame: params.shipsOrder.get(debugContext.executionIndex)!,
+                history: List(),
             };
 
-        runtimeContexts[currentIndex] = result[0];
-        if (currentWorld != result[1]) {
-            currentWorld = result[1];
-            history.push(currentWorld);
+        return {
+            newWorld: result[1],
+            nextBlockId: findPositionBlockId(result[0], params.roboAsts.get(debugContext.executionIndex)!) || '',
+            modifiedContext: result[0],
+            nextExecutionIndex: (debugContext.executionIndex + 1) % params.shipsOrder.size,
         }
-        currentIndex = (currentIndex + 1) % params.shipsOrder.size;
-        turnsRan++;
     }
 
-    history.push(removeLaserAndExplosionObjects(currentWorld));
-
     return getBattleResult({
-        world: currentWorld,
+        world: debugContext.world,
         battleType: params.battleType,
-        battleEndParams: {...params.battleParams, turnsRan},
-        contexts: runtimeContexts,
-        history: List(history),
+        battleEndParams: {...params.battleParams, turnsRan: debugContext.turnsRan},
+        contexts: debugContext.runtimeContexts,
+        history: List(),
     })
 };
 
@@ -110,7 +155,7 @@ const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: I
     return [currentContext, currentWorld];
 };
 
-const hasSomethingToDo = (contexts: IRuntimeContext[]): boolean =>
+const hasSomethingToDo = (contexts: ReadonlyArray<IRuntimeContext>): boolean =>
     contexts.some(c => !isContextEnded(c));
 
 const assertParamsCorrectness = (params: IRunBattleParams): void => {
@@ -123,3 +168,20 @@ const assertParamsCorrectness = (params: IRunBattleParams): void => {
 
 const isContextEnded = (context: IRuntimeContext): boolean =>
     context.minorActionsLeft <= 0 || context.hasEnded;
+
+const findPositionBlockId = (context: IRuntimeContext, ast: IRoboAst): string | undefined => {
+    const fncName = findExecutedFncName(context);
+    const fnc = fncName === undefined ? ast[0] : ast.find(s => s.name === fncName);
+    if (!fnc)
+        throw invalidProgramError(`Unknown fncName '${fncName}'.`);
+    const statements = getBlocksForPosition(fnc, context);
+    return statements.length > 0 && statements[statements.length - 1] ?
+        statements[statements.length - 1].location.blockId :
+        undefined;
+};
+
+const findExecutedFncName = (context: IRuntimeContext, contextFncName?: string): string | undefined =>
+    context.nestedFunctionExecution.isFunctionBeingExecuted && context.nestedFunctionExecution.functionRuntimeContext ?
+        findExecutedFncName(context.nestedFunctionExecution.functionRuntimeContext, context.nestedFunctionExecution.functionName) :
+        contextFncName;
+

@@ -22,6 +22,7 @@ interface IOwnProps {
     readonly toolbox: BlocklyToolbox;
     readonly additionalValidators: List<RoboAstValidator>;
     readonly height: number;
+    readonly isReadonly: boolean;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProps => ({
@@ -30,7 +31,7 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProp
     additionalValidators: ownProps.additionalValidators,
     toolbox: ownProps.toolbox,
     height: ownProps.height,
-    isReadOnly: state.strategyEditor.isGameRunning,
+    isReadOnly: state.strategyEditor.isGameRunning || ownProps.isReadonly,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>): INewEditorCallbackProps => ({

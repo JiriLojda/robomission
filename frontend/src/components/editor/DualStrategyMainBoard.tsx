@@ -5,7 +5,7 @@ import {convertWorldToEditorModel, World} from '../../core/strategyCore/models/w
 import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
-import {getEmptyRuntimeContext} from "../../core/strategyCore/utils/getEmptyRuntimeContext";
+import {createEmptyRuntimeContext} from "../../core/strategyCore/utils/createEmptyRuntimeContext";
 import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {List, Map} from "immutable";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
@@ -82,7 +82,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
         this.state = {
             blocklySettings: { trashcan: true, disable: false },
             roboAsts: {first: createEmptyAst(), second: createEmptyAst() },
-            runtimeContext: getEmptyRuntimeContext(),
+            runtimeContext: createEmptyRuntimeContext(),
             world: props.level.world,
             userProgramError: UserProgramError.None,
             showEditorFor: "none",
@@ -96,7 +96,7 @@ export class DualStrategyMainBoard extends React.PureComponent<IStrategyEditorPr
             this.state.drawingPromise.cancel();
         }
         this.setState(() => ({
-            runtimeContext: getEmptyRuntimeContext(),
+            runtimeContext: createEmptyRuntimeContext(),
             world: this.props.level.world,
             userProgramError: UserProgramError.None,
             battleResult: undefined,

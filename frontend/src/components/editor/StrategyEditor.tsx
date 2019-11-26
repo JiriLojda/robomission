@@ -1,6 +1,6 @@
 import React from "react";
 import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
-import {IRoboAst} from "../../core/strategyCore/models/programTypes";
+import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
 import {BattleResult, getMessageTypeForResult} from "../../core/strategyCore/battleRunner/BattleResult";
 import {delay, ICancelablePromise} from "../../utils/cancelablePromise";
@@ -9,12 +9,15 @@ import {HelpModal} from "../uiComponents/HelpModal";
 import {StandardEditorSidebar} from "../../containers/strategyEditor/StandardEditorSidebar";
 import {StrategyInnerEditor} from "../../containers/strategyEditor/StrategyInnerEditor";
 import {createDrawHistory} from "../../core/strategyCore/battleRunner/historyPrinter";
-import {runBattle} from "../../core/strategyCore/battleRunner/runBattle";
+import {IRunBattleParams, isBattleResult, runBattle, stepBattle} from "../../core/strategyCore/battleRunner/runBattle";
 import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 import RaisedButton from "material-ui/RaisedButton";
 import {WinModal} from "../uiComponents/WinModal";
 import {ResultMessageType} from "../uiComponents/ResultMessage";
 import {translate} from "../../localization";
+import {createEmptyRuntimeContext} from "../../core/strategyCore/utils/createEmptyRuntimeContext";
+import {EditorDebugState} from "./constants/editorDebugState";
+import {range} from "../../utils/arrays";
 
 export interface IStrategyEditorDataProps {
     readonly level: IGameLevel;
@@ -41,6 +44,13 @@ export interface IStrategyEditorCallbackProps {
 
 type Props = IStrategyEditorDataProps & IStrategyEditorCallbackProps;
 
+type DebugState = {
+    readonly debugState: EditorDebugState;
+    readonly runtimeContexts: List<IRuntimeContext>;
+    readonly executionIndex: number;
+    readonly turnsRan: number;
+}
+
 interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     useCodeEditor: boolean;
@@ -52,6 +62,7 @@ interface IState {
     lastExtraHelpFailureCount: number;
     failureCount: number;
     showExtraHelp: boolean;
+    debugState: DebugState;
 }
 
 const minimumEditorSize = 400 as const;
@@ -67,6 +78,29 @@ const createScheduleNextExtraHelp = (level: IGameLevel, nextHelpIndex: number, s
             .then(showHelpCallback) :
         undefined;
 };
+
+const createRunBattleParams = (level: IGameLevel, roboAsts: List<IRoboAst>): IRunBattleParams => ({
+    world: level.world,
+    battleParams: level.battleParams,
+    battleType: level.battleType,
+    shipsOrder: level.turnsOrder,
+    roboAsts,
+    behaviours: level.gameBehaviours,
+});
+
+const defineAstForOneMissingGroup = (level: IGameLevel, ast: IRoboAst) => {
+    const groups = defineAstForGroups(Map([
+        [findGroupsWithoutAst(level).get(0)!, ast],
+    ]), level);
+    return level.turnsOrder.map(id => groups.get(id)!).toList();
+};
+
+const createEmptyDebugState = (numberOfPlayers: number): DebugState => ({
+    debugState: EditorDebugState.NotDebugging,
+    turnsRan: 0,
+    executionIndex: 0,
+    runtimeContexts: List(range(numberOfPlayers).map(createEmptyRuntimeContext)),
+});
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
@@ -85,6 +119,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             ),
             nextExtraHelpIndex: this.props.level.help.count() > 1 ? 1 : 0,
             showExtraHelp: false,
+            debugState: createEmptyDebugState(this.props.level.turnsOrder.count())
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -121,6 +156,42 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         }
     }
 
+    private _makeDebugStep = () => {
+        if (this.state.debugState.debugState !== EditorDebugState.Debugging) {
+            this._reset();
+            this.setState(prev => ({debugState: {...prev.debugState, debugState: EditorDebugState.Debugging}}));
+        }
+
+        const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
+        const params = createRunBattleParams(this.props.level, asts);
+        const {runtimeContexts, turnsRan, executionIndex} = this.state.debugState;
+        const stepResult = stepBattle(params, {
+            world: this.props.currentWorld,
+            turnsRan,
+            runtimeContexts: runtimeContexts.toArray(),
+            executionIndex,
+        });
+
+        if (isBattleResult(stepResult)) {
+            this.setState(prevState => ({debugState: {...prevState.debugState, debugState: EditorDebugState.DebugFinished}}));
+            this.props.onBattleRunFinished(stepResult);
+            this._handleWinLoseCounts(stepResult);
+        } else {
+            this.setState(prevState => {
+                const prevDebugState = prevState.debugState;
+                return ({
+                    debugState: {
+                        ...prevDebugState,
+                        runtimeContexts: prevDebugState.runtimeContexts.set(prevDebugState.executionIndex, stepResult.modifiedContext),
+                        executionIndex: stepResult.nextExecutionIndex,
+                        turnsRan: prevDebugState.turnsRan + 1,
+                    }
+                });
+            });
+            this.props.worldChanged(stepResult.newWorld);
+        }
+    };
+
     private _cancelStatePromises = () => {
         if (this.state.drawingPromise) {
             this.state.drawingPromise.cancel();
@@ -137,6 +208,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         if (this.state.drawingPromise) {
             this.state.drawingPromise.cancel();
         }
+        this.setState(({debugState: createEmptyDebugState(this.props.level.turnsOrder.count())}));
         this.props.reset(this.props.level.world);
     };
 
@@ -219,6 +291,11 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
 
     private _closeHelp = () => this.props.onHelpClosed();
 
+    private _handleWinLoseCounts = (result: BattleResult) =>
+        getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
+            this._showWinModal() :
+            this._incrementFailureCount();
+
     private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
             console.warn('This should not be called when cannotRunBattle.');
@@ -226,27 +303,14 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         }
         this._reset();
         this.props.onBattleRunStarted();
-        const level = this.props.level;
-        const groups = defineAstForGroups(Map([
-            [findGroupsWithoutAst(this.props.level).get(0)!, this.props.roboAst],
-        ]), this.props.level);
-        const result = runBattle({
-            world: this.props.level.world,
-            battleParams: level.battleParams,
-            battleType: level.battleType,
-            shipsOrder: level.turnsOrder,
-            roboAsts: level.turnsOrder.map(id => groups.get(id)!).toList(),
-            behaviours: level.gameBehaviours,
-        });
+
+        const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
+        const result = runBattle(createRunBattleParams(this.props.level, asts));
 
         this._drawHistory(result.history.reverse())
             .then(this._cleanUpDrawingPromise)
             .then(() => this.props.onBattleRunFinished(result))
-            .then(() =>
-                getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
-                    this._showWinModal() :
-                    this._incrementFailureCount()
-            );
+            .then(() => this._handleWinLoseCounts(result));
     };
 
     private _enlargeTheEditor = () =>
@@ -270,12 +334,14 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 onReset={this._reset}
                 onRunBattle={this._runBattle}
                 isDecisiveWin={this.props.level.isDecisiveWin}
+                onDebugStep={this._makeDebugStep}
             />
             <StrategyInnerEditor
                 additionalValidators={this.props.level.additionalValidators}
                 showCodeEditor={this.state.useCodeEditor}
                 toolbox={this.props.level.toolbox}
                 height={this.state.editorHeight}
+                isReadonly={this.state.debugState.debugState === EditorDebugState.Debugging}
             />
             <RaisedButton
                 label={translate('editor.enlargeEditorArea')}

@@ -5,7 +5,7 @@ import {MovingDirection} from "./enums/movingDirection";
 import {removeLaserAndExplosionObjects, updateShipInWorld, World} from "./models/world";
 import {isUserProgramError, UserProgramError} from "./enums/userProgramError";
 import {
-    defaultFunctionName,
+    defaultFunctionName, IBlock,
     IFunctionCall,
     IFunctionDefinition,
     IPositionItem,
@@ -29,7 +29,7 @@ import {IGameBehaviours} from "./gameBehaviours/IGameBehaviours";
 import {handleMoveStatement} from "./actionStatementHandlers/moveStatementHandler";
 import {invalidProgramError} from "./utils/invalidProgramError";
 import {getFunctionExecutionId} from "./utils/getFunctionExecutionId";
-import {getEmptyRuntimeContext} from "./utils/getEmptyRuntimeContext";
+import {createEmptyRuntimeContext} from "./utils/createEmptyRuntimeContext";
 import {memoizeOne} from "../../utils/memoizeOne";
 import {isConditionStatement} from "./utils/getValueStatementType";
 
@@ -48,26 +48,29 @@ const getPositionItem = (index: number, elseBranchEntered = false, repeatCount =
 
 const incrementPositionItem = (item: IPositionItem) => ({...item, index: item.index + 1});
 
-const getStatementsForPosition = (roboAst: IStatement, context: IRuntimeContext) => {
-    const result: IStatement[] = [roboAst];
-    let statement = result[0];
+export const getBlocksForPosition = (roboAst: IStatement, context: IRuntimeContext): IBlock[] => {
+    const result: IBlock[] = [{statement: roboAst, location: {blockId: 'start'}}];
+    let block = result[0];
 
     for (const positionItem of context.position) {
-        if (statement.head === StatementType.If && positionItem.elseBranchEntered) {
-            if (!statement.orelse)
-                throw invalidProgramError(`Statement ${statement.head} is should have an orelse.`);
-            statement = statement.orelse.statement;
+        if (block.statement.head === StatementType.If && positionItem.elseBranchEntered) {
+            if (!block.statement.orelse)
+                throw invalidProgramError(`Statement ${block.statement.head} is should have an orelse.`);
+            block = block.statement.orelse;
             result.pop();
-            result.push(statement);
+            result.push(block);
         }
-        if (!statement.body)
-            throw invalidProgramError(`Statement ${statement.head} is should have a body.`);
-        statement = statement.body[positionItem.index].statement;
-        result.push(statement);
+        if (!block.statement.body)
+            throw invalidProgramError(`Statement ${block.statement.head} is should have a body.`);
+        block = block.statement.body[positionItem.index];
+        result.push(block);
     }
 
     return result;
 };
+
+const getStatementsForPosition = (roboAst: IStatement, context: IRuntimeContext): IStatement[] =>
+    getBlocksForPosition(roboAst, context).map(b => b.statement);
 
 const isScopeStatement = (statement: IStatement) => scopeStatements.contains(statement.head);
 
@@ -341,7 +344,7 @@ const executeStepInFunction = (
 };
 
 const callFunctionOnContext = (context: IRuntimeContext, fncName: string, requestId: string, parameters: Map<string, string>): void => {
-    const childContext = getEmptyRuntimeContext();
+    const childContext = createEmptyRuntimeContext();
     context.nestedFunctionExecution.isFunctionBeingExecuted = true;
     context.nestedFunctionExecution.functionName = fncName;
     context.nestedFunctionExecution.functionRuntimeContext = childContext;

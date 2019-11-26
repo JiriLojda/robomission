@@ -18,6 +18,7 @@ interface IOwnProps {
     readonly onShowCodeEditor: () => void;
     readonly onRunBattle: () => void;
     readonly isDecisiveWin: (winner: string) => boolean;
+    readonly onDebugStep: () => void;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): IStandardEditorSidebarDataProps => ({
@@ -42,7 +43,8 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): IS
     onShowHelp: () => dispatch(helpShowed()),
     onShowMap: () => dispatch(mapShowToggled()),
     isDecisiveWin: ownProps.isDecisiveWin,
-    onDrawingSpeedChanged: speed => dispatch(drawingSpeedChanged(speed))
+    onDrawingSpeedChanged: speed => dispatch(drawingSpeedChanged(speed)),
+    onDebugStep: ownProps.onDebugStep,
 });
 
 export const StandardEditorSidebar: React.ComponentType<IOwnProps> = connect(mapStateToProps, mapDispatchToProps)(StandardEditorSidebarComponent);

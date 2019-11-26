@@ -41,6 +41,7 @@ export interface IStandardEditorSidebarCallbackProps {
     readonly onCodeSubmit: (() => void) | undefined;
     readonly isDecisiveWin: (winner: string) => boolean;
     readonly onDrawingSpeedChanged: (speed: number) => void;
+    readonly onDebugStep: () => void;
 }
 
 type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackProps;
@@ -134,6 +135,15 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                       label={'ast to console'}
                       style={{margin: 2, minWidth: 50}}
                       onClick={() => console.log(JSON.stringify(this.props.roboAst))}
+                    />
+                    }
+                    {this.props.canRunBattle &&
+                    <RaisedButton
+                      label={'Debug'}
+                      disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
+                      primary
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={this.props.onDebugStep}
                     />
                     }
                     <RaisedButton
