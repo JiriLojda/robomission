@@ -12,6 +12,7 @@ import {getBattleResult} from "./getBattleResult";
 import {ShipId} from "../models/ship";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 import {defaultMinorActionsCount} from "../constants/interpreterConstants";
+import {getShip} from "../utils/worldModelUtils";
 
 export interface IRunBattleParams {
     readonly world: World,
@@ -88,8 +89,9 @@ const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: I
 
     let currentContext = context;
     let currentWorld = params.world;
+    let currentShip = getShip(params.world, shipId);
 
-    while (!currentContext.wasActionExecuted && currentContext.minorActionsLeft > 0 && !currentContext.hasEnded) {
+    while (!currentContext.wasActionExecuted && !isContextEnded(currentContext) && !!currentShip && !currentShip.isDestroyed) {
         const result = doNextStep(
             roboAst,
             params.world,
@@ -102,13 +104,14 @@ const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: I
 
         currentContext = result[0];
         currentWorld = result[1];
+        currentShip = getShip(currentWorld, shipId);
     }
 
     return [currentContext, currentWorld];
 };
 
 const hasSomethingToDo = (contexts: IRuntimeContext[]): boolean =>
-    contexts.some(c => !c.hasEnded);
+    contexts.some(c => !isContextEnded(c));
 
 const assertParamsCorrectness = (params: IRunBattleParams): void => {
     const placeName = 'runBattle';
@@ -117,3 +120,6 @@ const assertParamsCorrectness = (params: IRunBattleParams): void => {
     if (params.roboAsts.size < 1)
         throw invalidProgramError('There has to be at least one ship in the battle.', placeName);
 };
+
+const isContextEnded = (context: IRuntimeContext): boolean =>
+    context.minorActionsLeft <= 0 || context.hasEnded;
