@@ -174,6 +174,8 @@ const messages: {[index: string]: JSX.Element | string} = {
   'blockly.getCoordinate': 'get coordinate',
   'blockly.toShip': 'to ship',
   'blockly.getPositionOfShip': 'get position of ship',
+  'blockly.true': 'true',
+  'blockly.false': 'false',
 
   'blockly.categories.commands': 'commands',
   'blockly.categories.variables': 'variables',

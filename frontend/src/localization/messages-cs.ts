@@ -174,6 +174,8 @@ const messages: {[index: string]: JSX.Element | string} = {
   'blockly.getCoordinate': 'vezmi souřadnici',
   'blockly.toShip': 'k lodi',
   'blockly.getPositionOfShip': 'vezmi pozici lodě',
+  'blockly.true': 'pravda',
+  'blockly.false': 'nepravda',
 
   'blockly.categories.commands': 'povely',
   'blockly.categories.variables': 'proměnné',

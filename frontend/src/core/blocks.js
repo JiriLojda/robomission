@@ -573,8 +573,8 @@ const blocks = [
         type: 'field_dropdown',
         name: 'value',
         options: [
-          ['true', 'true'],
-          ['false', 'false'],
+          [translate('blockly.true'), 'true'],
+          [translate('blockly.false'), 'false'],
         ],
       },
     ],
