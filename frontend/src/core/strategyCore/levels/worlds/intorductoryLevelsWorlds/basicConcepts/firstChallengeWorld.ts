@@ -12,8 +12,8 @@ const map = [
     ['k-', 'kG', 'k-', 'kG', 'k-'],
     ['k-', 'kG', 'k-', 'kG', 'k-'],
     ['k-', 'kG', 'k-', 'kG', 'k-'],
-    ['k-', 'kG', 'k-', 'k-', 'k-'],
-    ['k-', 'kG', 'k-P', 'kG', 'k-'],
+    ['k-', 'kG', 'k-', 'k-P', 'k-'],
+    ['k-', 'kG', 'k-', 'kG', 'k-'],
 ];
 
 export const firstChallengeWorldShipIds = [
