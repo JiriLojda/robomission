@@ -430,6 +430,13 @@ const messages: {[index: string]: JSX.Element | string} = {
   'time.minutes': 'minutes',
   'time.hours': 'hours',
   'time.itTookYou': 'It took you',
+
+  'shipIds.aiShip1': 'AI Ship 1',
+  'shipIds.aiShip2': 'AI Ship 2',
+  'shipIds.aiShip3': 'AI Ship 3',
+  'shipIds.playerShip1': 'player 1 ship',
+  'shipIds.playerShip2': 'player 2 ship',
+  'shipIds.playerShip3': 'player 3 ship',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

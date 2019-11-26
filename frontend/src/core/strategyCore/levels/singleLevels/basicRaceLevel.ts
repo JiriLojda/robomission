@@ -4,7 +4,7 @@ import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../b
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
-import {raceBasicWorld} from "../worlds/raceBasicWorld";
+import {raceBasicWorld, raceBasicWorldShipIds} from "../worlds/raceBasicWorld";
 import {basicRaceStrategy} from "../../predefinedStrategies/basicRaceStrategy";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
@@ -14,7 +14,7 @@ import {narrowAlleyPassLevel} from "./narrowAlleyPassLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = raceBasicWorldShipIds.reverse();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

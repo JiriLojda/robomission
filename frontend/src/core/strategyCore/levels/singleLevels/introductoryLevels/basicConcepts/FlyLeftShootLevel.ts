@@ -10,7 +10,10 @@ import {
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
 import {BattleType} from "../../../../battleRunner/BattleType";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {flyLeftShootWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/flyLeftShootWorld";
+import {
+    flyLeftShootWorld,
+    flyLeftShootWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/flyLeftShootWorld";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
@@ -20,7 +23,7 @@ import {turnPickUpLevel} from "./TurnPickUpLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = flyLeftShootWorldShipIds.reverse();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

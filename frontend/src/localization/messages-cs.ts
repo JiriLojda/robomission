@@ -430,6 +430,13 @@ const messages: {[index: string]: JSX.Element | string} = {
   'time.minutes': 'minut',
   'time.hours': 'hodin',
   'time.itTookYou': 'Trvalo ti to',
+
+  'shipIds.aiShip1': 'Loď počítače 1',
+  'shipIds.aiShip2': 'Loď počítače 2',
+  'shipIds.aiShip3': 'Loď počítače 3',
+  'shipIds.playerShip1': 'Loď hráče 1',
+  'shipIds.playerShip2': 'Loď hráče 2',
+  'shipIds.playerShip3': 'Loď hráče 3',
 };
 
 const levelNames: [HelpTranslationKey, string][] = [

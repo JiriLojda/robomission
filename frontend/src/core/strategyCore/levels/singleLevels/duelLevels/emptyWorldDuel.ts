@@ -3,7 +3,7 @@ import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollis
 import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
 import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../../battleRunner/IGameLevel";
 import {BattleType} from "../../../battleRunner/BattleType";
-import {empty77World} from "../../worlds/empty77World";
+import {empty77World, empty77WorldShipIds} from "../../worlds/empty77World";
 import {addShipIdConstants, allStrategyCategories} from "../../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey";
@@ -11,7 +11,7 @@ import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['first', 'second'] as const;
+const shipIds = empty77WorldShipIds;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

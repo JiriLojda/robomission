@@ -3,9 +3,7 @@ import {World} from "../../../../models/world";
 import {Ship, ShipColor} from "../../../../models/ship";
 import {Direction} from "../../../../enums/direction";
 import {Position} from "../../../../models/position";
-import {List} from "immutable";
-import {range} from "../../../../../../utils/arrays";
-import {WorldObjectType} from "../../../../enums/worldObjectType";
+import {translate} from "../../../../../../localization";
 
 
 const map = [
@@ -24,9 +22,19 @@ const map = [
     ['k-P', 'k-'],
 ];
 
-const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
+export const secondWhileWorldShipIds = [
+    translate('shipIds.playerShip1'),
+    translate('shipIds.aiShip1'),
+];
+
+const playerShip = new Ship({
+    id: secondWhileWorldShipIds[0],
+    position: new Position(),
+    direction: Direction.Up,
+    shipColor: ShipColor.Red,
+});
 const aiShip = new Ship({
-    id: 'aiShip',
+    id: secondWhileWorldShipIds[1],
     position: new Position(),
     direction: Direction.Down,
     shipColor: ShipColor.Blue,

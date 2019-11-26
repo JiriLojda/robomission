@@ -3,6 +3,7 @@ import {Position} from "../../models/position";
 import {Direction} from "../../enums/direction";
 import {World} from "../../models/world";
 import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
+import {translate} from "../../../../localization";
 
 const map = [
     ['kD', 'kA', 'kA', 'kA', 'kA', 'kA', 'kA', 'kD', 'kA', 'kA', 'kA', 'kA', 'kA', 'kA', 'kD'],
@@ -22,8 +23,23 @@ const map = [
     ['kD', 'kA', 'kA', 'kA', 'kA', 'kM', 'kA', 'kD', 'kA', 'kM', 'kA', 'kA', 'kA', 'kA', 'kD'],
 ];
 
-const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Down, shipColor: ShipColor.Green});
-const aiShip = new Ship({id: 'aiShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
+export const starWithDiamondsWorldShipIds = [
+    translate('shipIds.playerShip1'),
+    translate('shipIds.aiShip1'),
+];
+
+const playerShip = new Ship({
+    id: starWithDiamondsWorldShipIds[0],
+    position: new Position(),
+    direction: Direction.Down,
+    shipColor: ShipColor.Green,
+});
+const aiShip = new Ship({
+    id: starWithDiamondsWorldShipIds[1],
+    position: new Position(),
+    direction: Direction.Up,
+    shipColor: ShipColor.Red,
+});
 
 const ships = {
     P: playerShip,

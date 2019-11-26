@@ -5,7 +5,7 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
 import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper";
-import {narrowPathWorld} from "../worlds/narrowPathWorld";
+import {narrowPathWorld, narrowPathWorldShipIds} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
@@ -26,7 +26,7 @@ const finalPositions = [
     new Position({x: 0, y: 2}),
 ];
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = narrowPathWorldShipIds.reverse();
 
 const help = List([createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass)]);
 

@@ -11,7 +11,10 @@ import {allStrategyCategories, categoryNames, filterCategories} from "../../../.
 import {BattleType} from "../../../../battleRunner/BattleType";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {firstChallengeWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstChallengeWorld";
+import {
+    firstChallengeWorld,
+    firstChallengeWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstChallengeWorld";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {shipRepresentingObjects} from "../../../../enums/worldObjectType";
 import {justShootingStrategy} from "../../../../predefinedStrategies/justShootingStrategy";
@@ -21,7 +24,7 @@ import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstRepeatLevel} from "./firstRepeatLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['playerShip', 'aiShip'] as const;
+const shipIds = firstChallengeWorldShipIds;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

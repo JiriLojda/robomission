@@ -13,7 +13,10 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {firstRepeatWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
+import {
+    firstRepeatWorld,
+    firstRepeatWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
 import {createRestrictedBlocksValidator} from "../../../additionalValidators/createRestrictedBlocksValidator";
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
@@ -22,7 +25,7 @@ import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {secondWhileLevel} from "./secondWhileLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['playerShip', 'aiShip'] as const;
+const shipIds = firstRepeatWorldShipIds;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

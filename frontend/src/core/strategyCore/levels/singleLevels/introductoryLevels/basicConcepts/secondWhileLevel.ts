@@ -14,14 +14,17 @@ import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSele
 import {createRestrictedBlocksValidator} from "../../../additionalValidators/createRestrictedBlocksValidator";
 import {StatementType} from "../../../../enums/statementType";
 import {Position} from "../../../../models/position";
-import {secondWhileWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondWhileWorld";
+import {
+    secondWhileWorld,
+    secondWhileWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondWhileWorld";
 import {randomSwitchAndShootStrategy} from "../../../../predefinedStrategies/randomSwitchAndShoot";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = secondWhileWorldShipIds.reverse();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

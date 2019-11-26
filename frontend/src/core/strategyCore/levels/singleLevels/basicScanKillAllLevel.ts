@@ -2,7 +2,7 @@ import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
 import {basicScanStrategy} from "../../predefinedStrategies/basicScanStrategy";
 import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../battleRunner/IGameLevel";
-import {basicKillAllWorld} from "../worlds/basicKillAllWorld";
+import {basicKillAllWorld, basicKillAllWorldShipIds} from "../worlds/basicKillAllWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
@@ -13,7 +13,7 @@ import {basicRaceLevel} from "./basicRaceLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = basicKillAllWorldShipIds.reverse();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

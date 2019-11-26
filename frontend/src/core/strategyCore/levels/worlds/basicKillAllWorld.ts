@@ -3,6 +3,7 @@ import {Position} from "../../models/position";
 import {Direction} from "../../enums/direction";
 import {World} from "../../models/world";
 import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
+import {translate} from "../../../../localization";
 
 const map = [
     ['k-', 'k-', 'k-', 'k-', 'k-P'],
@@ -12,8 +13,23 @@ const map = [
     ['k-A', 'k-', 'k-', 'k-', 'k-'],
 ];
 
-const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Down, shipColor: ShipColor.Green});
-const aiShip = new Ship({id: 'aiShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
+export const basicKillAllWorldShipIds = [
+    translate('shipIds.playerShip1'),
+    translate('shipIds.aiShip1'),
+];
+
+const playerShip = new Ship({
+    id: basicKillAllWorldShipIds[0],
+    position: new Position(),
+    direction: Direction.Down,
+    shipColor: ShipColor.Green,
+});
+const aiShip = new Ship({
+    id: basicKillAllWorldShipIds[1],
+    position: new Position(),
+    direction: Direction.Up,
+    shipColor: ShipColor.Red,
+});
 
 const ships = {
     P: playerShip,

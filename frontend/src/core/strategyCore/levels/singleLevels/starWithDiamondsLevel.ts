@@ -5,7 +5,7 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
-import {starWithDiamondsWorld} from "../worlds/starWithDiamondsWorld";
+import {starWithDiamondsWorld, starWithDiamondsWorldShipIds} from "../worlds/starWithDiamondsWorld";
 import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamondsStrategy";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
@@ -18,7 +18,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = starWithDiamondsWorldShipIds.reverse();
 
 const help = List([createTranslatedHelp(HelpTranslationKey.StarWithDiamonds)]);
 

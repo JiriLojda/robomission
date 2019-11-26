@@ -12,7 +12,10 @@ import {BattleType} from "../../../../battleRunner/BattleType";
 import {addSimpleStatementToRoboAstBody, createEmptyAst} from "../../../../../../utils/createEmptyAst";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {turnDiamondsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/TurnDiamondsWorld";
+import {
+    turnDiamondsWorld,
+    turnDiamondsWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/TurnDiamondsWorld";
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
@@ -21,7 +24,7 @@ import {firstChallengeLevel} from "./firstChallengeLevel";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['aiShip', 'playerShip'] as const;
+const shipIds = turnDiamondsWorldShipIds.reverse();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

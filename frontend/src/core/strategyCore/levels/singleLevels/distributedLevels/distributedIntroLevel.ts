@@ -12,8 +12,9 @@ import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {distributedIntroLevel2} from "./distributedIntroLevel2";
+import {distributedIntroLevel2WorldShipIds} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
 
-const shipIds = ['playerShip1', 'playerShip2'] as const;
+const shipIds = distributedIntroLevel2WorldShipIds;
 const teams = List([{name: 'player', members: List(shipIds)}]);
 
 const behaviours: IGameBehaviours = {

@@ -13,14 +13,17 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {firstIfsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstIfsWorld";
+import {
+    firstIfsWorld,
+    firstIfsWorldShipIds
+} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstIfsWorld";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {secondIfsLevel} from "./secondIfsLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 
-const shipIds = ['playerShip', 'aiShip'] as const;
+const shipIds = firstIfsWorldShipIds;
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,

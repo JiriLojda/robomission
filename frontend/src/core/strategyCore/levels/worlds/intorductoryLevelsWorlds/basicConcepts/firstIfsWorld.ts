@@ -6,6 +6,7 @@ import {Position} from "../../../../models/position";
 import {List} from "immutable";
 import {range} from "../../../../../../utils/arrays";
 import {WorldObjectType} from "../../../../enums/worldObjectType";
+import {translate} from "../../../../../../localization";
 
 
 const map = [
@@ -18,9 +19,19 @@ const map = [
     ['kM', 'kA', 'k-P', 'k-', 'k-'],
 ];
 
-const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
+export const firstIfsWorldShipIds = [
+    translate('shipIds.playerShip1'),
+    translate('shipIds.aiShip1'),
+];
+
+const playerShip = new Ship({
+    id: firstIfsWorldShipIds[0],
+    position: new Position(),
+    direction: Direction.Up,
+    shipColor: ShipColor.Red
+});
 const aiShip = new Ship({
-    id: 'aiShip',
+    id: firstIfsWorldShipIds[1],
     position: new Position(),
     direction: Direction.Down,
     shipColor: ShipColor.Blue,

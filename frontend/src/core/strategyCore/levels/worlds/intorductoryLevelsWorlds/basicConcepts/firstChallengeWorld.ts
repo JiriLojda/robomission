@@ -3,6 +3,7 @@ import {World} from "../../../../models/world";
 import {Ship, ShipColor} from "../../../../models/ship";
 import {Direction} from "../../../../enums/direction";
 import {Position} from "../../../../models/position";
+import {translate} from "../../../../../../localization";
 
 
 const map = [
@@ -15,8 +16,23 @@ const map = [
     ['k-', 'kG', 'k-P', 'kG', 'k-'],
 ];
 
-const playerShip = new Ship({id: 'playerShip', position: new Position(), direction: Direction.Up, shipColor: ShipColor.Red});
-const aiShip = new Ship({id: 'aiShip', position: new Position(), direction: Direction.Down, shipColor: ShipColor.Blue});
+export const firstChallengeWorldShipIds = [
+    translate('shipIds.playerShip1'),
+    translate('shipIds.aiShip1'),
+];
+
+const playerShip = new Ship({
+    id: firstChallengeWorldShipIds[0],
+    position: new Position(),
+    direction: Direction.Up,
+    shipColor: ShipColor.Red
+});
+const aiShip = new Ship({
+    id: firstChallengeWorldShipIds[1],
+    position: new Position(),
+    direction: Direction.Down,
+    shipColor: ShipColor.Blue
+});
 
 const ships = {
     P: playerShip,
