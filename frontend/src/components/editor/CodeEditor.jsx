@@ -14,6 +14,11 @@ export default class CodeEditor extends React.Component {
     if (this.props.code === '') {
       this.aceEditor.editor.focus();
     }
+    if (this.props.isReadOnly) {
+      this.aceEditor.editor.renderer.$cursorLayer.element.style.display = "none"
+    } else {
+      this.aceEditor.editor.renderer.$cursorLayer.element.style.display = "inline-block"
+    }
   }
 
   render() {
@@ -31,6 +36,7 @@ export default class CodeEditor extends React.Component {
         height="100%"
         style={{ display: 'inline-block', marginBottom: '-5px' }}
         readOnly={this.props.isReadOnly}
+        highlightActiveLine={!this.props.isReadOnly}
       />
     );
   }
