@@ -23,6 +23,7 @@ interface IOwnProps {
     readonly additionalValidators: List<RoboAstValidator>;
     readonly height: number;
     readonly isReadonly: boolean;
+    readonly highlightedLine: number | undefined;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProps => ({
@@ -32,6 +33,7 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProp
     toolbox: ownProps.toolbox,
     height: ownProps.height,
     isReadOnly: state.strategyEditor.isGameRunning || ownProps.isReadonly,
+    highlightedLine: ownProps.highlightedLine,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>): INewEditorCallbackProps => ({

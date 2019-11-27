@@ -1,5 +1,5 @@
 import {removeLaserAndExplosionObjects, World} from "../models/world";
-import {IRoboAst, IRuntimeContext} from "../models/programTypes";
+import {BlockLocation, IRoboAst, IRuntimeContext} from "../models/programTypes";
 import {List} from "immutable";
 import {BattleResult, BattleResultType} from "./BattleResult";
 import {createEmptyRuntimeContext} from "../utils/createEmptyRuntimeContext";
@@ -24,7 +24,8 @@ export interface IRunBattleParams {
 }
 
 export interface IDebugStepMade {
-    readonly nextBlockId: string;
+    readonly nextBlockId?: string;
+    readonly nextLineNumber?: number;
     readonly newWorld: World;
     readonly nextExecutionIndex: number;
     readonly modifiedContext: IRuntimeContext;
@@ -77,11 +78,12 @@ export const runBattle = (params: IRunBattleParams): BattleResult => {
     return {...battleResult, history: List(history)};
 };
 
-export const stepBattle = (params: IRunBattleParams, debugContext: IDebugContext): BattleResult | IDebugStepMade => {
+export const stepBattle = (params: IRunBattleParams, debugContext: IDebugContext, shouldDoJustMinorAction: boolean = false): BattleResult | IDebugStepMade => {
     assertParamsCorrectness(params);
+    const turnFnc = shouldDoJustMinorAction ? doMinorAction : makeTurn;
 
     if (!hasBattleEnded(debugContext.world, params.battleType, {...params.battleParams, turnsRan: debugContext.turnsRan}) && hasSomethingToDo(debugContext.runtimeContexts)) {
-        const result = makeTurn(
+        const result = turnFnc(
             {
                 world: debugContext.world,
                 shipsOrder: params.shipsOrder,
@@ -99,12 +101,22 @@ export const stepBattle = (params: IRunBattleParams, debugContext: IDebugContext
                 blame: params.shipsOrder.get(debugContext.executionIndex)!,
                 history: List(),
             };
+        const [newContext, newWorld] = result;
+        const nextExecutionIndex = newContext.wasActionExecuted || isContextEnded(newContext) ?
+            (debugContext.executionIndex + 1) % params.shipsOrder.size :
+            debugContext.executionIndex;
+        if (newContext.wasActionExecuted) {
+            newContext.minorActionsLeft = defaultMinorActionsCount;
+            newContext.wasActionExecuted = false;
+        }
 
+        const location = findPositionLocation(result[0], params.roboAsts.get(debugContext.executionIndex)!);
         return {
-            newWorld: result[1],
-            nextBlockId: findPositionBlockId(result[0], params.roboAsts.get(debugContext.executionIndex)!) || '',
+            newWorld,
+            nextBlockId: typeof location === 'object' ? location.blockId : undefined,
+            nextLineNumber: typeof location === 'number' ? location : undefined,
             modifiedContext: result[0],
-            nextExecutionIndex: (debugContext.executionIndex + 1) % params.shipsOrder.size,
+            nextExecutionIndex,
         }
     }
 
@@ -118,6 +130,38 @@ export const stepBattle = (params: IRunBattleParams, debugContext: IDebugContext
 };
 
 type MakeTurnParamNames = 'shipsOrder' | 'roboAsts' | 'world' | 'behaviours';
+
+const doMinorAction = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: IRuntimeContext, playerIndex: number): [IRuntimeContext, World] | UserProgramError => {
+    const roboAst = params.roboAsts.get(playerIndex);
+    const shipId = params.shipsOrder.get(playerIndex);
+
+    if (!roboAst || !shipId) {
+        throw invalidProgramError(
+            `Player index ${playerIndex} is not a correct index for roboAsts: ${params.roboAsts.size} or ships: ${params.shipsOrder.size}.`,
+            'runBattle -> makeTurn'
+        );
+    }
+    if (context.wasActionExecuted) {
+        throw invalidProgramError('Use should have initialized the context before.');
+    }
+    const ship = getShip(params.world, shipId);
+    if (!ship || ship.isDestroyed|| isContextEnded(context))
+        return [context, params.world];
+
+
+    const result = doNextStep(
+        roboAst,
+        params.world,
+        shipId,
+        context,
+        params.behaviours
+    );
+    if (isUserProgramError(result))
+        return result;
+
+
+    return result;
+};
 
 const makeTurn = (params: Pick<IRunBattleParams, MakeTurnParamNames>, context: IRuntimeContext, playerIndex: number): [IRuntimeContext, World] | UserProgramError => {
     context.wasActionExecuted = false;
@@ -169,19 +213,19 @@ const assertParamsCorrectness = (params: IRunBattleParams): void => {
 const isContextEnded = (context: IRuntimeContext): boolean =>
     context.minorActionsLeft <= 0 || context.hasEnded;
 
-const findPositionBlockId = (context: IRuntimeContext, ast: IRoboAst): string | undefined => {
-    const fncName = findExecutedFncName(context);
+const findPositionLocation = (context: IRuntimeContext, ast: IRoboAst): BlockLocation | undefined => {
+    const [fncName, fncContext] = findExecutedFncNameAndContext(context) || [undefined, context];
     const fnc = fncName === undefined ? ast[0] : ast.find(s => s.name === fncName);
     if (!fnc)
         throw invalidProgramError(`Unknown fncName '${fncName}'.`);
-    const statements = getBlocksForPosition(fnc, context);
+    const statements = getBlocksForPosition(fnc, fncContext);
     return statements.length > 0 && statements[statements.length - 1] ?
-        statements[statements.length - 1].location.blockId :
+        statements[statements.length - 1].location :
         undefined;
 };
 
-const findExecutedFncName = (context: IRuntimeContext, contextFncName?: string): string | undefined =>
+const findExecutedFncNameAndContext = (context: IRuntimeContext, contextFncName?: string): [string, IRuntimeContext] | undefined =>
     context.nestedFunctionExecution.isFunctionBeingExecuted && context.nestedFunctionExecution.functionRuntimeContext ?
-        findExecutedFncName(context.nestedFunctionExecution.functionRuntimeContext, context.nestedFunctionExecution.functionName) :
-        contextFncName;
+        findExecutedFncNameAndContext(context.nestedFunctionExecution.functionRuntimeContext, context.nestedFunctionExecution.functionName) :
+        contextFncName ? [contextFncName, context] : undefined;
 

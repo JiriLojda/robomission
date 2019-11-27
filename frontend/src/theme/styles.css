@@ -43,3 +43,10 @@ p, h1, h2, h3, h4, h5, h6,
 .blocklyScrollbarHandle:hover {
   fill: #455A64;
 }
+
+/*----code editor--------*/
+.editorLine--highlighted {
+  position:absolute;
+  background:rgba(100,200,100,0.5);
+  z-index:20
+}

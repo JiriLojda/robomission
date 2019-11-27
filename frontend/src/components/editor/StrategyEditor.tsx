@@ -49,6 +49,7 @@ type DebugState = {
     readonly runtimeContexts: List<IRuntimeContext>;
     readonly executionIndex: number;
     readonly turnsRan: number;
+    readonly highlightedLine: number | undefined;
 }
 
 interface IState {
@@ -100,6 +101,7 @@ const createEmptyDebugState = (numberOfPlayers: number): DebugState => ({
     turnsRan: 0,
     executionIndex: 0,
     runtimeContexts: List(range(numberOfPlayers).map(createEmptyRuntimeContext)),
+    highlightedLine: undefined,
 });
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
@@ -165,15 +167,26 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
         const params = createRunBattleParams(this.props.level, asts);
         const {runtimeContexts, turnsRan, executionIndex} = this.state.debugState;
-        const stepResult = stepBattle(params, {
-            world: this.props.currentWorld,
-            turnsRan,
-            runtimeContexts: runtimeContexts.toArray(),
-            executionIndex,
-        });
+        const isPlayerTurn = this.props.level.isDecisiveWin(this.props.level.turnsOrder.get(executionIndex) || '');
+        const stepResult = stepBattle(
+            params,
+            {
+                world: this.props.currentWorld,
+                turnsRan,
+                runtimeContexts: runtimeContexts.toArray(),
+                executionIndex,
+            },
+            isPlayerTurn,
+        );
 
         if (isBattleResult(stepResult)) {
-            this.setState(prevState => ({debugState: {...prevState.debugState, debugState: EditorDebugState.DebugFinished}}));
+            this.setState(prevState => ({
+                debugState: {
+                    ...prevState.debugState,
+                    debugState: EditorDebugState.DebugFinished,
+                    highlightedLine: undefined,
+                }
+            }));
             this.props.onBattleRunFinished(stepResult);
             this._handleWinLoseCounts(stepResult);
         } else {
@@ -185,6 +198,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                         runtimeContexts: prevDebugState.runtimeContexts.set(prevDebugState.executionIndex, stepResult.modifiedContext),
                         executionIndex: stepResult.nextExecutionIndex,
                         turnsRan: prevDebugState.turnsRan + 1,
+                        highlightedLine: isPlayerTurn ? stepResult.nextLineNumber: prevDebugState.highlightedLine,
                     }
                 });
             });
@@ -342,6 +356,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 toolbox={this.props.level.toolbox}
                 height={this.state.editorHeight}
                 isReadonly={this.state.debugState.debugState === EditorDebugState.Debugging}
+                highlightedLine={this.state.debugState.highlightedLine}
             />
             <RaisedButton
                 label={translate('editor.enlargeEditorArea')}

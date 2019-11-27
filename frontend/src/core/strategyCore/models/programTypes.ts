@@ -118,9 +118,11 @@ export type Condition =
     IConstantBoolean;
 
 export interface IBlock {
-    location: { blockId: string };
+    location: BlockLocation;
     statement: IStatement;
 }
+
+export type BlockLocation = { blockId: string } | number
 
 export interface IFunctionCallParameter {
     readonly value: IStatement;

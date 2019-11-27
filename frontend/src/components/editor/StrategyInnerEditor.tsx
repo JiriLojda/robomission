@@ -22,6 +22,7 @@ export interface INewEditorDataProps {
     readonly toolbox: BlocklyToolbox;
     readonly height: number;
     readonly isReadOnly: boolean;
+    readonly highlightedLine: number | undefined;
 }
 
 export interface INewEditorCallbackProps {
@@ -141,6 +142,7 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
                         onChange={this._onCodeChange}
                         highlighter={new StrategyRoboCodeHighlighter()}
                         isReadOnly={this.props.isReadOnly}
+                        highlightedLine={this.props.highlightedLine && this.props.highlightedLine - 1}
                     />
                 ) : (
                     <ReactBlocklyComponent.BlocklyEditor
