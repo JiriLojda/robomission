@@ -50,6 +50,7 @@ type DebugState = {
     readonly executionIndex: number;
     readonly turnsRan: number;
     readonly highlightedLine: number | undefined;
+    readonly highlightedBlockId: string | undefined;
 }
 
 interface IState {
@@ -102,6 +103,7 @@ const createEmptyDebugState = (numberOfPlayers: number): DebugState => ({
     executionIndex: 0,
     runtimeContexts: List(range(numberOfPlayers).map(createEmptyRuntimeContext)),
     highlightedLine: undefined,
+    highlightedBlockId: undefined,
 });
 
 export class StrategyEditor extends React.PureComponent<Props, IState> {
@@ -185,6 +187,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                     ...prevState.debugState,
                     debugState: EditorDebugState.DebugFinished,
                     highlightedLine: undefined,
+                    highlightedBlockId: undefined,
                 }
             }));
             this.props.onBattleRunFinished(stepResult);
@@ -199,6 +202,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                         executionIndex: stepResult.nextExecutionIndex,
                         turnsRan: prevDebugState.turnsRan + 1,
                         highlightedLine: isPlayerTurn ? stepResult.nextLineNumber: prevDebugState.highlightedLine,
+                        highlightedBlockId: isPlayerTurn ? stepResult.nextBlockId: prevDebugState.highlightedBlockId,
                     }
                 });
             });
@@ -357,6 +361,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 height={this.state.editorHeight}
                 isReadonly={this.state.debugState.debugState === EditorDebugState.Debugging}
                 highlightedLine={this.state.debugState.highlightedLine}
+                highlightedBlockId={this.state.debugState.highlightedBlockId}
             />
             <RaisedButton
                 label={translate('editor.enlargeEditorArea')}

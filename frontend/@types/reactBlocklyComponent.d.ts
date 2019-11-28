@@ -18,3 +18,5 @@ declare module 'react-blockly-component' {
 }
 
 declare module "react-router-relative-link";
+
+declare module "node-blockly/browser";

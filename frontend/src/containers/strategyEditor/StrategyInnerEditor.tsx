@@ -24,6 +24,7 @@ interface IOwnProps {
     readonly height: number;
     readonly isReadonly: boolean;
     readonly highlightedLine: number | undefined;
+    readonly highlightedBlockId: string | undefined;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProps => ({
@@ -34,6 +35,7 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): INewEditorDataProp
     height: ownProps.height,
     isReadOnly: state.strategyEditor.isGameRunning || ownProps.isReadonly,
     highlightedLine: ownProps.highlightedLine,
+    highlightedBlockId: ownProps.highlightedBlockId,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>): INewEditorCallbackProps => ({

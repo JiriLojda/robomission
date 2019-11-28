@@ -23,6 +23,7 @@ export interface INewEditorDataProps {
     readonly height: number;
     readonly isReadOnly: boolean;
     readonly highlightedLine: number | undefined;
+    readonly highlightedBlockId: string | undefined;
 }
 
 export interface INewEditorCallbackProps {
@@ -75,6 +76,10 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
             } else {
                 this._updateBlockly(this.props.roboAst);
             }
+        }
+
+        if (this.blocklyEditor) {
+            getBlocklyWorkspace(this.blocklyEditor).highlightBlock(this.props.highlightedBlockId || null);
         }
     }
 
@@ -135,7 +140,13 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
     };
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
-        return <div style={{width: '100%', height: `${this.props.height}px`}}>
+        return <div
+            style={{
+                width: '100%',
+                height: `${this.props.height}px`,
+                pointerEvents: this.props.isReadOnly && !this.props.showCodeEditor ? "none" : undefined,
+            }}
+        >
             {
                 this.props.showCodeEditor ? (<CodeEditor
                         code={this.state.code || ''}
@@ -146,11 +157,10 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
                     />
                 ) : (
                     <ReactBlocklyComponent.BlocklyEditor
-                        key={`${this.props.isReadOnly}`}
                         ref={ref => {
                             this.blocklyEditor = ref;
                         }}
-                        workspaceConfiguration={{trashcan: true, collapse: true, readOnly: this.props.isReadOnly}}
+                        workspaceConfiguration={{trashcan: true, collapse: true}}
                         toolboxCategories={this.props.toolbox}
                         initialXml={generateBlocklyXml(this.props.roboAst)}
                         xmlDidChange={this._onXmlChange}
