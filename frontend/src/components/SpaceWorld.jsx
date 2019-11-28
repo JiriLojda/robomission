@@ -21,7 +21,7 @@ export default function SpaceWorld({ fields, width }) {
             <GameObject
               // The key must change if the object type changes in order to
               // unregister old instructable and register the new one.
-              key={`${index}-${object.imageId}`}
+              key={`[${object.row}, ${object.col}]-${object.imageId}`}
               imageId={object.imageId}
               width={fieldSize}
               height={fieldSize}
