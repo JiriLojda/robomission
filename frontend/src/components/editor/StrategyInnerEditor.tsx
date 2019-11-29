@@ -1,9 +1,10 @@
 import CodeEditor from "./CodeEditor";
 import StrategyRoboCodeHighlighter from "../../core/strategyCore/codeEditor/strategyRoboCodeHighlighter";
 import * as ReactBlocklyComponent from "react-blockly-component";
+import {BlocklyEditor} from "react-blockly-component";
 import {generateBlocklyXml} from "../../core/strategyCore/codeEditor/xmlGenerator/blocklyXmlGenerator";
 import React from "react";
-import {IRoboAst} from "../../core/strategyCore/models/programTypes";
+import {IBlock, IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {InvalidProgramReason} from "../../core/strategyCore/enums/invalidProgramReason";
 import {generateStrategyRoboCode} from "../../core/strategyCore/codeEditor/codeGenerator/strategyRoboCodeGenerator";
 import {parseStrategyRoboCode} from "../../core/strategyCore/codeEditor/parser/strategyParser";
@@ -13,7 +14,7 @@ import {List} from "immutable";
 import {RoboAstValidator} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {blocklyXmlToRoboAst} from "../../core/blockly";
 import {BlocklyToolbox} from "../../core/strategyCore/constants/strategyToolbox";
-import {BlocklyEditor} from "react-blockly-component";
+import {invalidProgramError} from "../../core/strategyCore/utils/invalidProgramError";
 
 export interface INewEditorDataProps {
     readonly showCodeEditor: boolean;
@@ -43,12 +44,27 @@ interface IState {
 const getBlocklyWorkspace = (editor: BlocklyEditor) =>
     editor.refs.workspace.state.workspace;
 
-const blockIdRegex = /"blockId":"[^"]+"|"blockId":null/g;
-const areSameExcludingIds = (firstAst: IRoboAst, secondAst: IRoboAst): boolean => {
-    const firstSerialized = JSON.stringify(firstAst).replace(blockIdRegex, '');
-    const secondSerialized = JSON.stringify(secondAst).replace(blockIdRegex, '');
+const locationRegex = /,?\s*"location":\s*{\s*"blockId":"[^"]+"\s*}|,?\s*"location":\s*{\s*"blockId":null\s*}|,?\s*"location":\s*\s*\d+\s*/g;
+const areSameExcludingLocation = (firstAst: IRoboAst, secondAst: IRoboAst): boolean => {
+    const firstSerialized = JSON.stringify(firstAst).replace(locationRegex, '');
+    const secondSerialized = JSON.stringify(secondAst).replace(locationRegex, '');
 
     return firstSerialized === secondSerialized;
+};
+
+const doesBlockContainBlockId = (block: IBlock) =>
+    typeof block.location === 'object' && !!block.location.blockId
+
+const doesBlockContainLineNumber = (block: IBlock) =>
+    typeof block.location === 'number';
+
+const hasAstLocationProperlySet = (ast: IRoboAst, locationChecker: (block: IBlock) => boolean): boolean => {
+    if (ast.length <= 0 || !ast[0].body)
+        return false;
+    if (ast.length === 1)
+        return ast[0].body.length === 0 || locationChecker(ast[0].body[0]);
+    return ast.slice(1).some(fnc => !!fnc.body && fnc.body.length > 0 && locationChecker(fnc.body[0])) ||
+        (ast[0].body.length > 0 && locationChecker(ast[0].body[0])) || ast[0].body.length === 0;
 };
 
 export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
@@ -68,18 +84,37 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
             this.setState({code: generateStrategyRoboCode(this.props.roboAst)});
         }
         if (
-            !areSameExcludingIds(this.state.editedAst, this.props.roboAst) &&
-            !areSameExcludingIds(prevProps.roboAst, this.props.roboAst)
+            !areSameExcludingLocation(this.state.editedAst, this.props.roboAst) &&
+            !areSameExcludingLocation(prevProps.roboAst, this.props.roboAst)
         ) {
             if (this.props.showCodeEditor) {
                 this.setState({code: generateStrategyRoboCode(this.props.roboAst), editedAst: this.props.roboAst});
             } else {
                 this._updateBlockly(this.props.roboAst);
             }
+            return;
         }
 
         if (this.blocklyEditor) {
             getBlocklyWorkspace(this.blocklyEditor).highlightBlock(this.props.highlightedBlockId || null);
+        }
+
+        const locationChecker = this.props.showCodeEditor ? doesBlockContainLineNumber : doesBlockContainBlockId;
+        if (!hasAstLocationProperlySet(this.props.roboAst, locationChecker) && hasAstLocationProperlySet(this.state.editedAst, locationChecker)) {
+            if (!areSameExcludingLocation(this.state.editedAst, this.props.roboAst)) {
+                return;
+            }
+            this.props.onRoboAstChanged(this.state.editedAst);
+        } else if (
+            this.props.showCodeEditor &&
+            !hasAstLocationProperlySet(this.props.roboAst, locationChecker) &&
+            areSameExcludingLocation(this.props.roboAst, this.state.editedAst)
+        ) {
+            const result = parseStrategyRoboCode(generateStrategyRoboCode(this.props.roboAst));
+            if (!result.isSuccessful)
+                throw invalidProgramError(`This should be successful, but parse error: ${result.error}`);
+            this.setState({editedAst: result.result});
+            this.props.onRoboAstChanged(result.result);
         }
     }
 
@@ -99,9 +134,14 @@ export class StrategyInnerEditor extends React.PureComponent<Props, IState> {
     private _onValidationFinished = (validationResult: IValidatorResult, newAst: IRoboAst): void => {
         this.props.onSyntaxErrorRaised(validationResult.reason);
 
-        if (!areSameExcludingIds(newAst, this.props.roboAst)) {
+        if (!areSameExcludingLocation(newAst, this.props.roboAst)) {
             this.setState({editedAst: newAst});
             this.props.onRoboAstChanged(newAst);
+        } else {
+            const locationChecker = this.props.showCodeEditor ? doesBlockContainLineNumber : doesBlockContainBlockId;
+            if (!hasAstLocationProperlySet(this.props.roboAst, locationChecker) && hasAstLocationProperlySet(newAst, locationChecker)) {
+                this.setState({editedAst: newAst});
+            }
         }
     };
 
