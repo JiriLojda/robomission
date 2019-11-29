@@ -193,19 +193,23 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             this.props.onBattleRunFinished(stepResult);
             this._handleWinLoseCounts(stepResult);
         } else {
-            this.setState(prevState => {
-                const prevDebugState = prevState.debugState;
-                return ({
-                    debugState: {
-                        ...prevDebugState,
-                        runtimeContexts: prevDebugState.runtimeContexts.set(prevDebugState.executionIndex, stepResult.modifiedContext),
-                        executionIndex: stepResult.nextExecutionIndex,
-                        turnsRan: prevDebugState.turnsRan + 1,
-                        highlightedLine: isPlayerTurn ? stepResult.nextLineNumber: prevDebugState.highlightedLine,
-                        highlightedBlockId: isPlayerTurn ? stepResult.nextBlockId: prevDebugState.highlightedBlockId,
-                    }
-                });
-            });
+            this.setState(
+                prevState => {
+                    const prevDebugState = prevState.debugState;
+                    return ({
+                        debugState: {
+                            ...prevDebugState,
+                            runtimeContexts: prevDebugState.runtimeContexts.set(prevDebugState.executionIndex, stepResult.modifiedContext),
+                            executionIndex: stepResult.nextExecutionIndex,
+                            turnsRan: prevDebugState.turnsRan + 1,
+                            highlightedLine: isPlayerTurn ? stepResult.nextLineNumber : prevDebugState.highlightedLine,
+                            highlightedBlockId: isPlayerTurn ? stepResult.nextBlockId : prevDebugState.highlightedBlockId,
+                        }
+                    });
+                },
+                !isPlayerTurn && this.props.currentWorld === stepResult.newWorld ?
+                    () => this._makeDebugStep(stepMinorAction) : undefined
+            );
             this.props.worldChanged(stepResult.newWorld);
         }
     };
