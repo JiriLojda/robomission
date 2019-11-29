@@ -29,7 +29,7 @@ const shipIds = secondWhileWorldShipIds.reverse();
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: createStandardObjectCollisionResolver(),
-    shotResolver: createSelectiveShotResolver(['aiShip']),
+    shotResolver: createSelectiveShotResolver([secondWhileWorldShipIds[0]]),
 };
 
 const help = List([createTranslatedHelp(HelpTranslationKey.SecondWhile)]);

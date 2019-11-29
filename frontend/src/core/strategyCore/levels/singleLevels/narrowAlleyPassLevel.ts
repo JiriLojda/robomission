@@ -17,7 +17,7 @@ import {createStandardObjectCollisionResolver} from "../../gameBehaviours/create
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: createStandardObjectCollisionResolver(),
-    shotResolver: createSelectiveShotResolver(['aiShip']),
+    shotResolver: createSelectiveShotResolver([narrowPathWorldShipIds[0]]),
 };
 
 const finalPositions = [
