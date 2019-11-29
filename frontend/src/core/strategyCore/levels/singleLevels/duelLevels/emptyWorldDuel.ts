@@ -36,5 +36,6 @@ export const emptyWorldDuel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
+    additionalObjectGenerators: List(),
     isDecisiveWin: () => true,
 };

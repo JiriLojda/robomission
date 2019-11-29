@@ -7,6 +7,8 @@ import {IRoboAst} from "../models/programTypes";
 import {IGameBehaviours} from "../gameBehaviours/IGameBehaviours";
 import {BlocklyToolbox} from "../constants/strategyToolbox";
 import {IValidatorResult} from "../validator/programValidator";
+import {WorldObject} from "../models/worldObject";
+import {Position} from "../models/position";
 
 export type LevelHelp = {
     readonly text: string | JSX.Element;
@@ -28,6 +30,13 @@ export interface IWinModal {
     readonly nextLevelName: string | undefined;
 }
 
+type WorldObjectPlacement = {
+    readonly position: Position;
+    readonly worldObject: WorldObject;
+}
+
+export type WorldObjectGenerator = (world: World) => List<WorldObjectPlacement>;
+
 export interface IGameLevel {
     readonly name: string;
     readonly urlSlug: string;
@@ -43,6 +52,7 @@ export interface IGameLevel {
     readonly help: List<LevelHelp>;
     readonly winModal: IWinModal;
     readonly additionalValidators: List<RoboAstValidator>;
+    readonly additionalObjectGenerators: List<WorldObjectGenerator>;
     readonly isDecisiveWin: (winner: string) => boolean;
 }
 

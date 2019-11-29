@@ -45,6 +45,7 @@ export const distributedIntroLevel2: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
+    additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === 'player',
 };
 

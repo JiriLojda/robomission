@@ -57,6 +57,7 @@ export const flyLeftShootLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(turnPickUpLevel),
     additionalValidators,
+    additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === flyLeftShootWorldShipIds[1],
 };
 

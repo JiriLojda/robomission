@@ -44,6 +44,7 @@ export const basicRaceLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(narrowAlleyPassLevel),
     additionalValidators: List(),
+    additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === raceBasicWorldShipIds[1],
 };
 

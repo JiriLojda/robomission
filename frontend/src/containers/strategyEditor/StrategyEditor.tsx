@@ -46,7 +46,7 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingPro
     onCodeSubmit: ownProps.onCodeSubmit,
     worldChanged: newWorld => dispatch(worldChanged(newWorld)),
     onBattleRunFinished: newBattleResult => dispatch(gameRunFinished(newBattleResult)),
-    onBattleRunStarted: () => dispatch(gameRunStarted()),
+    onBattleRunStarted: world => dispatch(gameRunStarted(world)),
     reset: originalWorld => dispatch(editorReseted(originalWorld)),
     initializeStore: level => {
         dispatch(editorInitialized(level, ownProps.showMapAndHelpOnMount, ownProps.showMapAndHelpOnMount));

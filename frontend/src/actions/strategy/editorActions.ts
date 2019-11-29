@@ -87,8 +87,11 @@ export const drawingSpeedChanged = (speed: number): AnyAction => ({
     }
 });
 
-export const gameRunStarted = (): AnyAction => ({
+export const gameRunStarted = (world: World): AnyAction => ({
     type: STRATEGY_EDITOR_GAME_RUN_STARTED,
+    payload: {
+        world,
+    }
 });
 
 export const gameRunFinished = (battleResult: BattleResult): AnyAction => ({

@@ -64,6 +64,7 @@ export const firstWhileLevel: IGameLevel = {
     help,
     winModal: createWinModalWithStandardMessage(secondWhileLevel),
     additionalValidators,
+    additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === firstRepeatWorldShipIds[0],
 };
 

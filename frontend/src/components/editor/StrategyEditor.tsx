@@ -18,6 +18,7 @@ import {translate} from "../../localization";
 import {createEmptyRuntimeContext} from "../../core/strategyCore/utils/createEmptyRuntimeContext";
 import {EditorDebugState} from "./constants/editorDebugState";
 import {range} from "../../utils/arrays";
+import {applyObjectGenerators} from "../../core/strategyCore/levels/utils/applyObjectGenerators";
 
 export interface IStrategyEditorDataProps {
     readonly level: IGameLevel;
@@ -39,7 +40,7 @@ export interface IStrategyEditorCallbackProps {
     readonly toggleMap: () => void;
     readonly initializeStore: (level: IGameLevel) => void;
     readonly onBattleRunFinished: (newBattleResult: BattleResult) => void;
-    readonly onBattleRunStarted: () => void;
+    readonly onBattleRunStarted: (world: World) => void;
 }
 
 type Props = IStrategyEditorDataProps & IStrategyEditorCallbackProps;
@@ -324,7 +325,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             return;
         }
         this._reset();
-        this.props.onBattleRunStarted();
+        this.props.onBattleRunStarted(applyObjectGenerators(this.props.level.world, this.props.level.additionalObjectGenerators));
 
         const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
         const result = runBattle(createRunBattleParams(this.props.level, asts));
