@@ -139,7 +139,7 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                     }
                     {this.props.canRunBattle &&
                     <RaisedButton
-                      label={'Make battle step'}
+                      label={translate('editor.makeBattleStep')}
                       disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
                       primary
                       style={{margin: 2, minWidth: 50}}
@@ -148,7 +148,7 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                     }
                     {this.props.canRunBattle &&
                     <RaisedButton
-                      label={'Make program step'}
+                      label={translate('editor.makeProgramStep')}
                       disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
                       primary
                       style={{margin: 2, minWidth: 50}}

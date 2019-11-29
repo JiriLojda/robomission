@@ -424,6 +424,8 @@ const messages: {[index: string]: JSX.Element | string} = {
   'editor.enlargeEditorArea': 'Enlarge the editor',
   'editor.shrinkEditorArea': 'Shrink the editor',
   'editor.battleSpeed': 'battle speed',
+  'editor.makeBattleStep': 'make battle step',
+  'editor.makeProgramStep': 'make program step',
 
   'winModal.title': 'Congratulation, you won',
   'winModal.nextLevelLink': 'next level',

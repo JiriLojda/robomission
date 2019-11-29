@@ -424,6 +424,8 @@ const messages: {[index: string]: JSX.Element | string} = {
   'editor.enlargeEditorArea': 'Zvětšit editor',
   'editor.shrinkEditorArea': 'Zmenšit editor',
   'editor.battleSpeed': 'rychlost bitvy',
+  'editor.makeBattleStep': 'spusť jeden krok bitvy',
+  'editor.makeProgramStep': 'spusť jeden krok programu',
 
   'winModal.title': 'Vítězství',
   'winModal.nextLevelLink': 'další úroveň',
