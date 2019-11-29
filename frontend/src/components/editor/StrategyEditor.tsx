@@ -160,7 +160,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         }
     }
 
-    private _makeDebugStep = () => {
+    private _makeDebugStep = (stepMinorAction: boolean) => {
         if (this.state.debugState.debugState !== EditorDebugState.Debugging) {
             this._reset();
             this.setState(prev => ({debugState: {...prev.debugState, debugState: EditorDebugState.Debugging}}));
@@ -178,7 +178,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 runtimeContexts: runtimeContexts.toArray(),
                 executionIndex,
             },
-            isPlayerTurn,
+            isPlayerTurn && stepMinorAction,
         );
 
         if (isBattleResult(stepResult)) {

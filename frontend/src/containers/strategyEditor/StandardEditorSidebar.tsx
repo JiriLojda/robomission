@@ -18,7 +18,7 @@ interface IOwnProps {
     readonly onShowCodeEditor: () => void;
     readonly onRunBattle: () => void;
     readonly isDecisiveWin: (winner: string) => boolean;
-    readonly onDebugStep: () => void;
+    readonly onDebugStep: (stepMinorAction: boolean) => void;
 }
 
 const mapStateToProps = (state: IStore, ownProps: IOwnProps): IStandardEditorSidebarDataProps => ({

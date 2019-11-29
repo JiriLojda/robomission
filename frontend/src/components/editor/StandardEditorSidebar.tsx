@@ -41,7 +41,7 @@ export interface IStandardEditorSidebarCallbackProps {
     readonly onCodeSubmit: (() => void) | undefined;
     readonly isDecisiveWin: (winner: string) => boolean;
     readonly onDrawingSpeedChanged: (speed: number) => void;
-    readonly onDebugStep: () => void;
+    readonly onDebugStep: (stepMinorAction: boolean) => void;
 }
 
 type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackProps;
@@ -139,11 +139,20 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                     }
                     {this.props.canRunBattle &&
                     <RaisedButton
-                      label={'Debug'}
+                      label={'Make battle step'}
                       disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
                       primary
                       style={{margin: 2, minWidth: 50}}
-                      onClick={this.props.onDebugStep}
+                      onClick={() => this.props.onDebugStep(false)}
+                    />
+                    }
+                    {this.props.canRunBattle &&
+                    <RaisedButton
+                      label={'Make program step'}
+                      disabled={this.props.validationResult !== InvalidProgramReason.None || !!this.props.codeError}
+                      primary
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={() => this.props.onDebugStep(true)}
                     />
                     }
                     <RaisedButton
