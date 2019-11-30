@@ -3,7 +3,7 @@ import {World} from "../../../../models/world";
 import {Ship, ShipColor} from "../../../../models/ship";
 import {Direction} from "../../../../enums/direction";
 import {Position} from "../../../../models/position";
-import {translate} from "../../../../../../localization";
+import {standardAiShipIds, standardPlayerShipIds} from "../../../constants/standardShipIds";
 
 
 const map = [
@@ -14,19 +14,14 @@ const map = [
     ['kD', 'kM', 'k-P', 'kM', 'kD'],
 ];
 
-export const turnDiamondsWorldShipIds = [
-    translate('shipIds.playerShip1'),
-    translate('shipIds.aiShip1'),
-];
-
 const playerShip = new Ship({
-    id: turnDiamondsWorldShipIds[0],
+    id: standardPlayerShipIds.get(0),
     position: new Position(),
     direction: Direction.Up,
     shipColor: ShipColor.Red,
 });
 const aiShip = new Ship({
-    id: turnDiamondsWorldShipIds[1],
+    id: standardAiShipIds.get(0),
     position: new Position(),
     direction: Direction.Down,
     shipColor: ShipColor.Blue,

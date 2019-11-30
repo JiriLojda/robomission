@@ -12,11 +12,11 @@ import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {distributedIntroLevel2} from "./distributedIntroLevel2";
-import {distributedIntroLevel2WorldShipIds} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
 import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
+import {twoPlayersShipIds} from "../../constants/standardShipIds";
 
-const shipIds = distributedIntroLevel2WorldShipIds;
-const teams = List([{name: 'player', members: List(shipIds)}]);
+const shipIds = twoPlayersShipIds;
+const teams = List([{name: 'player', members: shipIds}]);
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -42,7 +42,7 @@ export const distributedIntroLevel: IGameLevel = {
     sameAstGroups: List([Set(shipIds)]),
     world: distributedIntroLevelWorld,
     gameBehaviours: behaviours,
-    toolbox: addShipIdConstants(allStrategyCategories, shipIds),
+    toolbox: addShipIdConstants(allStrategyCategories, shipIds.toArray()),
     help,
     winModal: createWinModalWithStandardMessage(distributedIntroLevel2),
     additionalValidators: List(),

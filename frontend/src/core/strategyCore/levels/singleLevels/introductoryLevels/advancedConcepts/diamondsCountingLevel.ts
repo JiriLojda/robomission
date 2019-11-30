@@ -16,18 +16,15 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
-import {
-    diamondsCountingWorld,
-    diamondsCountingWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/advancedConcepts/diamondsCountingWorld";
+import {diamondsCountingWorld} from "../../../worlds/intorductoryLevelsWorlds/advancedConcepts/diamondsCountingWorld";
 import {Position} from "../../../../models/position";
 import {createDiamondDistributionGenerator} from "../../../additionalObjectGenerators/createDiamondDistributionGenerator";
 import {generateRectangularPositionGroup} from "../../../utils/generateRectangularPositionGroup";
 import {diamondsCountingStrategy} from "../../../strategies/introduction/advancedConcepts/diamondsCountingLevelStrategy";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
-import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerPlayerStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = diamondsCountingWorldShipIds;
+const shipIds = singlePlayerPlayerStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -78,7 +75,7 @@ export const diamondsCountingLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(),
     additionalValidators,
     additionalObjectGenerators,
-    isDecisiveWin: winner => winner === diamondsCountingWorldShipIds[0],
+    isDecisiveWin: winner => winner === shipIds[0],
     retryPolicy: {winsRequired: 3, maxRounds: 3},
 };
 

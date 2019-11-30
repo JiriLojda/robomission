@@ -12,10 +12,7 @@ import {BattleType} from "../../../../battleRunner/BattleType";
 import {addSimpleStatementToRoboAstBody, createEmptyAst} from "../../../../../../utils/createEmptyAst";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
-import {
-    turnDiamondsWorld,
-    turnDiamondsWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/TurnDiamondsWorld";
+import {turnDiamondsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/TurnDiamondsWorld";
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
@@ -24,8 +21,9 @@ import {firstChallengeLevel} from "./firstChallengeLevel";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = turnDiamondsWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -61,7 +59,7 @@ export const turnPickUpLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(firstChallengeLevel),
     additionalValidators,
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === turnDiamondsWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

@@ -13,18 +13,16 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {
-    secondIfsWorld,
-    secondIfsWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondIfsWorld";
+import {secondIfsWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondIfsWorld";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstWhileLevel} from "./firstWhileLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerPlayerStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = secondIfsWorldShipIds;
+const shipIds = singlePlayerPlayerStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -66,7 +64,7 @@ export const secondIfsLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(firstWhileLevel),
     additionalValidators,
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === secondIfsWorldShipIds[0],
+    isDecisiveWin: winner => winner === shipIds[0],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

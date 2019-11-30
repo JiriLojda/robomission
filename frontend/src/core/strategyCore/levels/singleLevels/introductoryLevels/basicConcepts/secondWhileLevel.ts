@@ -14,23 +14,21 @@ import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSele
 import {createRestrictedBlocksValidator} from "../../../additionalValidators/createRestrictedBlocksValidator";
 import {StatementType} from "../../../../enums/statementType";
 import {Position} from "../../../../models/position";
-import {
-    secondWhileWorld,
-    secondWhileWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondWhileWorld";
+import {secondWhileWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/secondWhileWorld";
 import {randomSwitchAndShootStrategy} from "../../../../predefinedStrategies/randomSwitchAndShoot";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = secondWhileWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: createStandardObjectCollisionResolver(),
-    shotResolver: createSelectiveShotResolver([secondWhileWorldShipIds[0]]),
+    shotResolver: createSelectiveShotResolver([shipIds[0]]),
 };
 
 const help = List([createTranslatedHelp(HelpTranslationKey.SecondWhile)]);
@@ -66,7 +64,7 @@ export const secondWhileLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(),
     additionalValidators,
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === secondWhileWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

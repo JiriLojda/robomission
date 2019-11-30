@@ -1,4 +1,4 @@
-import {List, Map, Set} from "immutable";
+import {List, Map} from "immutable";
 import {IGameBehaviours} from "../../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../../models/position";
@@ -10,13 +10,11 @@ import {addShipIdConstants, allStrategyCategories} from "../../../constants/stra
 import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
-import {
-    distributedIntroLevel2World,
-    distributedIntroLevel2WorldShipIds
-} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
+import {distributedIntroLevel2World} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
 import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
+import {twoPlayersShipIds} from "../../constants/standardShipIds";
 
-const teams = List([{name: 'player', members: List(distributedIntroLevel2WorldShipIds)}]);
+const teams = List([{name: 'player', members: twoPlayersShipIds}]);
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -36,13 +34,13 @@ export const distributedIntroLevel2: IGameLevel = {
     urlSlug: 'your-second-distributed-program',
     battleType: BattleType.TeamGetThereFirst,
     battleParams: {turnsRan: 0, maxTurns: 100, finishPositions: List(finalPositions), teams},
-    turnsOrder: List(distributedIntroLevel2WorldShipIds),
+    turnsOrder: twoPlayersShipIds,
     shipsAsts: Map(),
     teams,
-    sameAstGroups: List([Set(distributedIntroLevel2WorldShipIds)]),
+    sameAstGroups: List([twoPlayersShipIds.toSet()]),
     world: distributedIntroLevel2World,
     gameBehaviours: behaviours,
-    toolbox: addShipIdConstants(allStrategyCategories, distributedIntroLevel2WorldShipIds),
+    toolbox: addShipIdConstants(allStrategyCategories, twoPlayersShipIds.toArray()),
     help,
     winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),

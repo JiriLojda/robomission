@@ -5,13 +5,14 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
-import {starWithDiamondsWorld, starWithDiamondsWorldShipIds} from "../worlds/starWithDiamondsWorld";
+import {starWithDiamondsWorld} from "../worlds/starWithDiamondsWorld";
 import {starWithDiamondsStrategy} from "../../predefinedStrategies/starWithDiamondsStrategy";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../constants/standardShipIds";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -19,7 +20,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 
-const shipIds = starWithDiamondsWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const help = List([createTranslatedHelp(HelpTranslationKey.StarWithDiamonds)]);
 
@@ -39,7 +40,7 @@ export const starWithDiamondsLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === starWithDiamondsWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

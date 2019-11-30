@@ -3,7 +3,7 @@ import {Position} from "../../models/position";
 import {Direction} from "../../enums/direction";
 import {World} from "../../models/world";
 import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
-import {translate} from "../../../../localization";
+import {standardPlayerShipIds} from "../constants/standardShipIds";
 
 const map = [
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-P'],
@@ -15,27 +15,22 @@ const map = [
     ['k-A', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
 ];
 
-export const empty77WorldShipIds = [
-    translate('shipIds.playerShip1'),
-    translate('shipIds.aiShip1'),
-];
-
-const playerShip = new Ship({
-    id: empty77WorldShipIds[0],
+const playerShip1 = new Ship({
+    id: standardPlayerShipIds.get(0),
     position: new Position(),
     direction: Direction.Down,
     shipColor: ShipColor.Green,
 });
-const aiShip = new Ship({
-    id: empty77WorldShipIds[1],
+const playerShip2 = new Ship({
+    id: standardPlayerShipIds.get(0),
     position: new Position(),
     direction: Direction.Up,
     shipColor: ShipColor.Red,
 });
 
 const ships = {
-    P: playerShip,
-    A: aiShip,
+    P: playerShip1,
+    A: playerShip2,
 };
 
 export const empty77World: World = convertReadableMapToWorld(map, ships);

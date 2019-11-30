@@ -13,10 +13,7 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {
-    firstRepeatWorld,
-    firstRepeatWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
+import {firstRepeatWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/firstRepeatWorld";
 import {createRestrictedBlocksValidator} from "../../../additionalValidators/createRestrictedBlocksValidator";
 import {StatementType} from "../../../../enums/statementType";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
@@ -25,8 +22,9 @@ import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {secondWhileLevel} from "./secondWhileLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerPlayerStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = firstRepeatWorldShipIds;
+const shipIds = singlePlayerPlayerStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -66,7 +64,7 @@ export const firstWhileLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(secondWhileLevel),
     additionalValidators,
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === firstRepeatWorldShipIds[0],
+    isDecisiveWin: winner => winner === shipIds[0],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

@@ -2,7 +2,7 @@ import {BattleType} from "../../battleRunner/BattleType";
 import {List, Map} from "immutable";
 import {basicScanStrategy} from "../../predefinedStrategies/basicScanStrategy";
 import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../battleRunner/IGameLevel";
-import {basicKillAllWorld, basicKillAllWorldShipIds} from "../worlds/basicKillAllWorld";
+import {basicKillAllWorld} from "../worlds/basicKillAllWorld";
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
@@ -13,8 +13,9 @@ import {basicRaceLevel} from "./basicRaceLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../constants/standardShipIds";
 
-const shipIds = basicKillAllWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -40,6 +41,6 @@ export const basicScanKillAllLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(basicRaceLevel),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === basicKillAllWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };

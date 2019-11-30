@@ -10,10 +10,7 @@ import {
 import {allStrategyCategories, categoryNames, filterCategories} from "../../../../constants/strategyToolbox";
 import {BattleType} from "../../../../battleRunner/BattleType";
 import {createEmptyAst} from "../../../../../../utils/createEmptyAst";
-import {
-    flyLeftShootWorld,
-    flyLeftShootWorldShipIds
-} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/flyLeftShootWorld";
+import {flyLeftShootWorld} from "../../../worlds/intorductoryLevelsWorlds/basicConcepts/flyLeftShootWorld";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
@@ -23,8 +20,9 @@ import {turnPickUpLevel} from "./TurnPickUpLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../../../constants/standardShipIds";
 
-const shipIds = flyLeftShootWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -59,7 +57,7 @@ export const flyLeftShootLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(turnPickUpLevel),
     additionalValidators,
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === flyLeftShootWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

@@ -4,7 +4,7 @@ import {createOnTheirOwnGroups, createOnTheirOwnTeams, IGameLevel} from "../../b
 import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
-import {raceBasicWorld, raceBasicWorldShipIds} from "../worlds/raceBasicWorld";
+import {raceBasicWorld} from "../worlds/raceBasicWorld";
 import {basicRaceStrategy} from "../../predefinedStrategies/basicRaceStrategy";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
@@ -14,8 +14,9 @@ import {narrowAlleyPassLevel} from "./narrowAlleyPassLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../constants/standardShipIds";
 
-const shipIds = raceBasicWorldShipIds.reverse();
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -46,7 +47,7 @@ export const basicRaceLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(narrowAlleyPassLevel),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === raceBasicWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

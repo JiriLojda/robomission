@@ -5,7 +5,7 @@ import {IGameBehaviours} from "../../gameBehaviours/IGameBehaviours";
 import {explosionCollisionResolver} from "../../gameBehaviours/exposionCollisionResolver";
 import {Position} from "../../models/position";
 import {narrowAlleySweeper} from "../../predefinedStrategies/narrowAlleySweeper";
-import {narrowPathWorld, narrowPathWorldShipIds} from "../worlds/narrowPathWorld";
+import {narrowPathWorld} from "../worlds/narrowPathWorld";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {addShipIdConstants, allStrategyCategories} from "../../constants/strategyToolbox";
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
@@ -14,11 +14,14 @@ import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {starWithDiamondsLevel} from "./starWithDiamondsLevel";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
+import {singlePlayerAiStartsShipIds} from "../constants/standardShipIds";
+
+const shipIds = singlePlayerAiStartsShipIds.toArray();
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
     shipCollisionResolver: createStandardObjectCollisionResolver(),
-    shotResolver: createSelectiveShotResolver([narrowPathWorldShipIds[0]]),
+    shotResolver: createSelectiveShotResolver([shipIds[0]]),
 };
 
 const finalPositions = [
@@ -26,8 +29,6 @@ const finalPositions = [
     new Position({x: 0, y: 1}),
     new Position({x: 0, y: 2}),
 ];
-
-const shipIds = narrowPathWorldShipIds.reverse();
 
 const help = List([createTranslatedHelp(HelpTranslationKey.NarrowAlleyPass)]);
 
@@ -47,7 +48,7 @@ export const narrowAlleyPassLevel: IGameLevel = {
     winModal: createWinModalWithStandardMessage(starWithDiamondsLevel),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
-    isDecisiveWin: winner => winner === narrowPathWorldShipIds[1],
+    isDecisiveWin: winner => winner === shipIds[1],
     retryPolicy: createSingleRunRetryPolicy(),
 };
 

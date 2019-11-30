@@ -3,7 +3,7 @@ import {Position} from "../../models/position";
 import {Direction} from "../../enums/direction";
 import {World} from "../../models/world";
 import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
-import {translate} from "../../../../localization";
+import {standardAiShipIds, standardPlayerShipIds} from "../constants/standardShipIds";
 
 const map = [
     ['g-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
@@ -11,19 +11,14 @@ const map = [
     ['g-', 'k-A', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
 ];
 
-export const narrowPathWorldShipIds = [
-    translate('shipIds.playerShip1'),
-    translate('shipIds.aiShip1'),
-];
-
 const playerShip = new Ship({
-    id: narrowPathWorldShipIds[0],
+    id: standardPlayerShipIds.get(0),
     position: new Position(),
     direction: Direction.Left,
     shipColor: ShipColor.Green,
 });
 const aiShip = new Ship({
-    id: narrowPathWorldShipIds[1],
+    id: standardAiShipIds.get(0),
     position: new Position(),
     direction: Direction.Right,
     shipColor: ShipColor.Red,
