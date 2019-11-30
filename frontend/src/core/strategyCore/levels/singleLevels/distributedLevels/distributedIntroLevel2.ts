@@ -14,6 +14,7 @@ import {
     distributedIntroLevel2World,
     distributedIntroLevel2WorldShipIds
 } from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
+import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
 
 const teams = List([{name: 'player', members: List(distributedIntroLevel2WorldShipIds)}]);
 
@@ -47,5 +48,6 @@ export const distributedIntroLevel2: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === 'player',
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

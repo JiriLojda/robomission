@@ -10,6 +10,7 @@ import {HelpTranslationKey} from "../../../../../localization/helpTranslationKey
 import {createWinModalWithStandardMessage} from "../../utils/createWinModal";
 import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
 
 const shipIds = empty77WorldShipIds;
 
@@ -38,4 +39,5 @@ export const emptyWorldDuel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: () => true,
+    retryPolicy: createSingleRunRetryPolicy(),
 };

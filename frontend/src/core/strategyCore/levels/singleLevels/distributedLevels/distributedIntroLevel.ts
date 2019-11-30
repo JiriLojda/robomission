@@ -13,6 +13,7 @@ import {createSelectiveShotResolver} from "../../../gameBehaviours/createSelecti
 import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {distributedIntroLevel2} from "./distributedIntroLevel2";
 import {distributedIntroLevel2WorldShipIds} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
+import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
 
 const shipIds = distributedIntroLevel2WorldShipIds;
 const teams = List([{name: 'player', members: List(shipIds)}]);
@@ -47,5 +48,6 @@ export const distributedIntroLevel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === 'player',
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

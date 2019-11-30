@@ -23,6 +23,7 @@ import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTrans
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 
 const shipIds = secondWhileWorldShipIds.reverse();
 
@@ -66,5 +67,6 @@ export const secondWhileLevel: IGameLevel = {
     additionalValidators,
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === secondWhileWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

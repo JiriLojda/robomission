@@ -411,6 +411,7 @@ const messages: {[index: string]: JSX.Element | string} = {
   'InvalidProgramReason.CustomLevelMessage': 'In this level',
 
   'level.category.introduction': 'Introduction',
+  'level.category.introduction2': 'Advanced concepts introduction',
   'level.category.distributed': 'Distributed programming introduction',
   'level.category.others': 'Others',
   'level.category.justOthers': 'Just Others',
@@ -418,6 +419,7 @@ const messages: {[index: string]: JSX.Element | string} = {
   'battleType.shoot': 'shoot',
   'battleType.collect': 'collect',
   'battleType.race': 'race',
+  'battleType.collectAndGetThere': 'race collect',
 
   'editor.standardWinModalMessageContinued': 'Congratulation, you won. It is time to celebrate with another level. ;)',
   'editor.standardWinModalMessageFinal': 'Great, you just won the final round. Take a look into the menu for another challenge.',

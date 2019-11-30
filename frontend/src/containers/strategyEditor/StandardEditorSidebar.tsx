@@ -32,6 +32,7 @@ const mapStateToProps = (state: IStore, ownProps: IOwnProps): IStandardEditorSid
     canRunBattle: ownProps.canRunBattle,
     isCodeEditorShown: ownProps.isCodeEditorShown,
     drawingSpeed: state.strategyEditor.drawingSpeed,
+    battleSeriesResult: state.strategyEditor.battleSeriesResult,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: IOwnProps): IStandardEditorSidebarCallbackProps => ({

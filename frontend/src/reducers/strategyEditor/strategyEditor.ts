@@ -10,6 +10,7 @@ import {battleResult} from "./internalReducers/battleResult";
 import {drawingSpeed} from "./internalReducers/drawingSpeed";
 import {IStrategyEditor} from "../IStore";
 import {isGameRunning} from "./internalReducers/isGameRunning";
+import {battleSeriesResult} from "./internalReducers/battleSeriesResult";
 
 export const strategyEditor = combineReducers<IStrategyEditor>({
     currentWorld,
@@ -22,4 +23,5 @@ export const strategyEditor = combineReducers<IStrategyEditor>({
     battleResult,
     drawingSpeed,
     isGameRunning,
+    battleSeriesResult,
 });

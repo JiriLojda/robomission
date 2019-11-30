@@ -23,6 +23,7 @@ import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstChallengeLevel} from "./firstChallengeLevel";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 
 const shipIds = turnDiamondsWorldShipIds.reverse();
 
@@ -61,5 +62,6 @@ export const turnPickUpLevel: IGameLevel = {
     additionalValidators,
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === turnDiamondsWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

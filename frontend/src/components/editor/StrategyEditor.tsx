@@ -2,7 +2,11 @@ import React from "react";
 import {defineAstForGroups, findGroupsWithoutAst, IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
 import {IRoboAst, IRuntimeContext} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
-import {BattleResult, getMessageTypeForResult} from "../../core/strategyCore/battleRunner/BattleResult";
+import {
+    BattleResult,
+    BattleResultType,
+    getMessageTypeForResult
+} from "../../core/strategyCore/battleRunner/BattleResult";
 import {delay, ICancelablePromise} from "../../utils/cancelablePromise";
 import {List, Map} from "immutable";
 import {HelpModal} from "../uiComponents/HelpModal";
@@ -19,6 +23,7 @@ import {createEmptyRuntimeContext} from "../../core/strategyCore/utils/createEmp
 import {EditorDebugState} from "./constants/editorDebugState";
 import {range} from "../../utils/arrays";
 import {applyObjectGenerators} from "../../core/strategyCore/levels/utils/applyObjectGenerators";
+import {BattleSeriesResult} from "../../reducers/strategyEditor/internalReducers/battleSeriesResult";
 
 export interface IStrategyEditorDataProps {
     readonly level: IGameLevel;
@@ -40,7 +45,9 @@ export interface IStrategyEditorCallbackProps {
     readonly toggleMap: () => void;
     readonly initializeStore: (level: IGameLevel) => void;
     readonly onBattleRunFinished: (newBattleResult: BattleResult) => void;
+    readonly onBattleRunPartialResultGot: (newBattleResult: BattleResult) => void;
     readonly onBattleRunStarted: (world: World) => void;
+    readonly onBattleSeriesFinished: (battleSeriesResult: BattleSeriesResult) => void;
 }
 
 type Props = IStrategyEditorDataProps & IStrategyEditorCallbackProps;
@@ -54,6 +61,13 @@ type DebugState = {
     readonly highlightedBlockId: string | undefined;
 }
 
+type RunState = {
+    readonly isRunning: boolean;
+    readonly lostRuns: number;
+    readonly wonRuns: number;
+    readonly drawRuns: number;
+};
+
 interface IState {
     drawingPromise?: ICancelablePromise<List<World> | undefined>;
     useCodeEditor: boolean;
@@ -66,6 +80,7 @@ interface IState {
     failureCount: number;
     showExtraHelp: boolean;
     debugState: DebugState;
+    runState: RunState,
 }
 
 const minimumEditorSize = 400 as const;
@@ -82,8 +97,8 @@ const createScheduleNextExtraHelp = (level: IGameLevel, nextHelpIndex: number, s
         undefined;
 };
 
-const createRunBattleParams = (level: IGameLevel, roboAsts: List<IRoboAst>): IRunBattleParams => ({
-    world: level.world,
+const createRunBattleParams = (level: IGameLevel, roboAsts: List<IRoboAst>, world: World): IRunBattleParams => ({
+    world,
     battleParams: level.battleParams,
     battleType: level.battleType,
     shipsOrder: level.turnsOrder,
@@ -107,6 +122,13 @@ const createEmptyDebugState = (numberOfPlayers: number): DebugState => ({
     highlightedBlockId: undefined,
 });
 
+const createEmptyRunState = (): RunState => ({
+    isRunning: false,
+    drawRuns: 0,
+    lostRuns: 0,
+    wonRuns: 0,
+});
+
 export class StrategyEditor extends React.PureComponent<Props, IState> {
     constructor(props: Props) {
         super(props);
@@ -124,7 +146,8 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
             ),
             nextExtraHelpIndex: this.props.level.help.count() > 1 ? 1 : 0,
             showExtraHelp: false,
-            debugState: createEmptyDebugState(this.props.level.turnsOrder.count())
+            debugState: createEmptyDebugState(this.props.level.turnsOrder.count()),
+            runState: createEmptyRunState(),
         };
 
         if (props.canRunBattle && findGroupsWithoutAst(props.level).count() !== 1) {
@@ -162,19 +185,23 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
     }
 
     private _makeDebugStep = (stepMinorAction: boolean) => {
+        const worldToUse = this.state.debugState.debugState !== EditorDebugState.Debugging ?
+            applyObjectGenerators(this.props.level.world, this.props.level.additionalObjectGenerators) :
+            this.props.currentWorld;
         if (this.state.debugState.debugState !== EditorDebugState.Debugging) {
-            this._reset();
+            this._userReset();
             this.setState(prev => ({debugState: {...prev.debugState, debugState: EditorDebugState.Debugging}}));
+            this.props.onBattleRunStarted(worldToUse);
         }
 
         const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
-        const params = createRunBattleParams(this.props.level, asts);
+        const params = createRunBattleParams(this.props.level, asts, worldToUse);
         const {runtimeContexts, turnsRan, executionIndex} = this.state.debugState;
         const isPlayerTurn = this.props.level.isDecisiveWin(this.props.level.turnsOrder.get(executionIndex) || '');
         const stepResult = stepBattle(
             params,
             {
-                world: this.props.currentWorld,
+                world: worldToUse,
                 turnsRan,
                 runtimeContexts: runtimeContexts.toArray(),
                 executionIndex,
@@ -191,8 +218,12 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                     highlightedBlockId: undefined,
                 }
             }));
+            const {winsRequired, maxRounds} = this.props.level.retryPolicy;
+            if (winsRequired === 1 && maxRounds === 1) {
+                const won = getMessageTypeForResult(stepResult, this.props.level.isDecisiveWin) === ResultMessageType.Success;
+                this._handleWinLoseCounts(won ? 1 : 0, 1);
+            }
             this.props.onBattleRunFinished(stepResult);
-            this._handleWinLoseCounts(stepResult);
         } else {
             this.setState(
                 prevState => {
@@ -208,7 +239,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                         }
                     });
                 },
-                !isPlayerTurn && this.props.currentWorld === stepResult.newWorld ?
+                !isPlayerTurn && worldToUse === stepResult.newWorld ?
                     () => this._makeDebugStep(stepMinorAction) : undefined
             );
             this.props.worldChanged(stepResult.newWorld);
@@ -227,12 +258,19 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
     private _showCodeEditor = () => this.setState({useCodeEditor: true});
     private _hideCodeEditor = () => this.setState({useCodeEditor: false});
 
-    private _reset = () => {
+    private _beforeBattleReset = () => {
         if (this.state.drawingPromise) {
             this.state.drawingPromise.cancel();
         }
         this.setState(({debugState: createEmptyDebugState(this.props.level.turnsOrder.count())}));
+    };
+
+    private _resetRunState = () => this.setState({runState: createEmptyRunState()});
+
+    private _userReset = () => {
+        this._beforeBattleReset();
         this.props.reset(this.props.level.world);
+        this._resetRunState();
     };
 
     private _drawNewWorld = (newWorld: World) => {
@@ -314,26 +352,75 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
 
     private _closeHelp = () => this.props.onHelpClosed();
 
-    private _handleWinLoseCounts = (result: BattleResult) =>
-        getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success ?
+    private _handleWinLoseCounts = (wonRuns: number, requiredWins: number) =>
+        wonRuns >= requiredWins ?
             this._showWinModal() :
             this._incrementFailureCount();
+
+    private _incrementWonRuns = () =>
+        this.setState(prevState => ({runState: {...prevState.runState, wonRuns: prevState.runState.wonRuns + 1}}));
+
+    private _incrementLostRuns = () =>
+        this.setState(prevState => ({runState: {...prevState.runState, lostRuns: prevState.runState.lostRuns + 1}}));
+
+    private _incrementDrawRuns = () =>
+        this.setState(prevState => ({runState: {...prevState.runState, drawRuns: prevState.runState.drawRuns + 1}}));
+
+    private _handleBattleResult = (result: BattleResult) => {
+        if (this.props.level.retryPolicy.maxRounds <= 0) {
+            return this.props.onBattleRunFinished(result);
+        }
+        const isWin = getMessageTypeForResult(result, this.props.level.isDecisiveWin) === ResultMessageType.Success;
+        if (isWin) {
+            this._incrementWonRuns();
+        } else if (result.type === BattleResultType.Draw) {
+            this._incrementDrawRuns();
+        } else if (result.type === BattleResultType.Decisive) {
+            this._incrementLostRuns();
+        } else {
+            this.props.onBattleRunFinished(result);
+        }
+
+        const {wonRuns, lostRuns, drawRuns} = this.state.runState;
+        const winsRequired = this.props.level.retryPolicy.winsRequired;
+        if (wonRuns >= winsRequired) {
+            this._handleWinLoseCounts(wonRuns, winsRequired);
+            this._resetRunState();
+            this.props.onBattleRunFinished(result);
+            if (wonRuns + lostRuns + drawRuns > 1) {
+                this.props.onBattleSeriesFinished({wonRuns, lostRuns, drawRuns, requiredWins: winsRequired});
+            }
+            return;
+        }
+        if (wonRuns + drawRuns + lostRuns >= this.props.level.retryPolicy.maxRounds) {
+            this._handleWinLoseCounts(wonRuns, winsRequired);
+            this._resetRunState();
+            this.props.onBattleRunFinished(result);
+            if (wonRuns + lostRuns + drawRuns > 1) {
+                this.props.onBattleSeriesFinished({wonRuns, lostRuns, drawRuns, requiredWins: winsRequired});
+            }
+            return;
+        }
+
+        this.props.onBattleRunPartialResultGot(result);
+        this._runBattle();
+    };
 
     private _runBattle = (): void => {
         if (!this.props.canRunBattle) {
             console.warn('This should not be called when cannotRunBattle.');
             return;
         }
-        this._reset();
-        this.props.onBattleRunStarted(applyObjectGenerators(this.props.level.world, this.props.level.additionalObjectGenerators));
+        this._beforeBattleReset();
+        const generatedWorld = applyObjectGenerators(this.props.level.world, this.props.level.additionalObjectGenerators);
+        this.props.onBattleRunStarted(generatedWorld);
 
         const asts = defineAstForOneMissingGroup(this.props.level, this.props.roboAst);
-        const result = runBattle(createRunBattleParams(this.props.level, asts));
+        const result = runBattle(createRunBattleParams(this.props.level, asts, generatedWorld));
 
         this._drawHistory(result.history.reverse())
             .then(this._cleanUpDrawingPromise)
-            .then(() => this.props.onBattleRunFinished(result))
-            .then(() => this._handleWinLoseCounts(result));
+            .then(() => this._handleBattleResult(result))
     };
 
     private _enlargeTheEditor = () =>
@@ -354,7 +441,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
                 isCodeEditorShown={this.state.useCodeEditor}
                 onHideCodeEditor={this._hideCodeEditor}
                 onShowCodeEditor={this._showCodeEditor}
-                onReset={this._reset}
+                onReset={this._userReset}
                 onRunBattle={this._runBattle}
                 isDecisiveWin={this.props.level.isDecisiveWin}
                 onDebugStep={this._makeDebugStep}

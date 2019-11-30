@@ -22,6 +22,7 @@ import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {turnPickUpLevel} from "./TurnPickUpLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSelectiveShotResolver} from "../../../../gameBehaviours/createSelectiveShotResolver";
+import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 
 const shipIds = flyLeftShootWorldShipIds.reverse();
 
@@ -59,5 +60,6 @@ export const flyLeftShootLevel: IGameLevel = {
     additionalValidators,
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === flyLeftShootWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

@@ -7,6 +7,7 @@ import {EditorWorldModel} from "./editorWorldModel";
 import {Direction} from "../enums/direction";
 import {WorldObject} from "./worldObject";
 import {convertArraysToLists} from "../../../utils/arrays";
+import {invalidProgramError} from "../utils/invalidProgramError";
 
 interface IWorldModelParameters {
     surface: List<List<TileColor>>;
@@ -37,10 +38,10 @@ export const updateShipInWorld = (world: World, oldShip: Ship, newShip: Ship): W
 
 const assertPositionInWorld = (world: World, x: number, y: number): void => {
     if (world.size.x <= x || world.size.y <= y || x < 0 || y < 0) {
-        throw new Error(`Position [${x}, ${y}] is outside of world size [${world.size.x}, ${world.size.y}].`);
+        throw invalidProgramError(`Position [${x}, ${y}] is outside of world size [${world.size.x}, ${world.size.y}].`);
     }
     if (!world.objects.get(y) || !world.objects.get(y)!.get(x)) {
-        throw new Error(`The world is badly constructed, position [${x}, ${y}] is within world.size, but undefined.`);
+        throw invalidProgramError(`The world is badly constructed, position [${x}, ${y}] is within world.size, but undefined.`);
     }
 };
 

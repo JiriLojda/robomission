@@ -9,8 +9,8 @@ import {
     MAP_SHOW_TOGGLED,
     ROBOAST_CHANGED,
     STRATEGY_EDITOR_DRAWING_SPEED_CHANGED,
-    STRATEGY_EDITOR_GAME_RUN_FINISHED,
-    STRATEGY_EDITOR_GAME_RUN_STARTED,
+    STRATEGY_EDITOR_GAME_RUN_FINISHED, STRATEGY_EDITOR_GAME_RUN_PARTIAL_RESULT,
+    STRATEGY_EDITOR_GAME_RUN_STARTED, STRATEGY_EDITOR_GAME_SERIES_FINISHED,
     SYNTAX_ERROR_RAISED,
     WORLD_CHANGED
 } from "../../action-types";
@@ -19,6 +19,7 @@ import {IRoboAst} from "../../core/strategyCore/models/programTypes";
 import {World} from "../../core/strategyCore/models/world";
 import {BattleResult} from "../../core/strategyCore/battleRunner/BattleResult";
 import {IGameLevel} from "../../core/strategyCore/battleRunner/IGameLevel";
+import {BattleSeriesResult} from "../../reducers/strategyEditor/internalReducers/battleSeriesResult";
 
 export const mapShowToggled = (): AnyAction => ({
     type: MAP_SHOW_TOGGLED,
@@ -94,9 +95,21 @@ export const gameRunStarted = (world: World): AnyAction => ({
     }
 });
 
+export const gameRunPartialResultGot = (battleResult: BattleResult): AnyAction => ({
+    type: STRATEGY_EDITOR_GAME_RUN_PARTIAL_RESULT,
+    payload: {
+        battleResult,
+    }
+});
+
 export const gameRunFinished = (battleResult: BattleResult): AnyAction => ({
     type: STRATEGY_EDITOR_GAME_RUN_FINISHED,
     payload: {
         battleResult,
     }
+});
+
+export const gameSeriesFinished = (payload: BattleSeriesResult): AnyAction => ({
+    type: STRATEGY_EDITOR_GAME_SERIES_FINISHED,
+    payload
 });

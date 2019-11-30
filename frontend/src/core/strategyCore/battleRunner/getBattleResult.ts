@@ -10,6 +10,7 @@ import {WorldObjectType} from "../enums/worldObjectType";
 import {getShip} from "../utils/worldModelUtils";
 import {Team} from "./IGameLevel";
 import {Ship} from "../models/ship";
+import {countTeamsDiamonds, findTeamsReachedTheDestination} from "./utils/battleResultUtils";
 
 export interface IGetBattleResultParams {
     world: World,
@@ -37,6 +38,8 @@ export const getBattleResult = (params: IGetBattleResultParams): BattleResult =>
             return getTeamJustCollectResult(params);
         case BattleType.TeamGetThereFirst:
             return teamGetThereFirst(params);
+        case BattleType.TeamCollectAndGetThere:
+            return teamCollectAndGetThere(params);
         default:
             throw invalidProgramError(`Unknown battle type ${params.battleType}`);
     }
@@ -148,18 +151,28 @@ const getGeThereFirst: BattleResultGetter = params => {
     return addHistory({type: BattleResultType.Draw, between: params.world.ships.map(s => s.id).toSet()}, params);
 };
 
-const findNameOfTeamsInPositions = (teams: List<Team>, positions: List<Position>, world: World): List<string> =>
-    teams
-        .map(team => ({...team, members: team.members.map(id => getShip(world, id))}))
-        .filter(team => team.members.every(ship => !!ship && isShipOnSomeFinalPosition(ship, positions)))
-        .map(team => team.name);
-
 const teamGetThereFirst: BattleResultGetter = params => {
     const finalPositions = params.battleEndParams.finishPositions!;
-    const presentTeamNames = findNameOfTeamsInPositions(params.battleEndParams.teams!, finalPositions, params.world);
+    const presentTeamNames = findTeamsReachedTheDestination(params.world, finalPositions, params.battleEndParams.teams!)
+        .map(team => team.name);
 
     if (presentTeamNames.size > 1)
         throw invalidProgramError('There cannot be more than one ship in the final position.');
+
+    if (presentTeamNames.size === 1)
+        return addHistory({type: BattleResultType.Decisive, winner: presentTeamNames.get(0)!}, params);
+
+    return addHistory({type: BattleResultType.Draw, between: presentTeamNames.toSet()}, params);
+};
+
+const teamCollectAndGetThere: BattleResultGetter = params => {
+    const finalPositions = params.battleEndParams.finishPositions!;
+    const presentTeamNames = findTeamsReachedTheDestination(params.world, finalPositions, params.battleEndParams.teams!)
+        .filter(team => countTeamsDiamonds(team, params.world) >= params.battleEndParams.minimumNumberOfDiamonds!)
+        .map(team => team.name);
+
+    if (presentTeamNames.size > 1)
+        throw invalidProgramError('There cannot be more than one ship in the final position with all diamonds.');
 
     if (presentTeamNames.size === 1)
         return addHistory({type: BattleResultType.Decisive, winner: presentTeamNames.get(0)!}, params);

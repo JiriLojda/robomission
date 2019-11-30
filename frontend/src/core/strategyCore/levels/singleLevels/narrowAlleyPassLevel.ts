@@ -13,6 +13,7 @@ import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {starWithDiamondsLevel} from "./starWithDiamondsLevel";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -47,5 +48,6 @@ export const narrowAlleyPassLevel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === narrowPathWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

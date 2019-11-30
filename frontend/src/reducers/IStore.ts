@@ -5,6 +5,7 @@ import {World} from "../core/strategyCore/models/world";
 import {BattleResult} from "../core/strategyCore/battleRunner/BattleResult";
 import {List} from "immutable";
 import {IGameLevel} from "../core/strategyCore/battleRunner/IGameLevel";
+import {BattleSeriesResult} from "./strategyEditor/internalReducers/battleSeriesResult";
 
 export interface IStore {
     readonly strategyEditor: IStrategyEditor;
@@ -23,4 +24,5 @@ export interface IStrategyEditor {
     readonly battleResult: BattleResult | null;
     readonly drawingSpeed: number;
     readonly isGameRunning: boolean;
+    readonly battleSeriesResult: BattleSeriesResult;
 }

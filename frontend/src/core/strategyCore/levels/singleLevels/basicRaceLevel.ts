@@ -13,6 +13,7 @@ import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {narrowAlleyPassLevel} from "./narrowAlleyPassLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
 
 const shipIds = raceBasicWorldShipIds.reverse();
 
@@ -46,5 +47,6 @@ export const basicRaceLevel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === raceBasicWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

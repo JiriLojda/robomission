@@ -30,12 +30,16 @@ export interface IWinModal {
     readonly nextLevelName: string | undefined;
 }
 
-type WorldObjectPlacement = {
+export type WorldObjectPlacement = {
     readonly position: Position;
     readonly worldObject: WorldObject;
 }
 
 export type WorldObjectGenerator = (world: World) => List<WorldObjectPlacement>;
+export type RetryPolicy = {
+    readonly winsRequired: number;
+    readonly maxRounds: number;
+};
 
 export interface IGameLevel {
     readonly name: string;
@@ -54,6 +58,7 @@ export interface IGameLevel {
     readonly additionalValidators: List<RoboAstValidator>;
     readonly additionalObjectGenerators: List<WorldObjectGenerator>;
     readonly isDecisiveWin: (winner: string) => boolean;
+    readonly retryPolicy: RetryPolicy;
 }
 
 export const findGroupsWithoutAst = (level: IGameLevel): List<Set<ShipId>> => {

@@ -9,8 +9,8 @@ import {Dispatch} from "redux";
 import {
     editorInitialized,
     editorReseted,
-    gameRunFinished,
-    gameRunStarted,
+    gameRunFinished, gameRunPartialResultGot,
+    gameRunStarted, gameSeriesFinished,
     helpHidden,
     mapShowToggled,
     roboAstChanged,
@@ -46,8 +46,10 @@ const mapDispatchToProps = (dispatch: Dispatch<IStore>, ownProps: INewEditingPro
     onCodeSubmit: ownProps.onCodeSubmit,
     worldChanged: newWorld => dispatch(worldChanged(newWorld)),
     onBattleRunFinished: newBattleResult => dispatch(gameRunFinished(newBattleResult)),
+    onBattleRunPartialResultGot: newBattleResult => dispatch(gameRunPartialResultGot(newBattleResult)),
     onBattleRunStarted: world => dispatch(gameRunStarted(world)),
     reset: originalWorld => dispatch(editorReseted(originalWorld)),
+    onBattleSeriesFinished: result => dispatch(gameSeriesFinished(result)),
     initializeStore: level => {
         dispatch(editorInitialized(level, ownProps.showMapAndHelpOnMount, ownProps.showMapAndHelpOnMount));
 

@@ -411,6 +411,7 @@ const messages: {[index: string]: JSX.Element | string} = {
   'InvalidProgramReason.CustomLevelMessage': 'V tomto levelu',
 
   'level.category.introduction': 'Úvod',
+  'level.category.introduction2': 'Úvod do pokročilých konceptů',
   'level.category.distributed': 'Úvod do distribuovaného programování',
   'level.category.others': 'Ostatní',
   'level.category.justOthers': 'Jen ostatní',
@@ -418,6 +419,7 @@ const messages: {[index: string]: JSX.Element | string} = {
   'battleType.shoot': 'střílej',
   'battleType.collect': 'sbírej',
   'battleType.race': 'závod',
+  'battleType.collectAndGetThere': 'sbírej a závoď',
 
   'editor.standardWinModalMessageContinued': 'Gratulujeme, právě si vyhrál. Je čas oslavovat další úrovní. ;)',
   'editor.standardWinModalMessageFinal': 'Skvělé, právě jsi vyhrál závěrečnou úroveň. Podívej se do hlavní nabídky na další výzvy.',

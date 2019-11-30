@@ -22,6 +22,7 @@ import {HelpTranslationKey} from "../../../../../../localization/helpTranslation
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
 import {firstIfsLevel} from "./firstIfsLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 
 const shipIds = firstRepeatWorldShipIds;
 
@@ -58,5 +59,6 @@ export const firstRepeatLevel: IGameLevel = {
     additionalValidators,
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === firstRepeatWorldShipIds[0],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

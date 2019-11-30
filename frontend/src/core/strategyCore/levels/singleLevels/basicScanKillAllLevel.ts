@@ -12,6 +12,7 @@ import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {basicRaceLevel} from "./basicRaceLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
 
 const shipIds = basicKillAllWorldShipIds.reverse();
 
@@ -40,4 +41,5 @@ export const basicScanKillAllLevel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === basicKillAllWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };

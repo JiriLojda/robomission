@@ -12,6 +12,8 @@ export enum BattleType {
     TeamGetThereFirst = 'teamGetThereFirst',
     TeamKillAll = 'teamKillAll',
     TeamJustCollect = 'teamJustCollect',
+
+    TeamCollectAndGetThere = 'teamCollectAndGetThere',
 }
 
 export const getBattleTypeDisplayName = (type: BattleType): string => {
@@ -27,6 +29,8 @@ export const getBattleTypeDisplayName = (type: BattleType): string => {
         case BattleType.GetThereFirstOrKill:
         case BattleType.TeamGetThereFirst:
             return translate('battleType.race');
+        case BattleType.TeamCollectAndGetThere:
+            return translate('battleType.collectAndGetThere');
         default:
             throw invalidProgramError(`Unknown battle type ${type}`);
     }

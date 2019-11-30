@@ -11,6 +11,7 @@ import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedH
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
+import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
 
 const behaviours: IGameBehaviours = {
     mapBorderCollisionResolver: explosionCollisionResolver,
@@ -39,5 +40,6 @@ export const starWithDiamondsLevel: IGameLevel = {
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === starWithDiamondsWorldShipIds[1],
+    retryPolicy: createSingleRunRetryPolicy(),
 };
 

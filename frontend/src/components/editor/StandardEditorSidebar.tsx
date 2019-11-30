@@ -5,10 +5,10 @@ import {
     getInvalidProgramReasonDisplayName,
     InvalidProgramReason
 } from "../../core/strategyCore/enums/invalidProgramReason";
-import {Toggle, Slider} from "material-ui";
+import {Slider, Toggle} from "material-ui";
 import {ErrorMessage} from "../uiComponents/ErrorMessage";
 import {getUserProgramErrorDisplayName, UserProgramError} from "../../core/strategyCore/enums/userProgramError";
-import {ResultMessage} from "../uiComponents/ResultMessage";
+import {ResultMessage, ResultMessageType} from "../uiComponents/ResultMessage";
 import React from "react";
 import {translate} from "../../localization";
 import {IRoboAst} from "../../core/strategyCore/models/programTypes";
@@ -17,6 +17,7 @@ import {
     getBattleResultMessage,
     getMessageTypeForResult
 } from "../../core/strategyCore/battleRunner/BattleResult";
+import {BattleSeriesResult} from "../../reducers/strategyEditor/internalReducers/battleSeriesResult";
 
 export interface IStandardEditorSidebarDataProps {
     readonly world: World;
@@ -29,6 +30,7 @@ export interface IStandardEditorSidebarDataProps {
     readonly battleResult: BattleResult | null;
     readonly canRunBattle: boolean;
     readonly drawingSpeed: number;
+    readonly battleSeriesResult: BattleSeriesResult;
 }
 
 export interface IStandardEditorSidebarCallbackProps {
@@ -64,6 +66,18 @@ const getMapElementHeight = (world: World, width: number) =>
 const calculateControlsWidth = (world: World, width: number) =>
     width - getMapWidth(world) - 30 < minControlsSize ?
         '100%' : `calc(100% - ${getMapWidth(world)}px)`;
+
+const getBattleSeriesMessageType = ({wonRuns, requiredWins, drawRuns, lostRuns}: BattleSeriesResult): ResultMessageType =>
+    wonRuns >= requiredWins ? ResultMessageType.Success : ResultMessageType.Bad;
+
+const createBattleSeriesMessage = ({wonRuns, requiredWins, drawRuns, lostRuns}: BattleSeriesResult): string | undefined => {
+    if (wonRuns === 0 && requiredWins === 0 && drawRuns === 0 && lostRuns === 0)
+        return undefined;
+    if (wonRuns >= requiredWins)
+        return `Great, you just won. successful rounds: ${wonRuns}, draw rounds: ${drawRuns}, lost rounds: ${lostRuns}.`;
+
+    return `No worries, try it again later. Result: won ${wonRuns}, draw ${drawRuns}, lost ${lostRuns}.`;
+}
 
 export class StandardEditorSidebar extends React.PureComponent<Props, IStandardEditorSidebarState> {
     constructor(props: Props) {
@@ -196,6 +210,9 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                     <ResultMessage
                         type={getMessageTypeForResult(this.props.battleResult || undefined, this.props.isDecisiveWin)}>
                         {getBattleResultMessage(this.props.battleResult || undefined, this.props.isDecisiveWin)}
+                    </ResultMessage>
+                    <ResultMessage type={getBattleSeriesMessageType(this.props.battleSeriesResult)}>
+                        {createBattleSeriesMessage(this.props.battleSeriesResult)}
                     </ResultMessage>
                 </div>
             </div>
