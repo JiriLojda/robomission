@@ -6,10 +6,8 @@ import {World} from "../../../../models/world";
 import {convertReadableMapToWorld} from "../../../utils/convertReadableMapToWorld";
 
 const map = [
-    ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'g-P'],
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'r-A'],
-    ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
 ];
 
 export const diamondsCountingWorldShipIds = [

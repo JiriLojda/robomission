@@ -181,6 +181,18 @@ const distributedIntro2Message = 'Again, you have to get both ships to their res
     'The only difference is that the ships have different paths from each other. ' +
     'That suggests, you will have to use some branching.';
 
+const diamondsCountingTitle = 'Collect 3 diamonds and get back';
+const diamondsCountingMessage = 'In this level series we will explore more advanced concepts. ' +
+    'Lets start with variables. You can set variable using set variable block or assignment in code like this "x = 0". ' +
+    'To read the saved variable use get variable block. You can read a variable either as a string or as a number. ' +
+    'Using respective block. In the code you don\'t have to worry about that. Just write the variable name where ' +
+    'you want to use it and the code will determine from the context how to read the variable. ' +
+    'Your goal in this level is to collect at least 3 diamonds and get back to your starting point with them. ' +
+    'The diamonds will randomly generate in front of you, so you will probably have to count the diamonds ' +
+    'you have collected so far in some variable so you know whether you can return already. ' +
+    'To successfully end this level you have to win 3 times in a row. The battle will run 3 times automatically. ' +
+    'Whoever is faster ... wins.';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -207,4 +219,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
     [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
     [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
+    [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
 ]);

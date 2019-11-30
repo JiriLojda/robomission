@@ -35,7 +35,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver([]),
 };
 const help = List([
-    createTranslatedHelp(HelpTranslationKey.FirstChallenge),
+    createTranslatedHelp(HelpTranslationKey.DiamondsCounting),
 ]);
 
 const additionalValidators: List<RoboAstValidator> = List([
@@ -45,10 +45,10 @@ const additionalValidators: List<RoboAstValidator> = List([
 
 const tileGroups = List([
     generateRectangularPositionGroup(
-        {upperLeft: new Position({x: 1, y: 1}), downRight: new Position({x: 10, y: 1})}
+        {upperLeft: new Position({x: 1, y: 0}), downRight: new Position({x: 10, y: 0})}
         ),
     generateRectangularPositionGroup(
-        {upperLeft: new Position({x: 1, y: 2}), downRight: new Position({x: 10, y: 2})}
+        {upperLeft: new Position({x: 1, y: 1}), downRight: new Position({x: 10, y: 1})}
     ),
 ]);
 const additionalObjectGenerators: List<WorldObjectGenerator> = List([
@@ -56,14 +56,14 @@ const additionalObjectGenerators: List<WorldObjectGenerator> = List([
 ]);
 
 const finalPositions = [
+    new Position({x: 11, y: 0}),
     new Position({x: 11, y: 1}),
-    new Position({x: 11, y: 2}),
 ];
 
 const teams = createOnTheirOwnTeams(shipIds);
 
 export const diamondsCountingLevel: IGameLevel = {
-    name: findTranslatedName(HelpTranslationKey.FirstChallenge),
+    name: findTranslatedName(HelpTranslationKey.DiamondsCounting),
     urlSlug: 'diamonds-counting',
     battleType: BattleType.TeamCollectAndGetThere,
     battleParams: {turnsRan: 0, maxTurns: 38, finishPositions: List(finalPositions), minimumNumberOfDiamonds: 3, teams},

@@ -462,6 +462,7 @@ const levelNames: [HelpTranslationKey, string][] = [
     [HelpTranslationKey.StarWithDiamonds, 'Star with diamonds'],
     [HelpTranslationKey.DistributedIntro, 'Your first distributed program'],
     [HelpTranslationKey.DistributedIntroLevel2, 'Your second distributed program'],
+    [HelpTranslationKey.DiamondsCounting, 'Diamonds counting'],
 ];
 
 const registerLevelNames = () => {

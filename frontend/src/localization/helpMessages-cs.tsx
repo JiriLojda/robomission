@@ -181,6 +181,18 @@ const distributedIntro2Message = 'Zde opět musíte dostat obě lodě na jejich 
     'Jediný rozdíl s předchozím kolem je, že obě lodě mají rozlišné trasy. ' +
     'To nám napovídá, že bude potřeba použít nějaké větvení.';
 
+const diamondsCountingTitle = 'Seber š diamanty a dostaň se zpět';
+const diamondsCountingMessage = 'V této sérii levelů prozkoumáme některé pokročilé koncepty. ' +
+    'Začneme proměnnýma. Proměnnou vytvoříte pomocí bloku "nastav na" nebo v kódu pomocí rovná se ' +
+    'například takto "x = 0". Proměnnou pak můžete přečíst pomocí bloku "vezmi jako...". ' +
+    'Proměnnou můžete přečíst jako číslo nebo řetězec. V kódu toto rozlišovat nemusíte. Napište název proměnné ' +
+    'tam kde ji chcete načíst a podle kontextu kód pozná jestli je potřeba číslo nebo řetězec. ' +
+    'Vaším cílem zde je posbírat alespoň 3 diamanty a vrátit se s nimi co nejdříve zpět na vyznačené pole. ' +
+    'Diamanty se na mapě náhodně vygenerují, takže bude potřeba počítat kolik diamantů jste už posbírali. ' +
+    'Tak budete vědět kdy je už vhodné se vrátit. ' +
+    'K úspěšnému ukončení této úrovně musíte vyhrát třikrát v řadě. Bitva se automaticky spustí třikrát. ' +
+    'Ten rychlejší vyhrává.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
@@ -206,4 +218,5 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.EmptyWorldDuel, {title: emptyWorldDuelTitle, message: emptyWorldDuelMessage}],
     [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
     [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
+    [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
 ]);
