@@ -16,6 +16,7 @@ import {translate} from "../../../localization";
 import {distributedIntroLevel} from "./singleLevels/distributedLevels/distributedIntroLevel";
 import {distributedIntroLevel2} from "./singleLevels/distributedLevels/distributedIntroLevel2";
 import {diamondsCountingLevel} from "./singleLevels/introductoryLevels/advancedConcepts/diamondsCountingLevel";
+import {labyrinthLevel} from "./singleLevels/introductoryLevels/advancedConcepts/labyrinthLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -30,6 +31,7 @@ const introductoryLevels = [
 
 const advancedIntroductoryLevels = [
     diamondsCountingLevel,
+    labyrinthLevel,
 ];
 
 const distributedLevels = [

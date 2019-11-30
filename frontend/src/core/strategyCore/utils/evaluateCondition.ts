@@ -105,6 +105,7 @@ const evaluateBasicComparator = <T>(leftValue: T, rightValue: T, comparator: Com
         case Comparator.Equal:
             return leftValue === rightValue;
         case Comparator.NonEqual:
+            console.log('comparing left: ', leftValue, ', right: ', rightValue);
             return leftValue !== rightValue;
         case Comparator.Bigger:
             return leftValue > rightValue;
@@ -240,7 +241,7 @@ export const getObjectFromStatement = (statement: IStatement, context: IRuntimeC
             if (typeof foundShipId !== 'string')
                 throw invalidProgramError(`Expected type string but ${typeof foundShipId} of ${JSON.stringify(foundShipId)} found.`);
 
-            const ship = getShip(world, shipId);
+            const ship = getShip(world, foundShipId);
             if (!ship)
                 return UserProgramError.ProvidedShipIdDoesNotExist;
 
@@ -404,6 +405,7 @@ const executeFncIfNeeded = <T extends number | boolean | string>(
         const parameters = getCallParametersValues(fncCall, context, world, shipId);
         if (isUserProgramError(parameters) || parameters === evaluationInProgress)
             return parameters;
+        console.warn('calling fnc ', fncCall.name, ' with params: ', parameters);
         setSystemVariable(
             context,
             SystemVariableName.FunctionExecutionRequest,
