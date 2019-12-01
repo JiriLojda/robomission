@@ -378,7 +378,7 @@ export class StrategyEditor extends React.PureComponent<Props, IState> {
         } else if (result.type === BattleResultType.Decisive) {
             this._incrementLostRuns();
         } else {
-            this.props.onBattleRunFinished(result);
+            return this.props.onBattleRunFinished(result);
         }
 
         const {wonRuns, lostRuns, drawRuns} = this.state.runState;
