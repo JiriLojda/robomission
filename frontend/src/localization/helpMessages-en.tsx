@@ -201,6 +201,10 @@ const labyrinthMessage = 'Now you have to get to the green tile. But it is not a
     'Wait 2 turns for your guards to catch up. Turn left and follow the same path that is 1 step shorter ' +
     'again and again, until you are there.';
 
+const labyrinth2Title = 'Go through a classic labyrinth';
+const labyrinth2Message = 'This is a classic labyrinth. Your goal is to get your ship to the green tile. ' +
+    'You are limited to 15 blocks. Use them carefully.';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -229,4 +233,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
     [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
+    [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
 ]);

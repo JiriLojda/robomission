@@ -25,4 +25,5 @@ export enum HelpTranslationKey {
     DistributedIntroLevel2 = 'DistributedIntroLevel2',
     DiamondsCounting = 'DiamondsCounting',
     Labyrinth = 'Labyrinth',
+    Labyrinth2Level = 'Labyrinth2Level',
 }

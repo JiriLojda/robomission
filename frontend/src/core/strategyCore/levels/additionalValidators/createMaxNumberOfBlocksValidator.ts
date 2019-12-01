@@ -3,10 +3,13 @@ import {IRoboAst, IStatement} from "../../models/programTypes";
 import {getValidatorResult} from "../../validator/programValidationUtils";
 import {InvalidProgramReason} from "../../enums/invalidProgramReason";
 
-const countBlocks = (statement: IStatement): number => !statement.body ? 1 :
-    statement.body
-        .map(b => countBlocks(b.statement))
-        .reduce((sum, current) => sum + current, 0) + 1;
+const countBlocks = (statement: IStatement): number => {
+    const elseCount = statement.orelse ? countBlocks(statement.orelse.statement) - 1 : 0;
+    return !statement.body ? 1 + elseCount :
+        statement.body
+            .map(b => countBlocks(b.statement))
+            .reduce((sum, current) => sum + current, elseCount) + 1;
+};
 
 const countRoboAstBlocks = (roboAst: IRoboAst): number =>
     roboAst

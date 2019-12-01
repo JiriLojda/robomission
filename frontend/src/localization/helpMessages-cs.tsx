@@ -201,6 +201,10 @@ const labyrinthMessage = 'Tvůj jediný úkol je dostat se na zelené pole. Nen�
     'Počkejte 2 kola na své stráže. Otočte se doleva a následujte stejnou cestu, která je o jedno kratší. ' +
     'tak dlouho dokola, až budete v cíli.';
 
+const labyrinth2Title = 'Projděte se klasickým bludištěm';
+const labyrinth2Message = 'Vaším úkolem je projít tímto klasickým bludištěm a dostat se na zelené pole. ' +
+    'Jste omezeni na použití pouze 15 ti bloků, tak je využijte opatrně.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
@@ -228,4 +232,5 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
     [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
+    [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
 ]);
