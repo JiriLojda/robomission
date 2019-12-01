@@ -13,6 +13,7 @@ import {createStandardObjectCollisionResolver} from "../../../gameBehaviours/cre
 import {distributedIntroLevel2World} from "../../worlds/distributedLevelsWorlds/distributedIntroLevel2World";
 import {createSingleRunRetryPolicy} from "../../utils/createSingleRunRetryPolicy";
 import {twoPlayersShipIds} from "../../constants/standardShipIds";
+import {teamShootingLevel} from "./teamShootingLevel";
 
 const teams = List([{name: 'player', members: twoPlayersShipIds}]);
 
@@ -42,7 +43,7 @@ export const distributedIntroLevel2: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, twoPlayersShipIds.toArray()),
     help,
-    winModal: createWinModalWithStandardMessage(),
+    winModal: createWinModalWithStandardMessage(teamShootingLevel),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === 'player',

@@ -213,6 +213,22 @@ const simonSaysMessage = 'You will have to follow instruction to get to the gree
     'There is one catch though. Every two turn up you have to turn your ship around and every two turns down, ' +
     'you have to turn you ship back and forward again (but back in the other direction).';
 
+const teamShootingTitle = 'Cooperate to kill the enemy';
+const teamShootingMessage = 'Now lets try to make both of your ships cooperate together. ' +
+    'Your goal is to kill the enemy ship. The problem is it is hiding itself. The enemy will keep shooting so ' +
+    'you cannot go in front of him, but there is no other way. Try to figure out how the two of your ships ' +
+    'can bring him down.';
+
+const teamShootingMessage2 = 'Did you notice the small green meteorites near the enemy? ' +
+    'They can be pushed. While they can be destroyed by a shot, the shot will not destroy anything behind it. ' +
+    'Can you use it? ;-)';
+
+const teamShootingMessage3 = 'You can distinguish your ships by their position. Try creating an if ' +
+    'block with condition on y coordinate of ships current position (relative position with both x and y equal to 0). ' +
+    'If the y coordinate is smaller then 2, the current ship has to be the left one. So anything you put inside ' +
+    'the if\'s body will be executed only on the left ship. On top of that anything you put into the else body ' +
+    'will be executed only on the other one. This way you can make the ships do different actions.';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -243,4 +259,7 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
     [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
     [HelpTranslationKey.SimonSays, {title: simonSaysTitle, message: simonSaysMessage}],
+    [HelpTranslationKey.TeamShooting, {title: teamShootingTitle, message: teamShootingMessage}],
+    [HelpTranslationKey.TeamShooting2, {title: teamShootingTitle, message: teamShootingMessage2}],
+    [HelpTranslationKey.TeamShooting3, {title: teamShootingTitle, message: teamShootingMessage3}],
 ]);

@@ -466,6 +466,7 @@ const levelNames: [HelpTranslationKey, string][] = [
   [HelpTranslationKey.Labyrinth2Level, 'Labyrint'],
   [HelpTranslationKey.Labyrinth, 'Druhý labyrint'],
   [HelpTranslationKey.SimonSays, 'Simon říká'],
+  [HelpTranslationKey.TeamShooting, 'Týmová střelba'],
 ];
 
 const registerLevelNames = () => {

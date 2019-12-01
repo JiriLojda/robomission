@@ -213,6 +213,23 @@ const simonSaysMessage = 'Budete muset následovat instrukce, aby jste se dostal
     'Má to ale jeden háček. Po dvou úspěšných otočeních nahoru se musí vaše loď otočit dokola.' +
     'Po dvou úspěšných otočení dolů se musí vaše loď otočit dozadu a zpět dopředu, ale v opačném směru.';
 
+const teamShootingTitle = 'Spolupracuj ke zničení soupeře';
+const teamShootingMessage = 'Teď se pokusíme přimět lodě aby spolu spolupracovaly. ' +
+    'Váš úkol je zničit nepřátelskou loď. Problém je, že nepřítel se ukrývá. ' +
+    'Jedinou cestu která k němu vede si pečlivě stráží. Pokus se ho s pomocí svých dvou lodí zničit. ' +
+    'Opět jeden program ovládá obě lodě a musí spolupracovat.';
+
+const teamShootingMessage2 = 'Všimněte si zelených meteoritů poblíž nepřítele. ' +
+    'Pamatujete si, že zelené předměty mohou být tlačeny raketkou. ' +
+    'Zároveň meteority sice mohou být střelou zničeny, ale nic za nima není, meteorit sřelu zastaví. ' +
+    'Můžete toto nějak využít? ;-)';
+
+const teamShootingMessage3 = 'Lodě můžete rozlišit podle jejich pozice. Zkuste vytvořit "pokud" ' +
+    'blok s podmínkou na aktuální pozici lodě. Konkrétně souřadnici y (relativní pozice se souřadnicí x i y rovno 0). ' +
+    'Pokud je y menší než 2, pak levá loď je ta aktuální. Takže cokoliv co dáte dovnitř tohoto "pokud" bloku ' +
+    'provede pouze levá loď. Navíc cokoliv co dáto dovnitř "jinak" části tohoto "pokud" bloku bude spuštěno jen ' +
+    'na pravá raketce. Takto můžete spouštět různé povely na různých raketkách.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
@@ -242,4 +259,7 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
     [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
     [HelpTranslationKey.SimonSays, {title: simonSaysTitle, message: simonSaysMessage}],
+    [HelpTranslationKey.TeamShooting, {title: teamShootingTitle, message: teamShootingMessage}],
+    [HelpTranslationKey.TeamShooting2, {title: teamShootingTitle, message: teamShootingMessage2}],
+    [HelpTranslationKey.TeamShooting3, {title: teamShootingTitle, message: teamShootingMessage3}],
 ]);

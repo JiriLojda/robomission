@@ -27,4 +27,7 @@ export enum HelpTranslationKey {
     Labyrinth = 'Labyrinth',
     Labyrinth2Level = 'Labyrinth2Level',
     SimonSays = 'SimonSays',
+    TeamShooting = 'TeamShooting',
+    TeamShooting2 = 'TeamShooting2',
+    TeamShooting3 = 'TeamShooting3',
 }
