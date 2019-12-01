@@ -25,6 +25,7 @@ import {
     labyrinthLeftHandPlayerStrategy,
     labyrinthRightHandPlayerStrategy
 } from "../../../strategies/introduction/advancedConcepts/labyrinthStrategies";
+import {simonSaysLevel} from "./simonSaysLevel";
 
 const shipIds = standardPlayerShipIds.take(1).concat(standardAiShipIds.take(2)).toArray();
 
@@ -64,7 +65,7 @@ export const labyrinthLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, Object.values(categoryNames).filter(n => n !== categoryNames.functions)),
     help,
-    winModal: createWinModalWithStandardMessage(),
+    winModal: createWinModalWithStandardMessage(simonSaysLevel),
     additionalValidators,
     additionalObjectGenerators,
     isDecisiveWin: winner => winner === shipIds[0],
