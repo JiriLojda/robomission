@@ -23,6 +23,7 @@ import {generateRectangularPositionGroup} from "../../../utils/generateRectangul
 import {diamondsCountingStrategy} from "../../../strategies/introduction/advancedConcepts/diamondsCountingLevelStrategy";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
 import {singlePlayerPlayerStartsShipIds} from "../../../constants/standardShipIds";
+import {labyrinth2Level} from "./labyrinth2Level";
 
 const shipIds = singlePlayerPlayerStartsShipIds.toArray();
 
@@ -72,7 +73,7 @@ export const diamondsCountingLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, Object.values(categoryNames).filter(n => n !== categoryNames.functions)),
     help,
-    winModal: createWinModalWithStandardMessage(),
+    winModal: createWinModalWithStandardMessage(labyrinth2Level),
     additionalValidators,
     additionalObjectGenerators,
     isDecisiveWin: winner => winner === shipIds[0],

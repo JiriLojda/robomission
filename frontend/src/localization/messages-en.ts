@@ -463,8 +463,8 @@ const levelNames: [HelpTranslationKey, string][] = [
     [HelpTranslationKey.DistributedIntro, 'Your first distributed program'],
     [HelpTranslationKey.DistributedIntroLevel2, 'Your second distributed program'],
     [HelpTranslationKey.DiamondsCounting, 'Diamonds counting'],
-    [HelpTranslationKey.Labyrinth, 'Labyrinth'],
-    [HelpTranslationKey.Labyrinth2Level, 'Second labyrinth'],
+    [HelpTranslationKey.Labyrinth, 'Second Labyrinth'],
+    [HelpTranslationKey.Labyrinth2Level, 'Labyrinth'],
 ];
 
 const registerLevelNames = () => {

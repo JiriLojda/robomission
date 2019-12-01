@@ -32,8 +32,8 @@ const introductoryLevels = [
 
 const advancedIntroductoryLevels = [
     diamondsCountingLevel,
-    labyrinthLevel,
     labyrinth2Level,
+    labyrinthLevel,
 ];
 
 const distributedLevels = [

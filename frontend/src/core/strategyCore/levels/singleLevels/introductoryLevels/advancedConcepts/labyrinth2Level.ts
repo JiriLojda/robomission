@@ -21,6 +21,7 @@ import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsVal
 import {standardPlayerShipIds} from "../../../constants/standardShipIds";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 import {labyrinth2World} from "../../../worlds/intorductoryLevelsWorlds/advancedConcepts/labyrinth2World";
+import {labyrinthLevel} from "./labyrinthLevel";
 
 const shipIds = standardPlayerShipIds.take(1).toArray();
 
@@ -60,7 +61,7 @@ export const labyrinth2Level: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, Object.values(categoryNames).filter(n => n !== categoryNames.functions)),
     help,
-    winModal: createWinModalWithStandardMessage(),
+    winModal: createWinModalWithStandardMessage(labyrinthLevel),
     additionalValidators,
     additionalObjectGenerators,
     isDecisiveWin: winner => winner === shipIds[0],
