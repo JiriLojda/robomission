@@ -21,6 +21,7 @@ import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPol
 import {singlePlayerAiStartsShipIds} from "../../../constants/standardShipIds";
 import {firstRepeatLevel} from "./firstRepeatLevel";
 import {noFunctionsValidator} from "../../../additionalValidators/noFunctionsValidator";
+import {createMaxNumberOfBlocksValidator} from "../../../additionalValidators/createMaxNumberOfBlocksValidator";
 
 const shipIds = singlePlayerAiStartsShipIds.toArray();
 
@@ -41,7 +42,8 @@ const help = List([
 ]);
 
 const additionalValidators = List([
-    noFunctionsValidator
+    noFunctionsValidator,
+    createMaxNumberOfBlocksValidator(8),
 ]);
 
 export const basicRaceLevel: IGameLevel = {
