@@ -1,16 +1,16 @@
-import {Ship, ShipColor} from "../../models/ship";
-import {Position} from "../../models/position";
-import {Direction} from "../../enums/direction";
-import {World} from "../../models/world";
-import {convertReadableMapToWorld} from "../utils/convertReadableMapToWorld";
-import {standardAiShipIds, standardPlayerShipIds} from "../constants/standardShipIds";
+import {Ship, ShipColor} from "../../../../models/ship";
+import {Position} from "../../../../models/position";
+import {Direction} from "../../../../enums/direction";
+import {World} from "../../../../models/world";
+import {convertReadableMapToWorld} from "../../../utils/convertReadableMapToWorld";
+import {standardAiShipIds, standardPlayerShipIds} from "../../../constants/standardShipIds";
 
 const map = [
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-P'],
     ['g-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
     ['kG', 'kG', 'kG', 'kG', 'kG', 'kG', 'kG'],
-    ['r-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
+    ['g-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-A'],
     ['k-', 'k-', 'k-', 'k-', 'k-', 'k-', 'k-'],
 ];

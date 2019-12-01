@@ -1,7 +1,7 @@
 import {List} from "immutable";
 import {IGameLevel} from "../battleRunner/IGameLevel";
 import {basicScanKillAllLevel} from "./singleLevels/basicScanKillAllLevel";
-import {basicRaceLevel} from "./singleLevels/basicRaceLevel";
+import {basicRaceLevel} from "./singleLevels/introductoryLevels/basicConcepts/basicRaceLevel";
 import {narrowAlleyPassLevel} from "./singleLevels/narrowAlleyPassLevel";
 import {starWithDiamondsLevel} from "./singleLevels/starWithDiamondsLevel";
 import {flyLeftShootLevel} from "./singleLevels/introductoryLevels/basicConcepts/FlyLeftShootLevel";
@@ -24,6 +24,7 @@ const introductoryLevels = [
     flyLeftShootLevel,
     turnPickUpLevel,
     firstChallengeLevel,
+    basicRaceLevel,
     firstRepeatLevel,
     firstIfsLevel,
     secondIfsLevel,
@@ -45,7 +46,6 @@ const distributedLevels = [
 
 const otherLevels = [
     basicScanKillAllLevel,
-    basicRaceLevel,
     narrowAlleyPassLevel,
     starWithDiamondsLevel,
 ];

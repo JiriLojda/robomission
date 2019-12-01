@@ -18,10 +18,10 @@ import {justShootingStrategy} from "../../../../predefinedStrategies/justShootin
 import {createTranslatedHelp, findTranslatedName} from "../../../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../../../utils/createWinModal";
-import {firstRepeatLevel} from "./firstRepeatLevel";
 import {createStandardObjectCollisionResolver} from "../../../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../../../utils/createSingleRunRetryPolicy";
 import {singlePlayerPlayerStartsShipIds} from "../../../constants/standardShipIds";
+import {basicRaceLevel} from "./basicRaceLevel";
 
 const shipIds = singlePlayerPlayerStartsShipIds.toArray();
 
@@ -53,7 +53,7 @@ export const firstChallengeLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: filterCategories(allStrategyCategories, [categoryNames.commands]),
     help,
-    winModal: createWinModalWithStandardMessage(firstRepeatLevel),
+    winModal: createWinModalWithStandardMessage(basicRaceLevel),
     additionalValidators,
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === shipIds[0],

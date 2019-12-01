@@ -9,11 +9,11 @@ import {addShipIdConstants, allStrategyCategories} from "../../constants/strateg
 import {createTranslatedHelp, findTranslatedName} from "../utils/findTranslatedHelp";
 import {HelpTranslationKey} from "../../../../localization/helpTranslationKey";
 import {createWinModalWithStandardMessage} from "../utils/createWinModal";
-import {basicRaceLevel} from "./basicRaceLevel";
 import {createSelectiveShotResolver} from "../../gameBehaviours/createSelectiveShotResolver";
 import {createStandardObjectCollisionResolver} from "../../gameBehaviours/createStandardObjectCollisionResolver";
 import {createSingleRunRetryPolicy} from "../utils/createSingleRunRetryPolicy";
 import {singlePlayerAiStartsShipIds} from "../constants/standardShipIds";
+import {narrowAlleyPassLevel} from "./narrowAlleyPassLevel";
 
 const shipIds = singlePlayerAiStartsShipIds.toArray();
 
@@ -38,7 +38,7 @@ export const basicScanKillAllLevel: IGameLevel = {
     gameBehaviours: behaviours,
     toolbox: addShipIdConstants(allStrategyCategories, shipIds),
     help,
-    winModal: createWinModalWithStandardMessage(basicRaceLevel),
+    winModal: createWinModalWithStandardMessage(narrowAlleyPassLevel),
     additionalValidators: List(),
     additionalObjectGenerators: List(),
     isDecisiveWin: winner => winner === shipIds[1],
