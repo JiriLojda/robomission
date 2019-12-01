@@ -18,6 +18,7 @@ import {distributedIntroLevel2} from "./singleLevels/distributedLevels/distribut
 import {diamondsCountingLevel} from "./singleLevels/introductoryLevels/advancedConcepts/diamondsCountingLevel";
 import {labyrinthLevel} from "./singleLevels/introductoryLevels/advancedConcepts/labyrinthLevel";
 import {labyrinth2Level} from "./singleLevels/introductoryLevels/advancedConcepts/labyrinth2Level";
+import {simonSaysLevel} from "./singleLevels/introductoryLevels/advancedConcepts/simonSaysLevel";
 
 const introductoryLevels = [
     flyLeftShootLevel,
@@ -34,6 +35,7 @@ const advancedIntroductoryLevels = [
     diamondsCountingLevel,
     labyrinth2Level,
     labyrinthLevel,
+    simonSaysLevel,
 ];
 
 const distributedLevels = [

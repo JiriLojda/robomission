@@ -205,6 +205,14 @@ const labyrinth2Title = 'Go through a classic labyrinth';
 const labyrinth2Message = 'This is a classic labyrinth. Your goal is to get your ship to the green tile. ' +
     'You are limited to 15 blocks. Use them carefully.';
 
+const simonSaysTitle = 'Lets play Simon says';
+const simonSaysMessage = 'You will have to follow instruction to get to the green tile. ' +
+    'Otherwise you opponent will shoot you, while you cannot shoot, resistance is futile. ' +
+    'Carefully watch the other ship. If it faces up, turn you ship up too. If it faces down, turn you ship ' +
+    'down too. After you successfully repeat the turn you can move one tile forward. ' +
+    'There is one catch though. Every two turn up you have to turn your ship around and every two turns down, ' +
+    'you have to turn you ship back and forward again (but back in the other direction).';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -234,4 +242,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
     [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
+    [HelpTranslationKey.SimonSays, {title: simonSaysTitle, message: simonSaysMessage}],
 ]);

@@ -465,6 +465,7 @@ const levelNames: [HelpTranslationKey, string][] = [
   [HelpTranslationKey.DiamondsCounting, 'Počítání diamantů'],
   [HelpTranslationKey.Labyrinth2Level, 'Labyrint'],
   [HelpTranslationKey.Labyrinth, 'Druhý labyrint'],
+  [HelpTranslationKey.SimonSays, 'Simon říká'],
 ];
 
 const registerLevelNames = () => {

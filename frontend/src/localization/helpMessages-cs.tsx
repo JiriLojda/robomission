@@ -205,6 +205,14 @@ const labyrinth2Title = 'Projděte se klasickým bludištěm';
 const labyrinth2Message = 'Vaším úkolem je projít tímto klasickým bludištěm a dostat se na zelené pole. ' +
     'Jste omezeni na použití pouze 15 ti bloků, tak je využijte opatrně.';
 
+const simonSaysTitle = 'Zahrajte si Simon říká';
+const simonSaysMessage = 'Budete muset následovat instrukce, aby jste se dostali na zelené pole. ' +
+    'V opačném případě vás protivník sestřelí a vy střílet nemůžete. Pozorně druhou loď sledujte.' +
+    'Pokud se druhá loď otočí nahoru, otočte se nahoru taky, pokud dolů, taky se otočte dolů ' +
+    'Po každém správném otočení se můžete pohnout o jedno pole vpřed, pak znovu musíte opakovat správný pohyb. ' +
+    'Má to ale jeden háček. Po dvou úspěšných otočeních nahoru se musí vaše loď otočit dokola.' +
+    'Po dvou úspěšných otočení dolů se musí vaše loď otočit dozadu a zpět dopředu, ale v opačném směru.';
+
 export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
     [HelpTranslationKey.FirstChallenge2, {title: firstChallengeTitle, message: firstChallengeMessage2}],
@@ -233,4 +241,5 @@ export const allCsHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
     [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
     [HelpTranslationKey.Labyrinth2Level, {title: labyrinth2Title, message: labyrinth2Message}],
+    [HelpTranslationKey.SimonSays, {title: simonSaysTitle, message: simonSaysMessage}],
 ]);

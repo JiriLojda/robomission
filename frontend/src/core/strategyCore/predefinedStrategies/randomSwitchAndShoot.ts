@@ -4,7 +4,7 @@ import {IRoboAst} from "../models/programTypes";
 def Start():
     x = '1'
     while true:
-        if 5 <= 50:
+        if 666 <= 50:
             if x == '1':
                 goRight()
                 x = '0'
