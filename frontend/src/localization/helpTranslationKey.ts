@@ -24,4 +24,5 @@ export enum HelpTranslationKey {
     DistributedIntro = 'DistributedIntro',
     DistributedIntroLevel2 = 'DistributedIntroLevel2',
     DiamondsCounting = 'DiamondsCounting',
+    Labyrinth = 'Labyrinth',
 }

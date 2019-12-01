@@ -34,7 +34,7 @@ const behaviours: IGameBehaviours = {
     shotResolver: createSelectiveShotResolver(standardAiShipIds.take(2).toArray()),
 };
 const help = List([
-    createTranslatedHelp(HelpTranslationKey.DiamondsCounting),
+    createTranslatedHelp(HelpTranslationKey.Labyrinth),
 ]);
 
 const additionalValidators: List<RoboAstValidator> = List([
@@ -52,7 +52,7 @@ const finalPositions = [
 const teams = createOnTheirOwnTeams(shipIds);
 
 export const labyrinthLevel: IGameLevel = {
-    name: findTranslatedName(HelpTranslationKey.DiamondsCounting),
+    name: findTranslatedName(HelpTranslationKey.Labyrinth),
     urlSlug: 'labyrinth',
     battleType: BattleType.GetThereFirstOrKill,
     battleParams: {turnsRan: 0, maxTurns: 200, finishPositions: List(finalPositions)},

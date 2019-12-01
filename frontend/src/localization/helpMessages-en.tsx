@@ -193,6 +193,14 @@ const diamondsCountingMessage = 'In this level series we will explore more advan
     'To successfully end this level you have to win 3 times in a row. The battle will run 3 times automatically. ' +
     'Whoever is faster ... wins.';
 
+const labyrinthTitle = 'Go through the invisible labyrinth';
+const labyrinthMessage = 'Now you have to get to the green tile. But it is not as easy as it looks. ' +
+    'The two ships behind your will be watching you. If you find yourself on a tile you are not ' +
+    'supposed to be or be too fast or too slow, they will shoot you. You cannot shoot back. ' +
+    'You have to follow their orders. The instructions are following. Start by flying forward 7 tiles. ' +
+    'Wait 2 turns for your guards to catch up. Turn left and follow the same path that is 1 step shorter ' +
+    'again and again, until you are there.';
+
 export type HelpEntry = { title: string, message: string | JSX.Element};
 export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.FirstChallenge, {title: firstChallengeTitle, message: firstChallengeMessage}],
@@ -220,4 +228,5 @@ export const allEnHelpMessages: Map<HelpTranslationKey, HelpEntry> = Map([
     [HelpTranslationKey.DistributedIntro, {title: distributedIntroTitle, message: distributedIntroMessage}],
     [HelpTranslationKey.DistributedIntroLevel2, {title: distributedIntro2Title, message: distributedIntro2Message}],
     [HelpTranslationKey.DiamondsCounting, {title: diamondsCountingTitle, message: diamondsCountingMessage}],
+    [HelpTranslationKey.Labyrinth, {title: labyrinthTitle, message: labyrinthMessage}],
 ]);
