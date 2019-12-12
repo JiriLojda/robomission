@@ -18,6 +18,9 @@ import {
     getMessageTypeForResult
 } from "../../core/strategyCore/battleRunner/BattleResult";
 import {BattleSeriesResult} from "../../reducers/strategyEditor/internalReducers/battleSeriesResult";
+import {allCodeDocs} from "../../core/strategyCore/constants/codeDocs/allCodeDocs";
+import {DocsModal} from "../uiComponents/DocsModal";
+import {DocumentationEntry} from "../../core/strategyCore/models/docsTypes";
 
 export interface IStandardEditorSidebarDataProps {
     readonly world: World;
@@ -50,6 +53,8 @@ type Props = IStandardEditorSidebarDataProps & IStandardEditorSidebarCallbackPro
 
 interface IStandardEditorSidebarState {
     readonly width: number;
+    readonly showDocs: boolean;
+    readonly currentDocsIndex: number;
 }
 
 const tileSize = 40;
@@ -77,13 +82,15 @@ const createBattleSeriesMessage = ({wonRuns, requiredWins, drawRuns, lostRuns}: 
         return `Great, you just won. successful rounds: ${wonRuns}, draw rounds: ${drawRuns}, lost rounds: ${lostRuns}.`;
 
     return `No worries, try it again later. Result: won ${wonRuns}, draw ${drawRuns}, lost ${lostRuns}.`;
-}
+};
 
 export class StandardEditorSidebar extends React.PureComponent<Props, IStandardEditorSidebarState> {
     constructor(props: Props) {
         super(props);
         this.state = {
             width: window.innerWidth,
+            showDocs: false,
+            currentDocsIndex: 0,
         }
     }
 
@@ -104,6 +111,35 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
 
     private _onDrawingSpeedChanged = (e: any, speed: number) =>
         this.props.onDrawingSpeedChanged(maxDrawingSpeed + minDrawingSpeed - speed);
+
+    private _toggleShowDocs = () =>
+        this.setState(prev => ({showDocs: !prev.showDocs}));
+
+    private _nextDocs = () => {
+        if (this.state.currentDocsIndex + 1 >= allCodeDocs.size) {
+            return;
+        } else {
+            this.setState(prev => ({currentDocsIndex: prev.currentDocsIndex + 1}));
+        }
+    };
+
+    private _prevDocs = () => {
+        if (this.state.currentDocsIndex - 1 < 0) {
+            return;
+        } else {
+            this.setState(prev => ({currentDocsIndex: prev.currentDocsIndex - 1}));
+        }
+    };
+
+    private _findCurrentDoc = (): DocumentationEntry => allCodeDocs.get(this.state.currentDocsIndex) || {title: '', message: ''};
+
+    private _findNextDocTitle = () => this.state.currentDocsIndex + 1 < allCodeDocs.size ?
+        allCodeDocs.get(this.state.currentDocsIndex + 1)!.title :
+        undefined;
+
+    private _findPrevDocTitle = () => this.state.currentDocsIndex - 1 >= 0 ?
+        allCodeDocs.get(this.state.currentDocsIndex - 1)!.title :
+        undefined;
 
     render() {
         return (
@@ -174,6 +210,13 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                         style={{margin: 2, minWidth: 50}}
                         onClick={this.props.onShowHelp}
                     />
+                    {this.props.isCodeEditorShown &&
+                    <RaisedButton
+                      label={'show docs'}
+                      style={{margin: 2, minWidth: 50}}
+                      onClick={this._toggleShowDocs}
+                    />
+                    }
                     <div style={{width: '200px', color: "white", marginBottom: '-20px'}}>
                         {translate('editor.battleSpeed')}
                         <Slider
@@ -215,6 +258,18 @@ export class StandardEditorSidebar extends React.PureComponent<Props, IStandardE
                         {createBattleSeriesMessage(this.props.battleSeriesResult)}
                     </ResultMessage>
                 </div>
+                <DocsModal
+                    title={this._findCurrentDoc().title}
+                    message={this._findCurrentDoc().message}
+                    isOpened={this.state.showDocs && this.props.isCodeEditorShown}
+                    onClose={this._toggleShowDocs}
+                    showNext={this.state.currentDocsIndex + 1 < allCodeDocs.size}
+                    onShowNext={this._nextDocs}
+                    nextTitle={this._findNextDocTitle()}
+                    showPrev={this.state.currentDocsIndex - 1 >= 0}
+                    onShowPrev={this._prevDocs}
+                    prevTitle={this._findPrevDocTitle()}
+                />
             </div>
         );
     }
