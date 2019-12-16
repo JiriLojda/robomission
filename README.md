@@ -3,11 +3,15 @@
 aiming at creating a [flow experience][2].
 RoboMission is developed by [Adaptive Learning group][3]
 at [Masaryk University][4].
+An extension was added that aims at enabling competitive game-play 
+and more sophisticated programs. More information about the 
+extension is [here][5].
 
   [1]: https://en.staging.robomise.cz/
   [2]: https://en.wikipedia.org/wiki/Flow_(psychology)
   [3]: http://www.fi.muni.cz/adaptivelearning/
   [4]: https://www.muni.cz/en
+  [5]: CompetitiveExtension.md
 
 ## Start working on the project
 
